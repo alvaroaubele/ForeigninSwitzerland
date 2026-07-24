@@ -221,6 +221,8 @@ const BFS_MODE = (process.env.BFS_MODE ?? "auto") as BfsMode;
 
 const API_URL = (cube: string) => `https://www.pxweb.bfs.admin.ch/api/v1/de/${cube}/${cube}.px`;
 const API_ACCESS = "PxWeb json-stat2 query API (POST)";
+/** The seed responses came from the same API, captured during reconnaissance and committed. */
+const SEED_ACCESS = `${API_ACCESS}, response committed under data/bfs-seed/`;
 const PX_ACCESS = "Full PC-Axis cube download (GET), decoded locally";
 
 async function runBfs(urlsAccum: Set<string>): Promise<string[]> {
@@ -350,7 +352,7 @@ function runBfsSeed(): number {
         value: c.value,
         state: c.state,
         concept: "Chilean nationals in Zug by year (permanent)",
-        provenance: { url: SEED_URL(CUBE_101), referenceDate: `${year}-12-31`, retrievedAt, query: "seed: ZG x Chile x permanent, all years" },
+        provenance: { url: SEED_URL(CUBE_101), referenceDate: `${year}-12-31`, retrievedAt, access: SEED_ACCESS, query: "seed: ZG x Chile x permanent, all years" },
       });
       n++;
     });
@@ -370,7 +372,7 @@ function runBfsSeed(): number {
         value: c.value,
         state: c.state,
         concept: "Chilean-born residents of Zug by passport group",
-        provenance: { url: SEED_URL(CUBE_399), referenceDate: "2024-12-31", retrievedAt, query: "seed: ZG x born-Chile x 2024 x passport group" },
+        provenance: { url: SEED_URL(CUBE_399), referenceDate: "2024-12-31", retrievedAt, access: SEED_ACCESS, query: "seed: ZG x born-Chile x 2024 x passport group" },
       });
       n++;
     });

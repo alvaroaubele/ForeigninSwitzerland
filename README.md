@@ -118,10 +118,23 @@ states, verifies against a fixed anchor list, and writes `harvest.json` +
 `manifest.json`. Re-runs are incremental — cached responses are not re-fetched —
 so refreshing when SEM publishes a new month only downloads the new files.
 
-> **Note on the BFS PxWeb endpoint.** `pxweb.bfs.admin.ch` rate-limits POST
-> queries aggressively (roughly one per minute per IP) and tarpits bursts. The
-> harvester spaces BFS queries out and backs off; a full cold BFS harvest takes
-> several minutes. SEM tables have no such limit.
+> **Note on the BFS PxWeb endpoint.** `pxweb.bfs.admin.ch` sits behind a WAF
+> that rejects requests before they reach the query engine, in two ways that
+> both look like server trouble but are neither. It answers any **User-Agent**
+> it does not recognise with HTTP 400 and an HTML block page — so sending a
+> polite identifying UA fails where curl's default UA succeeds — and it rejects
+> **Node's built-in `fetch`** on its TLS/HTTP fingerprint regardless of headers,
+> returning 400/503 where a byte-identical curl request gets 200. BFS queries
+> therefore run through curl (`transport: "curl"` in `scripts/harvest/fetcher.ts`).
+> Retrying a block page is counter-productive: a burst of them trips a short
+> connection-level ban, which is what earlier versions of this README described
+> as rate limiting. The fetcher detects a block page and fails fast instead.
+> With that understood, the full BFS set answers back-to-back at ~12 s a query.
+>
+> If the query API is ever withdrawn, `scripts/harvest/px.ts` is a second route
+> to the same figures: it downloads a whole cube over plain GET (95–275 MB) and
+> decodes the PC-Axis format locally. Force it with `BFS_MODE=px npm run harvest`.
+> SEM tables have no such restrictions and use ordinary Node `fetch`.
 
 ## Develop & build
 
@@ -129,6 +142,7 @@ so refreshing when SEM publishes a new month only downloads the new files.
 npm run dev            # http://localhost:3000
 npm run typecheck      # tsc --noEmit — zero errors required
 npm run lint           # next lint — zero errors required
+npm run test           # unit tests for the PC-Axis reader
 npm run build          # production build (static)
 ```
 

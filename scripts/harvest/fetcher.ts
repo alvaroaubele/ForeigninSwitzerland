@@ -167,12 +167,17 @@ export async function fetchRaw(url: string, opts: FetchOpts): Promise<RawResult>
       retrievedAt: meta.retrievedAt,
     };
   }
-  // A cached non-retryable failure marker (e.g. a 404 archive month) has a meta
-  // file but no data file — honour it so we don't re-fetch known-missing URLs.
+  // A cached absence marker (e.g. a 404 archive month) has a meta file but no
+  // data file — honour it so we don't re-fetch known-missing URLs. Only 404 and
+  // 410 count: they are the statuses that actually mean "this resource is not
+  // there". A cached 400 means the *request* was rejected, which says nothing
+  // about the resource and turns a fixable client bug into a permanent hole in
+  // the harvest — exactly what a batch of stale 400 markers from a since-fixed
+  // User-Agent rejection did to the cube-101 queries.
   if (opts.useCache !== false && !existsSync(path) && existsSync(metaPath)) {
     try {
       const meta = JSON.parse(readFileSync(metaPath, "utf8"));
-      if (meta.status && meta.status >= 400 && meta.status !== 429) {
+      if (meta.status === 404 || meta.status === 410) {
         return {
           key,
           path,
@@ -213,7 +218,8 @@ export async function fetchRaw(url: string, opts: FetchOpts): Promise<RawResult>
         }
         if (res.status < 200 || res.status >= 300) {
           const retrievedAt = new Date().toISOString();
-          // Non-retryable (e.g. 404): cache a marker so we don't hammer it.
+          // Not retryable (e.g. 404): cache a marker so we don't hammer it. Only
+          // 404/410 are honoured on later runs — see the read path above.
           const buffer = Buffer.from("");
           writeFileSync(metaPath, JSON.stringify({ url, status: res.status, retrievedAt }));
           return { key, path, buffer, fromCache: false, retrievedAt, notFound: true } as RawResult & {

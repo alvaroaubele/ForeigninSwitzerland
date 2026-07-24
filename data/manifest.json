@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-24T17:27:28.390Z",
-  "observationCount": 1915,
+  "generatedAt": "2026-07-24T22:25:31.024Z",
+  "observationCount": 3525,
   "cellStateCounts": {
-    "observed": 1117,
-    "structural_zero": 798,
+    "observed": 1810,
+    "structural_zero": 1715,
     "suppressed": 0,
     "not_published": 0
   },
@@ -178,10 +178,11 @@
       "source": "BFS",
       "title": "BFS STATPOP cube px-x-0103010000_101",
       "checkedFor": "Chile x Zug slices (nationality / birth country / marital)",
-      "yielded": "15 cells",
-      "observationCount": 15,
+      "yielded": "1203 cells",
+      "observationCount": 1203,
       "urls": [
-        "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px"
+        "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+        "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_101"
       ]
     },
     {
@@ -189,10 +190,11 @@
       "source": "BFS",
       "title": "BFS STATPOP cube px-x-0103010000_399",
       "checkedFor": "Chile x Zug slices (nationality / birth country / marital)",
-      "yielded": "24 cells",
-      "observationCount": 24,
+      "yielded": "394 cells",
+      "observationCount": 394,
       "urls": [
-        "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px"
+        "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+        "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_399"
       ]
     },
     {
@@ -200,10 +202,11 @@
       "source": "BFS",
       "title": "BFS STATPOP cube px-x-0103010000_423",
       "checkedFor": "Chile x Zug slices (nationality / birth country / marital)",
-      "yielded": "0 cells",
-      "observationCount": 0,
+      "yielded": "52 cells",
+      "observationCount": 52,
       "urls": [
-        "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_423/px-x-0103010000_423.px"
+        "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_423/px-x-0103010000_423.px",
+        "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_423"
       ]
     }
   ],
@@ -565,8 +568,8 @@
     {
       "label": "BFS 2023 Chilean nationals born in Chile",
       "expected": 27,
-      "observed": null,
-      "pass": false,
+      "observed": 27,
+      "pass": true,
       "source": "BFS 423"
     },
     {

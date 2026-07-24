@@ -118,24 +118,47 @@ series with 2017 peak 34, 2020 trough 20, 2024 = 33 nationals; 99 Chilean-born
 
 ## BFS harvest state (this build)
 
-The BFS PxWeb POST query endpoint (`pxweb.bfs.admin.ch`) rate-limited this
-harvest run after the initial reconnaissance burst and did not recover within
-the session, so the *live* multi-slice BFS harvest (deep permit/sex/age
-breakdowns per year, and cube 423 marital status) is pending. `scripts/harvest.ts`
-attempts it on every run and records blocked queries.
+Complete. All 13 configured BFS cube queries return live data and all 30 anchors
+pass, including the cube-423 anchor (27 of 28 Chilean nationals in Zug in 2023
+were born in Chile) that earlier builds could not reach.
 
-What **is** present, from two genuinely-fetched responses captured during
-reconnaissance before the rate-limit and committed under `data/bfs-seed/`
-(real values, real provenance — not synthesised):
+| Cube | Cells | What it carries |
+| --- | --- | --- |
+| `px-x-0103010000_101` | 1 203 | Chilean nationals in Zug: 2010–2024 series, by permit type, sex and age class; plus the 2024 all-canton denominator |
+| `px-x-0103010000_399` | 394 | Chilean-born residents by passport group, sex and age class |
+| `px-x-0103010000_423` | 52 | Nationality × birth country, and marital status by sex (2023) |
 
-- **Cube 101** — permanent Chilean nationals in Zug, full 2010–2024 series
-  (the trend, with the 2017 peak of 34 and 2020 trough of 20).
-- **Cube 399** — Chilean-born residents of Zug in 2024 by passport group
-  (the citizenship-vs-birthplace split: 99 = 33 Swiss / 29 EU / 34 LatAm /
-  1 N. America / 2 Oceania).
+Thirty-nine of those cells come from two responses captured during
+reconnaissance and committed under `data/bfs-seed/`; the rest were fetched live.
+Both routes are the same API and every cell records which one produced it in
+`provenance.access`, so the distinction is visible in the app rather than
+flattened away.
 
-These reproduce 7 of the 8 BFS anchors (29 of 30 anchors overall). The only
-outstanding anchor is BFS 2023 Chilean-nationals-born-in-Chile = 27 (cube 423),
-which requires the live query. When `pxweb` is reachable, re-running
-`npm run harvest` fills in every deeper BFS breakdown; the deep crosses that
-remain absent surface honestly as `not published` in the app until then.
+### How BFS access was actually blocked
+
+Earlier builds recorded this endpoint as rate-limiting the egress IP. That
+diagnosis was **wrong**, and the correction matters for anyone re-running the
+harvest. Two independent filters in front of `pxweb.bfs.admin.ch` were rejecting
+the harvester, neither of them a rate limit:
+
+1. **The User-Agent.** The WAF answers any UA string it does not recognise with
+   HTTP 400 and a 54 KB HTML block page. The harvester's own polite identifying
+   UA was one of those, so *every* BFS request had been failing on its headers,
+   never reaching the query engine. curl's default UA is accepted.
+2. **The HTTP client.** Node's built-in `fetch` is rejected on its TLS/HTTP
+   fingerprint no matter what headers it sends: byte-identical requests get
+   400/503 from `fetch` and 200 from curl. BFS traffic therefore goes through
+   curl (`transport: "curl"` in `scripts/harvest/fetcher.ts`).
+
+The "tarpit" behaviour that looked like rate limiting was the escalation
+pattern: a burst of blocked requests trips a short connection-level ban, so the
+retry ladder made things worse. The fetcher now recognises a block page by shape
+and fails immediately instead of retrying into a ban. With both filters
+understood, the whole cube set answers back-to-back at ~12 s per query.
+
+A second, independent route to the same figures is also implemented, in case the
+query API is withdrawn: `scripts/harvest/px.ts` downloads a cube in full over
+plain GET (`DownloadFile.aspx?file=<cube>`, 95–275 MB) and decodes the PC-Axis
+format locally. Set `BFS_MODE=px` to force it. Its row-major index arithmetic is
+unit-tested (`npm test`) against a fixture whose every value equals its own flat
+index, so a stride error cannot pass silently.

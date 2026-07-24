@@ -32,6 +32,12 @@ export async function queryCube(cube: string, query: PxQuery[]): Promise<JsonSta
     ext: "json",
     transport: "curl", // this host rejects Node's client outright; see fetcher.ts
   });
+  // An empty body means the fetcher returned an absence marker rather than a
+  // response. Say so, instead of letting JSON.parse report a bare "Unexpected
+  // end of JSON input" that gives no clue which cube or query was involved.
+  if (res.buffer.length === 0) {
+    throw new Error(`${cube}: no response body (cached absence marker or refused request)`);
+  }
   return JSON.parse(res.buffer.toString("utf8")) as JsonStat2;
 }
 
