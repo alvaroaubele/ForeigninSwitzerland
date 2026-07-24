@@ -50028,6 +50028,927 @@
    },
    "id": "14578d9641adfb57",
    "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2010,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 10,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2010-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "58ba13123d5046b7",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2011,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 14,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2011-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "e9eb9f8381cfcd34",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2012,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 10,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2012-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "ec50759307111825",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2013,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 19,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2013-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "c35c6d2f1a0251c6",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2014,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 24,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2014-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "a3107ecf3e5a1c65",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2015,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 20,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2015-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "c5cd42495818b7ad",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2016,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 30,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2016-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "deffb7074f9256e4",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 34,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "73ceb64b0778963a",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2018,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 25,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2018-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "d77376ca6629c36c",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 24,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "92eafa69cb215794",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 20,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "e5953fcf09d92451",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 23,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "3a822d178baa0ec5",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 26,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "0996c7a5f3167279",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 28,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "49c601b09cd06346",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_101",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 33,
+   "state": "observed",
+   "concept": "Chilean nationals in Zug by year (permanent)",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x Chile x permanent, all years"
+   },
+   "id": "bfd3cfe683bdc7ce",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "total",
+    "sex": "total"
+   },
+   "value": 99,
+   "state": "observed",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "aca65d30db615f77",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Swiss",
+    "sex": "total"
+   },
+   "value": 33,
+   "state": "observed",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "c917682540f11ea8",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "EU",
+    "sex": "total"
+   },
+   "value": 29,
+   "state": "observed",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "f34978c2be45e4ca",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "EFTA",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "7e2765d1e156bcba",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Other Europe",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "990e0d87068b3313",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Africa",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "9e16e94940a9dea4",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "North America",
+    "sex": "total"
+   },
+   "value": 1,
+   "state": "observed",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "d7b6f4a256d94903",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Latin America & Caribbean",
+    "sex": "total"
+   },
+   "value": 34,
+   "state": "observed",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "e49c7a4aec33ef6b",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Asia",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "2e2d7017baa79f68",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Oceania",
+    "sex": "total"
+   },
+   "value": 2,
+   "state": "observed",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "d2c620b1230880e2",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Stateless",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "9b9ca7bf711e364e",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Unknown",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "455ebe7a6459e053",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "total",
+    "sex": "total"
+   },
+   "value": 3,
+   "state": "observed",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "3c007454de1faefd",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Swiss",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "25bf9ae75af1a0c9",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "EU",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "fa42ca3531c1f787",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "EFTA",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "9ace0733941b5a06",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Other Europe",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "1d710b46d2572651",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Africa",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "3d2ba06e37a80455",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "North America",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "6916f98b5a7a1142",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Latin America & Caribbean",
+    "sex": "total"
+   },
+   "value": 3,
+   "state": "observed",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "4c0cf1b9d832e565",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Asia",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "40dc99aa714f8d81",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Oceania",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "a3bf0af1ba307024",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Stateless",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "08ff8d91ad7805d6",
+   "unit": "persons"
+  },
+  {
+   "source": "BFS",
+   "dataset": "px-x-0103010000_399",
+   "metric": "stock",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2024,
+    "birthCountry": "CL",
+    "nationalityGroup": "Unknown",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Chilean-born residents of Zug by passport group",
+   "provenance": {
+    "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+    "referenceDate": "2024-12-31",
+    "retrievedAt": "2026-07-24T16:05:00.000Z",
+    "query": "seed: ZG x born-Chile x 2024 x passport group"
+   },
+   "id": "73aebd87a64f7bcb",
+   "unit": "persons"
   }
  ]
 }

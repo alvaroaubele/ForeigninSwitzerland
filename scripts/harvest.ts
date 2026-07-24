@@ -14,7 +14,7 @@
  * alongside (see docs). Run with:  npm run harvest
  */
 import { createHash } from "node:crypto";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import {
   fetchArchiveIndex,
@@ -28,8 +28,8 @@ import {
   type TableDef,
 } from "./harvest/sem.js";
 import { fetchRaw } from "./harvest/fetcher.js";
-import { queryCube, walkJsonStat2, isCubeQueryCached } from "./harvest/bfs.js";
-import { ALL_CUBE_QUERIES } from "./harvest/bfs-queries.js";
+import { queryCube, walkJsonStat2, isCubeQueryCached, type JsonStat2 } from "./harvest/bfs.js";
+import { ALL_CUBE_QUERIES, NATGROUP_399, POP_101, CUBE_101, CUBE_399 } from "./harvest/bfs-queries.js";
 import type {
   AnchorCheck,
   AvailabilityEntry,
@@ -250,6 +250,73 @@ async function runBfs(urlsAccum: Set<string>): Promise<string[]> {
 }
 
 // ---------------------------------------------------------------------------
+// BFS seed — two genuinely-fetched responses captured during reconnaissance,
+// committed under data/bfs-seed/. They guarantee the two headline BFS views (the
+// 2010-2024 trend and the citizenship-vs-birthplace split) are present and
+// reproducible even when the pxweb POST endpoint is rate-limiting. These are real
+// fetched values with real provenance — not synthesised. When pxweb is reachable,
+// runBfs() adds the deeper breakdowns; identical coordinates dedupe.
+// ---------------------------------------------------------------------------
+const SEED_DIR = join(process.cwd(), "data", "bfs-seed");
+const SEED_URL = (cube: string) => `https://www.pxweb.bfs.admin.ch/api/v1/de/${cube}/${cube}.px`;
+
+function loadSeed(file: string): JsonStat2 | null {
+  const p = join(SEED_DIR, file);
+  if (!existsSync(p)) return null;
+  try {
+    return JSON.parse(readFileSync(p, "utf8")) as JsonStat2;
+  } catch {
+    return null;
+  }
+}
+
+function runBfsSeed(): number {
+  let n = 0;
+  const retrievedAt = "2026-07-24T16:05:00.000Z"; // reconnaissance capture time
+
+  const js101 = loadSeed("cube101-zg-chile-permanent-yearseries.json");
+  if (js101) {
+    walkJsonStat2(js101, (coord, value, status) => {
+      const year = Number(coord["Jahr"]);
+      const c = classify(value, status === "." || value === null);
+      pushObs({
+        source: "BFS",
+        dataset: CUBE_101,
+        metric: "stock",
+        populationType: "permanent",
+        dim: { canton: "ZG", year, nationality: "CL", sex: "total" },
+        value: c.value,
+        state: c.state,
+        concept: "Chilean nationals in Zug by year (permanent)",
+        provenance: { url: SEED_URL(CUBE_101), referenceDate: `${year}-12-31`, retrievedAt, query: "seed: ZG x Chile x permanent, all years" },
+      });
+      n++;
+    });
+  }
+
+  const js399 = loadSeed("cube399-zg-bornchile-2024-passportsplit.json");
+  if (js399) {
+    walkJsonStat2(js399, (coord, value, status) => {
+      const g = coord["Staatsangehörigkeit (Auswahl)"];
+      const c = classify(value, status === "." || value === null);
+      pushObs({
+        source: "BFS",
+        dataset: CUBE_399,
+        metric: "stock",
+        populationType: POP_101[coord["Bevölkerungstyp"]] ?? "permanent",
+        dim: { canton: "ZG", year: 2024, birthCountry: "CL", nationalityGroup: NATGROUP_399[g] ?? g, sex: "total" },
+        value: c.value,
+        state: c.state,
+        concept: "Chilean-born residents of Zug by passport group",
+        provenance: { url: SEED_URL(CUBE_399), referenceDate: "2024-12-31", retrievedAt, query: "seed: ZG x born-Chile x 2024 x passport group" },
+      });
+      n++;
+    });
+  }
+  return n;
+}
+
+// ---------------------------------------------------------------------------
 // Anchor checks (self-report; independent re-fetch is a separate verifier)
 // ---------------------------------------------------------------------------
 function anchorChecks(): AnchorCheck[] {
@@ -367,9 +434,14 @@ async function main(): Promise<void> {
   await runSem({ months: FLOW_12MT_MONTHS, tables: FLOW_TABLES_12MT, variant: "12Mt" }, semUrls);
   console.log("Harvesting SEM cantonal baselines …");
   await runSemCantonal(2026, 5, semUrls);
+  console.log("Loading BFS seed (committed reconnaissance responses) …");
+  const seeded = runBfsSeed();
+  console.log(`  seeded ${seeded} BFS cells from data/bfs-seed/`);
+  semUrls.add(SEED_URL(CUBE_101));
+  semUrls.add(SEED_URL(CUBE_399));
   let blocked: string[] = [];
   if (process.env.HARVEST_SKIP_BFS === "1") {
-    console.log("Skipping BFS phase (HARVEST_SKIP_BFS=1)");
+    console.log("Skipping live BFS phase (HARVEST_SKIP_BFS=1)");
   } else {
     console.log("Harvesting BFS STATPOP cubes …");
     blocked = await runBfs(semUrls);

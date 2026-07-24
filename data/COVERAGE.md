@@ -115,3 +115,27 @@ FZA 17 / AIG 18, married 23 (6 to a Swiss national), single 10, age 18–64 = 27
 naturalisations 0; cantonal VD 989 / ZH 554 / Switzerland 3 303; BFS — 2010–2024
 series with 2017 peak 34, 2020 trough 20, 2024 = 33 nationals; 99 Chilean-born
 (33 Swiss / 29 EU / 34 LatAm); 27 of 28 Chilean nationals born in Chile (2023).
+
+## BFS harvest state (this build)
+
+The BFS PxWeb POST query endpoint (`pxweb.bfs.admin.ch`) rate-limited this
+harvest run after the initial reconnaissance burst and did not recover within
+the session, so the *live* multi-slice BFS harvest (deep permit/sex/age
+breakdowns per year, and cube 423 marital status) is pending. `scripts/harvest.ts`
+attempts it on every run and records blocked queries.
+
+What **is** present, from two genuinely-fetched responses captured during
+reconnaissance before the rate-limit and committed under `data/bfs-seed/`
+(real values, real provenance — not synthesised):
+
+- **Cube 101** — permanent Chilean nationals in Zug, full 2010–2024 series
+  (the trend, with the 2017 peak of 34 and 2020 trough of 20).
+- **Cube 399** — Chilean-born residents of Zug in 2024 by passport group
+  (the citizenship-vs-birthplace split: 99 = 33 Swiss / 29 EU / 34 LatAm /
+  1 N. America / 2 Oceania).
+
+These reproduce 7 of the 8 BFS anchors (29 of 30 anchors overall). The only
+outstanding anchor is BFS 2023 Chilean-nationals-born-in-Chile = 27 (cube 423),
+which requires the live query. When `pxweb` is reachable, re-running
+`npm run harvest` fills in every deeper BFS breakdown; the deep crosses that
+remain absent surface honestly as `not published` in the app until then.

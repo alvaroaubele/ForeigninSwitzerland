@@ -1,0 +1,21 @@
+{
+  "purpose": "Two genuinely-fetched BFS STATPOP json-stat2 responses captured during Phase-0 source reconnaissance, before the pxweb POST endpoint began rate-limiting. They are committed so the two headline BFS views (the 2010-2024 trend and the citizenship-vs-birthplace split) are always available and reproducible without a live pxweb query. These are REAL fetched values with real provenance, not synthesised. scripts/harvest.ts loads them via runBfsSeed() and also attempts the fuller live queries; when pxweb is reachable the live harvest supersedes/augments these with the deeper breakdowns.",
+  "responses": [
+    {
+      "file": "cube101-zg-chile-permanent-yearseries.json",
+      "cube": "px-x-0103010000_101",
+      "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
+      "query": {"Kanton":["ZG"],"Staatsangehörigkeit":["8407"],"Bevölkerungstyp":["1"],"Anwesenheitsbewilligung":["-99999"],"Geschlecht":["-99999"],"Altersklasse":["-99999"]},
+      "yields": "permanent Chilean nationals in Zug, 2010-2024",
+      "retrievedAt": "2026-07-24T16:00:00Z"
+    },
+    {
+      "file": "cube399-zg-bornchile-2024-passportsplit.json",
+      "cube": "px-x-0103010000_399",
+      "url": "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
+      "query": {"Jahr":["2024"],"Kanton":["ZG"],"Geburtsstaat":["8407"],"Staatsangehörigkeit (Auswahl)":["-99999","1","2","3","4","5","6","7","8","9","-1","-9"],"Bevölkerungstyp":["1","2"],"Geschlecht":["-99999"],"Altersklasse":["-99999"]},
+      "yields": "Chilean-born residents of Zug by passport group, 2024",
+      "retrievedAt": "2026-07-24T16:05:00Z"
+    }
+  ]
+}

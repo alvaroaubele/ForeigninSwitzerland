@@ -978,3 +978,15 @@ button {
     overflow-x: auto;
   }
 }
+
+/* stacked-bar segment wrapper (a ProvenanceTip that is also a flex item) */
+.stackseg-anchor {
+  display: block;
+  height: 100%;
+  border-bottom: none;
+  cursor: pointer;
+  min-width: 2px;
+}
+.stackseg-anchor .stackseg {
+  height: 100%;
+}

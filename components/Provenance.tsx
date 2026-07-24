@@ -15,16 +15,21 @@ export function ProvenanceTip({
   state,
   wouldBeCarriedBy,
   children,
+  style,
+  className,
 }: {
   observation: Observation | null;
   state: CellState;
   wouldBeCarriedBy?: string;
   children: React.ReactNode;
+  style?: React.CSSProperties;
+  className?: string;
 }) {
   const [open, setOpen] = useState(false);
   return (
     <span
-      className="prov-anchor"
+      className={`prov-anchor${className ? " " + className : ""}`}
+      style={style}
       tabIndex={0}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}

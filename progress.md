@@ -32,3 +32,8 @@
   - LOW: fetcher honours cached 404 markers; 2-22 "born in Switzerland" no longer tagged birthCountry:other; removed dead double-counting sumMatching/sumOver; removed unused d3-shape/d3-array deps + fixed README.
   - Bonus (found while verifying): naturalisation metric now uses populationType "total" in the cross-filter (was unqueryable).
 - SEM harvest regenerated: 1876 obs (1094 observed, 782 structural_zero), 22/22 SEM anchors still pass. tsc + next build clean.
+
+## Phase 2 — BFS headline data seeded (2026-07-24)
+- pxweb POST endpoint stayed rate-limited through the session (GET works; POST tarpitted, >40min silence didn't clear). Live long-wait recovery task still running as a floor.
+- Committed two genuinely-fetched BFS json-stat2 responses (captured pre-rate-limit) under data/bfs-seed/; runBfsSeed() emits 39 real BFS cells -> hero split (99: 33/29/34) + full 2010-2024 trend. 29/30 anchors pass (only cube-423 2023=27 pending live).
+- Fixed stacked-bar flex rendering (ProvenanceTip now accepts style/className). Verified hero + trend render correctly via headless Chromium. tsc + build clean.

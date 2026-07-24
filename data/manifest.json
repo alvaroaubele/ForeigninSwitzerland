@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-24T17:19:31.312Z",
-  "observationCount": 1876,
+  "generatedAt": "2026-07-24T17:27:28.390Z",
+  "observationCount": 1915,
   "cellStateCounts": {
-    "observed": 1094,
-    "structural_zero": 782,
+    "observed": 1117,
+    "structural_zero": 798,
     "suppressed": 0,
     "not_published": 0
   },
@@ -178,8 +178,8 @@
       "source": "BFS",
       "title": "BFS STATPOP cube px-x-0103010000_101",
       "checkedFor": "Chile x Zug slices (nationality / birth country / marital)",
-      "yielded": "0 cells",
-      "observationCount": 0,
+      "yielded": "15 cells",
+      "observationCount": 15,
       "urls": [
         "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px"
       ]
@@ -189,8 +189,8 @@
       "source": "BFS",
       "title": "BFS STATPOP cube px-x-0103010000_399",
       "checkedFor": "Chile x Zug slices (nationality / birth country / marital)",
-      "yielded": "0 cells",
-      "observationCount": 0,
+      "yielded": "24 cells",
+      "observationCount": 24,
       "urls": [
         "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px"
       ]
@@ -516,50 +516,50 @@
     {
       "label": "BFS 2024 Chilean nationals (perm)",
       "expected": 33,
-      "observed": null,
-      "pass": false,
+      "observed": 33,
+      "pass": true,
       "source": "BFS 101"
     },
     {
       "label": "BFS 2017 Chilean nationals (perm)",
       "expected": 34,
-      "observed": null,
-      "pass": false,
+      "observed": 34,
+      "pass": true,
       "source": "BFS 101"
     },
     {
       "label": "BFS 2020 Chilean nationals (perm)",
       "expected": 20,
-      "observed": null,
-      "pass": false,
+      "observed": 20,
+      "pass": true,
       "source": "BFS 101"
     },
     {
       "label": "BFS 2024 Chilean-born (perm)",
       "expected": 99,
-      "observed": null,
-      "pass": false,
+      "observed": 99,
+      "pass": true,
       "source": "BFS 399"
     },
     {
       "label": "BFS 2024 Chilean-born Swiss passport",
       "expected": 33,
-      "observed": null,
-      "pass": false,
+      "observed": 33,
+      "pass": true,
       "source": "BFS 399"
     },
     {
       "label": "BFS 2024 Chilean-born LatAm passport",
       "expected": 34,
-      "observed": null,
-      "pass": false,
+      "observed": 34,
+      "pass": true,
       "source": "BFS 399"
     },
     {
       "label": "BFS 2024 Chilean-born EU passport",
       "expected": 29,
-      "observed": null,
-      "pass": false,
+      "observed": 29,
+      "pass": true,
       "source": "BFS 399"
     },
     {

@@ -81,11 +81,17 @@ export function PassportBirthplace() {
                 {split
                   .filter((r) => (r.cell.value ?? 0) > 0)
                   .map((r) => (
-                    <ProvenanceTip key={r.group} observation={r.cell.observation} state={r.cell.state}>
+                    <ProvenanceTip
+                      key={r.group}
+                      observation={r.cell.observation}
+                      state={r.cell.state}
+                      className="stackseg-anchor"
+                      style={{ flexGrow: r.cell.value ?? 0, flexBasis: 0 }}
+                    >
                       <span
                         className="stackseg"
                         style={{
-                          width: `${((r.cell.value ?? 0) / splitTotal) * 100}%`,
+                          width: "100%",
                           background: GROUP_COLORS[r.group] ?? "var(--fg-muted)",
                         }}
                         title={`${label(r.group)}: ${fmtInt(r.cell.value)}`}
