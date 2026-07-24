@@ -95,7 +95,10 @@ export async function fetchRaw(url: string, opts: FetchOpts): Promise<RawResult>
             ...(opts.headers ?? {}),
           },
         });
-        if (RETRY_STATUS.has(res.status)) {
+        // pxweb tarpits bursts with transient 400s and 403s under load; since the
+        // harvest's queries are validated, treat those as retryable for POSTs too.
+        const postTransient = opts.method === "POST" && (res.status === 400 || res.status === 403);
+        if (RETRY_STATUS.has(res.status) || postTransient) {
           throw new Error(`retryable status ${res.status}`);
         }
         if (!res.ok) {
@@ -108,6 +111,11 @@ export async function fetchRaw(url: string, opts: FetchOpts): Promise<RawResult>
           };
         }
         const buffer = Buffer.from(await res.arrayBuffer());
+        // An empty successful body is the tarpit's other failure mode — never
+        // cache it; treat it as retryable so backoff can outlast the block.
+        if (buffer.length === 0) {
+          throw new Error("empty response body");
+        }
         const retrievedAt = new Date().toISOString();
         writeFileSync(path, buffer);
         writeFileSync(
