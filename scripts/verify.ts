@@ -16,8 +16,9 @@
  *      `expected`).
  *
  * Network: <=4 concurrent against www.sem.admin.ch, small stagger delay, retry
- * with backoff. Never touches pxweb.bfs.admin.ch. BFS observations/anchors are
- * skipped (BFS is pending a rate-limit cooldown).
+ * with backoff. Never touches pxweb.bfs.admin.ch — that host needs a different
+ * client and a much lower request rate, so BFS is verified by its own script,
+ * `scripts/verify-bfs.ts`. Run both (`npm run verify`) to cover the whole harvest.
  *
  * Run:  npx tsx scripts/verify.ts
  * Writes: data/verification-report.md
@@ -552,7 +553,7 @@ async function main(): Promise<void> {
   lines.push(`- Every file was fetched with a fresh HTTP GET against \`www.sem.admin.ch\`; the harvest's \`data/raw/\` disk cache was never read. Requests were bounded to <=4 concurrent with a stagger delay and retry-on-failure backoff.`);
   lines.push(`- The ZG sheet (or the recorded canton sheet for cantonal baselines) was parsed fresh; the "Chile" row was matched whitespace-tolerantly, "Gesamttotal" for the per-capita denominator, and Chile-absence confirmed for flow structural-zero totals.`);
   lines.push(`- Column indices were resolved by an independent map in this script, written from a direct reading of the SEM header rows (rows 2-4) and cross-checked against \`scripts/harvest/sem.ts\`. This script does not import or execute the harvest extraction code.`);
-  lines.push(`- BFS observations and BFS anchors were skipped entirely; \`pxweb.bfs.admin.ch\` was never contacted.`);
+  lines.push(`- BFS observations and BFS anchors are out of scope here and \`pxweb.bfs.admin.ch\` was never contacted; they are verified separately by \`scripts/verify-bfs.ts\`, which reports to \`data/verification-bfs.md\`.`);
   lines.push("");
 
   writeFileSync(join(DATA, "verification-report.md"), lines.join("\n"));

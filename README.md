@@ -67,6 +67,8 @@ offers the single filter to drop to reach a populated view.
   dimension-availability matrix, and the anchor-check results.
 - `data/COVERAGE.md` — a written account of which cross-tabs exist, which are
   suppressed, and which were never published.
+- `data/verification-report.md` / `data/verification-bfs.md` — the output of the
+  independent re-fetch of each source (see *Verification* below).
 
 ## Capabilities
 
@@ -136,6 +138,32 @@ so refreshing when SEM publishes a new month only downloads the new files.
 > decodes the PC-Axis format locally. Force it with `BFS_MODE=px npm run harvest`.
 > SEM tables have no such restrictions and use ordinary Node `fetch`.
 
+## Verification
+
+Nothing here checks its own homework. The harvest self-tests against a fixed
+anchor list, and then two *separate* scripts re-fetch the figures from the
+published sources and compare — neither imports the harvest's fetcher, its
+parsers, or its query definitions:
+
+```bash
+npm run verify         # both, sequentially
+npm run verify:sem     # -> data/verification-report.md
+npm run verify:bfs     # -> data/verification-bfs.md
+```
+
+`verify.ts` re-downloads the SEM workbooks from the recorded provenance URLs,
+finds the `Chile` row itself, and resolves each column from an independently
+written map of the SEM header rows — covering ≥15% of eligible SEM cells
+(deterministically sampled, every dataset and reference period represented) plus
+every SEM anchor. `verify-bfs.ts` inverts the *harvested dimensions* back into
+PxWeb codes, re-POSTs those queries, and decodes json-stat2 with its own
+row-major decoder; it covers 100% of non-null BFS cells (they arrive in
+rectangular blocks, so checking all of them costs the same handful of requests as
+sampling would) plus every BFS anchor. It also re-fetches each cube's metadata to
+confirm from the source's own labels that `8407` really is Chile, `ZG` really is
+Zug, and so on — the bare numeric codes are exactly where a silent mapping error
+would hide. Both write a Markdown report and exit non-zero on any discrepancy.
+
 ## Develop & build
 
 ```bash
@@ -175,6 +203,8 @@ When SEM publishes a new month, re-run `npm run harvest`, commit the updated
 ```
 scripts/harvest.ts          # Phase 1 entry point (npm run harvest)
 scripts/harvest/            # fetcher (cache + rate limit), SEM + BFS modules, query config
+scripts/verify.ts           # independent SEM re-fetch (imports no harvest code)
+scripts/verify-bfs.ts       # independent BFS re-fetch (imports no harvest code)
 lib/types.ts                # the Observation / CellState data model
 lib/model.ts                # query engine: resolveCell, availability, series
 lib/selectors.ts            # app-specific queries (headlines, splits, baselines)

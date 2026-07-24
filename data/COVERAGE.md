@@ -108,8 +108,12 @@ counts 33 at Dec 2024). Both are recorded with their own reference date and are
 ## Verified anchors
 
 The harvest self-checks against a fixed anchor list (see `manifest.json →
-anchors`) and an independent verifier re-fetches a sample from recorded
-provenance. Anchors include: SEM 2026-05 — 35 permanent (20 F / 15 M), L2/B22/C11,
+anchors`), and two independent verifiers then re-fetch the figures from the
+published sources — `scripts/verify.ts` for SEM (≥15% deterministic sample plus
+every SEM anchor, reported in `data/verification-report.md`) and
+`scripts/verify-bfs.ts` for BFS (all non-null cells plus every BFS anchor, plus a
+metadata check that the numeric codes mean what the harvest assumed, reported in
+`data/verification-bfs.md`). Neither imports any harvest code. Anchors include: SEM 2026-05 — 35 permanent (20 F / 15 M), L2/B22/C11,
 FZA 17 / AIG 18, married 23 (6 to a Swiss national), single 10, age 18–64 = 27,
 65+ = 0, stay 0–4y = 17, 20+y = 0, inflow 3 + 2, departures 1 + 3,
 naturalisations 0; cantonal VD 989 / ZH 554 / Switzerland 3 303; BFS — 2010–2024

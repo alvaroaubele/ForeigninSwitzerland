@@ -9,7 +9,10 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test scripts/harvest/*.test.ts"
+    "test": "tsx --test scripts/harvest/*.test.ts",
+    "verify": "tsx scripts/verify.ts && tsx scripts/verify-bfs.ts",
+    "verify:sem": "tsx scripts/verify.ts",
+    "verify:bfs": "tsx scripts/verify-bfs.ts"
   },
   "dependencies": {
     "d3-scale": "^4.0.2",
