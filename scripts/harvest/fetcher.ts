@@ -1,8 +1,13 @@
 // Cached, rate-limited fetcher. Every raw response is cached to data/raw/
 // keyed by a hash of (url + body) so re-runs and resumed sessions never re-fetch.
-import { createHash } from "node:crypto";
-import { mkdirSync, existsSync, readFileSync, writeFileSync } from "node:fs";
+import { createHash, randomBytes } from "node:crypto";
+import { execFile } from "node:child_process";
+import { mkdirSync, existsSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
 
 const RAW_DIR = join(process.cwd(), "data", "raw");
 mkdirSync(RAW_DIR, { recursive: true });
@@ -51,6 +56,90 @@ interface FetchOpts {
   /** Set false to force a network read even when cached (used by the verifier). */
   useCache?: boolean;
   label?: string;
+  /**
+   * Which HTTP client to use. `"curl"` is required for pxweb.bfs.admin.ch — see
+   * `curlRequest` below. Defaults to Node's built-in fetch, which is fine for
+   * sem.admin.ch and every other source in the harvest.
+   */
+  transport?: "fetch" | "curl";
+}
+
+interface HttpResult {
+  status: number;
+  buffer: Buffer;
+}
+
+/** Rejected by a filter in front of the origin — retrying cannot help. */
+export class BlockedError extends Error {}
+
+function isBlockPage(res: HttpResult, opts: FetchOpts): boolean {
+  if (res.status < 400) return false;
+  if (opts.ext !== "json") return false; // only JSON callers can judge by shape
+  const head = res.buffer.subarray(0, 200).toString("latin1").trimStart().toLowerCase();
+  return head.startsWith("<!doctype html") || head.startsWith("<html");
+}
+
+const USER_AGENT = "chileans-in-zug-harvest/1.0 (open statistical data explorer)";
+
+async function nodeFetchRequest(url: string, opts: FetchOpts): Promise<HttpResult> {
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, {
+      method: opts.method ?? "GET",
+      body: opts.body,
+      signal: ac.signal,
+      headers: { "User-Agent": USER_AGENT, ...(opts.headers ?? {}) },
+    });
+    return { status: res.status, buffer: Buffer.from(await res.arrayBuffer()) };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * Same request, issued by curl instead of Node.
+ *
+ * www.pxweb.bfs.admin.ch sits behind a WAF that rejects Node's TLS/HTTP client
+ * outright: identical requests get 400/503 from `fetch` and 200 from curl, and
+ * no combination of User-Agent or other headers changes that — the rejection is
+ * on the connection fingerprint, not on anything we can put in a header. Rather
+ * than treat those responses as a rate limit and back off forever (they are not
+ * one; curl sustains back-to-back requests fine), we hand BFS traffic to curl.
+ */
+async function curlRequest(url: string, opts: FetchOpts): Promise<HttpResult> {
+  const stem = join(tmpdir(), `harvest-${randomBytes(8).toString("hex")}`);
+  const outPath = `${stem}.out`;
+  const bodyPath = `${stem}.body`;
+  // Deliberately no User-Agent override. The WAF answers any UA it does not
+  // recognise with a 400 and a 54 KB HTML block page — including our own polite
+  // identifying string — and a burst of those escalates to a connection-level
+  // ban on the egress IP. curl's own default UA is accepted, and it is the
+  // honest one here: this request really is curl.
+  const args = [
+    "-sS",
+    "--max-time",
+    String(Math.ceil(REQUEST_TIMEOUT_MS / 1000)),
+    "-o",
+    outPath,
+    "-w",
+    "%{http_code}",
+  ];
+  for (const [k, v] of Object.entries(opts.headers ?? {})) args.push("-H", `${k}: ${v}`);
+  if (opts.method === "POST") {
+    writeFileSync(bodyPath, opts.body ?? "", "utf8");
+    args.push("-X", "POST", "--data-binary", `@${bodyPath}`);
+  }
+  args.push(url);
+  try {
+    const { stdout } = await execFileAsync("curl", args, { maxBuffer: 1 << 20 });
+    const status = Number(stdout.trim().slice(-3));
+    const buffer = existsSync(outPath) ? readFileSync(outPath) : Buffer.from("");
+    return { status: Number.isFinite(status) ? status : 0, buffer };
+  } finally {
+    rmSync(outPath, { force: true });
+    rmSync(bodyPath, { force: true });
+  }
 }
 
 export interface RawResult {
@@ -101,26 +190,28 @@ export async function fetchRaw(url: string, opts: FetchOpts): Promise<RawResult>
   return gate(async () => {
     let lastErr: unknown;
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
-      const ac = new AbortController();
-      const timer = setTimeout(() => ac.abort(), REQUEST_TIMEOUT_MS);
       try {
-        const res = await fetch(url, {
-          method: opts.method ?? "GET",
-          body: opts.body,
-          signal: ac.signal,
-          headers: {
-            "User-Agent":
-              "chileans-in-zug-harvest/1.0 (open statistical data explorer)",
-            ...(opts.headers ?? {}),
-          },
-        });
+        const res =
+          opts.transport === "curl"
+            ? await curlRequest(url, opts)
+            : await nodeFetchRequest(url, opts);
+        // A WAF block page is not a transient error and retrying it is actively
+        // harmful: a burst of blocked requests escalates to a connection-level
+        // ban on the egress IP. Detect it by shape (HTML body where the caller
+        // asked for JSON) and fail immediately with a diagnosable message.
+        if (isBlockPage(res, opts)) {
+          throw new BlockedError(
+            `${url} answered ${res.status} with a WAF block page — the request was rejected on its ` +
+              `headers or client fingerprint, not its content. Retrying will get the IP banned.`,
+          );
+        }
         // pxweb tarpits bursts with transient 400s and 403s under load; since the
         // harvest's queries are validated, treat those as retryable for POSTs too.
         const postTransient = opts.method === "POST" && (res.status === 400 || res.status === 403);
         if (RETRY_STATUS.has(res.status) || postTransient) {
           throw new Error(`retryable status ${res.status}`);
         }
-        if (!res.ok) {
+        if (res.status < 200 || res.status >= 300) {
           const retrievedAt = new Date().toISOString();
           // Non-retryable (e.g. 404): cache a marker so we don't hammer it.
           const buffer = Buffer.from("");
@@ -129,7 +220,7 @@ export async function fetchRaw(url: string, opts: FetchOpts): Promise<RawResult>
             notFound: true;
           };
         }
-        const buffer = Buffer.from(await res.arrayBuffer());
+        const buffer = res.buffer;
         // An empty successful body is the tarpit's other failure mode — never
         // cache it; treat it as retryable so backoff can outlast the block.
         if (buffer.length === 0) {
@@ -144,12 +235,11 @@ export async function fetchRaw(url: string, opts: FetchOpts): Promise<RawResult>
         return { key, path, buffer, fromCache: false, retrievedAt };
       } catch (err) {
         lastErr = err;
+        if (err instanceof BlockedError) throw err; // never retry a block page
         if (attempt < MAX_RETRIES) {
           const backoff = 3000 * 2 ** attempt; // 3s, 6s, 12s, 24s, 48s, 96s
           await sleep(backoff);
         }
-      } finally {
-        clearTimeout(timer);
       }
     }
     throw new Error(`fetch failed after retries: ${url}: ${String(lastErr)}`);

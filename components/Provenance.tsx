@@ -75,6 +75,12 @@ export function ProvenanceTip({
                   <span className="mono prov-query">{summariseQuery(observation.provenance.query)}</span>
                 </span>
               )}
+              {observation.provenance.access && (
+                <span className="prov-kv">
+                  <span>Access</span>
+                  <span>{observation.provenance.access}</span>
+                </span>
+              )}
               <span className="prov-kv">
                 <span>Retrieved</span>
                 <span>{fmtDate(observation.provenance.retrievedAt.slice(0, 10))}</span>

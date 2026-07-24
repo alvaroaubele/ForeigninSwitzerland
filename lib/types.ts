@@ -64,6 +64,9 @@ export interface Dimensions {
 
 export interface Provenance {
   url: string;
+  /** How the figure was retrieved, when a source offers more than one route
+   *  (e.g. the BFS query API vs. the full PC-Axis cube download). */
+  access?: string;
   publicationDate?: string; // ISO date the source file/table was published
   referenceDate: string; // ISO date the figure refers to (SEM month-end, BFS 31.12)
   retrievedAt: string; // ISO timestamp of retrieval

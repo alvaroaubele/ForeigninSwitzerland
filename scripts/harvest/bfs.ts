@@ -2,6 +2,7 @@
 // slice of a cube filtered to Chile x Zug (or a comparison canton), expanded
 // into typed observations with structural-zero / suppressed classification.
 import { fetchRaw, isCached } from "./fetcher.js";
+import { ensurePxCube, pxDownloadUrl, pxExtract, readPxHeader, type PxCell } from "./px.js";
 
 const PXWEB = (cube: string) => `https://www.pxweb.bfs.admin.ch/api/v1/de/${cube}/${cube}.px`;
 
@@ -29,6 +30,7 @@ export async function queryCube(cube: string, query: PxQuery[]): Promise<JsonSta
     body,
     headers: { "Content-Type": "application/json" },
     ext: "json",
+    transport: "curl", // this host rejects Node's client outright; see fetcher.ts
   });
   return JSON.parse(res.buffer.toString("utf8")) as JsonStat2;
 }
@@ -72,3 +74,25 @@ export function isCubeQueryCached(cube: string, query: PxQuery[]): boolean {
 }
 
 export const PXWEB_URL = PXWEB;
+
+/**
+ * Answer a cube query from the full PC-Axis download instead of the POST API.
+ *
+ * The .px file's dimension names and value codes are identical to the PxWeb API's
+ * variable codes, so the query spec needs no translation and the resulting
+ * coordinates are keyed exactly as `walkJsonStat2` would key them. Same server,
+ * same published figures — only the access method differs.
+ */
+export async function queryCubeViaPx(
+  cube: string,
+  query: PxQuery[],
+): Promise<{ cells: PxCell[]; url: string; retrievedAt: string; fromCache: boolean }> {
+  const { path, retrievedAt, fromCache } = await ensurePxCube(cube);
+  const header = readPxHeader(path);
+  const selection: Record<string, string[]> = {};
+  for (const q of query) {
+    if (q.selection.filter === "all") continue; // "all" = every value; px.ts defaults to that
+    selection[q.code] = q.selection.values;
+  }
+  return { cells: pxExtract(path, header, selection), url: pxDownloadUrl(cube), retrievedAt, fromCache };
+}

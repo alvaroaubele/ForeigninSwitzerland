@@ -28,8 +28,9 @@ import {
   type TableDef,
 } from "./harvest/sem.js";
 import { fetchRaw } from "./harvest/fetcher.js";
-import { queryCube, walkJsonStat2, isCubeQueryCached, type JsonStat2 } from "./harvest/bfs.js";
+import { queryCube, walkJsonStat2, isCubeQueryCached, queryCubeViaPx, type JsonStat2 } from "./harvest/bfs.js";
 import { ALL_CUBE_QUERIES, NATGROUP_399, POP_101, CUBE_101, CUBE_399 } from "./harvest/bfs-queries.js";
+import { pxDownloadUrl } from "./harvest/px.js";
 import type {
   AnchorCheck,
   AvailabilityEntry,
@@ -203,54 +204,111 @@ async function runSemCantonal(year: number, month: number, urlsAccum: Set<string
 // ---------------------------------------------------------------------------
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+/**
+ * BFS access route.
+ *   api  - PxWeb json-stat2 query endpoint (POST) only
+ *   px   - full PC-Axis cube download (GET) only
+ *   auto - try the API, and fall back to the bulk download once it refuses
+ *
+ * The query endpoint is the documented interface and stays the default first
+ * choice. But it is POST-only and rate-limits some egress addresses for hours at
+ * a time, whereas the same server serves every cube in full over plain GET. Both
+ * routes return the same published figures; the route actually used is recorded
+ * in each observation's provenance.
+ */
+type BfsMode = "auto" | "api" | "px";
+const BFS_MODE = (process.env.BFS_MODE ?? "auto") as BfsMode;
+
+const API_URL = (cube: string) => `https://www.pxweb.bfs.admin.ch/api/v1/de/${cube}/${cube}.px`;
+const API_ACCESS = "PxWeb json-stat2 query API (POST)";
+const PX_ACCESS = "Full PC-Axis cube download (GET), decoded locally";
+
 async function runBfs(urlsAccum: Set<string>): Promise<string[]> {
   const blocked: string[] = [];
   let first = true;
+  // Once the query endpoint has refused, every further POST costs a spacing delay
+  // to fail the same way. Switch the rest of the run to the bulk download.
+  let apiRefused = BFS_MODE === "px";
   for (const spec of ALL_CUBE_QUERIES) {
-    urlsAccum.add(`https://www.pxweb.bfs.admin.ch/api/v1/de/${spec.cube}/${spec.cube}.px`);
-    // Space POSTs out: pxweb allows roughly one POST per minute per IP and
-    // tarpits bursts. Cached queries return instantly (the fetcher reads the disk
-    // cache before any network call), so this delay only applies to live fetches.
-    const cached = isCubeQueryCached(spec.cube, spec.query);
-    // Spacing between live pxweb POSTs. pxweb tarpits bursts; a longer gap (set via
-    // BFS_SPACING_MS) is a lower-intensity mode that better survives an aggressive
-    // rate limit. Cached queries skip the delay.
-    const spacingMs = Number(process.env.BFS_SPACING_MS ?? 50_000);
-    if (!first && !cached) await sleep(spacingMs);
-    first = false;
-    let js;
-    try {
-      js = await queryCube(spec.cube, spec.query);
-    } catch (err) {
-      console.warn(`BFS query ${spec.id} blocked/failed: ${String(err)}`);
-      blocked.push(spec.id);
+    urlsAccum.add(apiRefused ? pxDownloadUrl(spec.cube) : API_URL(spec.cube));
+
+    let js: JsonStat2 | undefined;
+    if (!apiRefused) {
+      // Space POSTs out: pxweb allows roughly one POST per minute per IP and
+      // tarpits bursts. Cached queries return instantly (the fetcher reads the disk
+      // cache before any network call), so this delay only applies to live fetches.
+      const cached = isCubeQueryCached(spec.cube, spec.query);
+      const spacingMs = Number(process.env.BFS_SPACING_MS ?? 50_000);
+      if (!first && !cached) await sleep(spacingMs);
+      first = false;
+      try {
+        js = await queryCube(spec.cube, spec.query);
+      } catch (err) {
+        console.warn(`BFS query ${spec.id} via API failed: ${String(err)}`);
+        if (BFS_MODE === "api") {
+          blocked.push(spec.id);
+          continue;
+        }
+        apiRefused = true;
+        console.warn("  -> query API is refusing; using the full-cube download for the rest of this run");
+      }
+    }
+
+    if (js) {
+      const retrievedAt = nowIso();
+      walkJsonStat2(js, (coord, value, status) => {
+        const suppressed = status === "." || status === ".." || status === "...";
+        const c = classify(value, suppressed || value === null);
+        pushBfsCell(spec, coord, c, API_URL(spec.cube), API_ACCESS, retrievedAt);
+      });
       continue;
     }
-    const retrievedAt = nowIso();
-    walkJsonStat2(js, (coord, value, status) => {
-      const mapped = spec.map(coord);
-      const { metric, populationType, ...dim } = mapped;
-      const suppressed = status === "." || status === ".." || status === "...";
-      const c = classify(value, suppressed || value === null);
-      pushObs({
-        source: "BFS",
-        dataset: spec.cube,
-        metric: (metric as Observation["metric"]) ?? spec.metric,
-        populationType: (populationType as Observation["populationType"]) ?? "permanent",
-        dim: dim as Observation["dim"],
-        value: c.value,
-        state: c.state,
-        concept: spec.concept,
-        provenance: {
-          url: `https://www.pxweb.bfs.admin.ch/api/v1/de/${spec.cube}/${spec.cube}.px`,
-          referenceDate: spec.referenceDateFor(coord),
-          retrievedAt,
-          query: spec.query,
-        },
-      });
-    });
+
+    try {
+      const { cells, url, retrievedAt } = await queryCubeViaPx(spec.cube, spec.query);
+      for (const cell of cells) {
+        // A dot-run token is the PC-Axis missing/confidential marker, the same
+        // signal the API carries in its separate `status` map.
+        const suppressed = /^\.+$/.test(cell.raw.replace(/"/g, "").trim());
+        const c = classify(cell.value, suppressed || cell.value === null);
+        pushBfsCell(spec, cell.coord, c, url, PX_ACCESS, retrievedAt);
+      }
+      console.log(`  ${spec.id}: ${cells.length} cells from the cube download`);
+    } catch (err) {
+      console.warn(`BFS query ${spec.id} blocked/failed on both routes: ${String(err)}`);
+      blocked.push(spec.id);
+    }
   }
   return blocked;
+}
+
+/** Shared cell -> observation mapping, so both access routes emit identical coordinates. */
+function pushBfsCell(
+  spec: (typeof ALL_CUBE_QUERIES)[number],
+  coord: Record<string, string>,
+  c: { value: number | null; state: CellState },
+  url: string,
+  access: string,
+  retrievedAt: string,
+): void {
+  const { metric, populationType, ...dim } = spec.map(coord);
+  pushObs({
+    source: "BFS",
+    dataset: spec.cube,
+    metric: (metric as Observation["metric"]) ?? spec.metric,
+    populationType: (populationType as Observation["populationType"]) ?? "permanent",
+    dim: dim as Observation["dim"],
+    value: c.value,
+    state: c.state,
+    concept: spec.concept,
+    provenance: {
+      url,
+      access,
+      referenceDate: spec.referenceDateFor(coord),
+      retrievedAt,
+      query: spec.query,
+    },
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -414,14 +472,23 @@ function buildSources(semUrls: Set<string>): SourceRecord[] {
     });
   }
   for (const cube of ["px-x-0103010000_101", "px-x-0103010000_399", "px-x-0103010000_423"]) {
+    const cells = bySrc("BFS", cube);
+    // Two routes reach the same cube. The json-stat2 query API is the documented
+    // one; the PC-Axis bulk download is the fallback used when the API refuses.
+    // Both are listed because either may have produced a given cell, and each
+    // cell's own provenance.access records which one did.
+    const viaPx = cells.filter((o) => o.provenance.access?.startsWith("Full PC-Axis")).length;
     records.push({
       id: `BFS ${cube}`,
       source: "BFS",
       title: `BFS STATPOP cube ${cube}`,
       checkedFor: "Chile x Zug slices (nationality / birth country / marital)",
-      yielded: `${bySrc("BFS", cube).length} cells`,
-      observationCount: bySrc("BFS", cube).length,
-      urls: [`https://www.pxweb.bfs.admin.ch/api/v1/de/${cube}/${cube}.px`],
+      yielded:
+        viaPx > 0
+          ? `${cells.length} cells (${viaPx} decoded from the full cube download)`
+          : `${cells.length} cells`,
+      observationCount: cells.length,
+      urls: [`https://www.pxweb.bfs.admin.ch/api/v1/de/${cube}/${cube}.px`, pxDownloadUrl(cube)],
     });
   }
   return records;
