@@ -589,13 +589,34 @@ async function main(): Promise<void> {
       anchorRows.push({ a, got: null, ok: false, note: "no independent predicate written for this anchor" });
       continue;
     }
+    // An anchor names a figure, not a row: the harvest emits that same BFS cell
+    // once per breakdown series it heads (the 2024 Zug total appears under "by
+    // year", "by permit", "by sex", "by age class" and "by canton"). So several
+    // matches are expected and correct. What would be wrong is matches that
+    // disagree — either on the value or on the PxWeb coordinate they invert to —
+    // since that would mean one series is carrying a different number under the
+    // same description. Check for that instead of demanding a unique row.
     const matches = bfs.filter(pred);
-    if (matches.length !== 1) {
+    if (matches.length === 0) {
+      anchorRows.push({ a, got: null, ok: false, note: "predicate matched no observation" });
+      continue;
+    }
+    const keys = new Set(
+      matches.map((m) => {
+        const c = coords.get(m.id);
+        return c ? coordKey(m.dataset, c) : `«${m.id} has no coordinate»`;
+      }),
+    );
+    const values = new Set(matches.map((m) => m.value));
+    if (keys.size !== 1 || values.size !== 1) {
       anchorRows.push({
         a,
         got: null,
         ok: false,
-        note: `predicate matched ${matches.length} observations (expected exactly 1)`,
+        note:
+          `predicate matched ${matches.length} observations that disagree — ` +
+          `${values.size} distinct value(s) {${[...values].join(", ")}}, ` +
+          `${keys.size} distinct coordinate(s)`,
       });
       continue;
     }
@@ -604,11 +625,12 @@ async function main(): Promise<void> {
     const got = f ? (f.value ?? 0) : null;
     const ok = got === a.expected;
     if (ok) anchorPass++;
+    const where = coord ? CUBE_DIMS[matches[0].dataset].map((d) => `${d}=${coord[d]}`).join(" ") : "no coordinate";
     anchorRows.push({
       a,
       got,
       ok,
-      note: coord ? CUBE_DIMS[matches[0].dataset].map((d) => `${d}=${coord[d]}`).join(" ") : "no coordinate",
+      note: matches.length === 1 ? where : `${where} (${matches.length} concepts agree)`,
     });
   }
   for (const row of anchorRows) {

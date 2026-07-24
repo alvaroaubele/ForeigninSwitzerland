@@ -164,6 +164,23 @@ confirm from the source's own labels that `8407` really is Chile, `ZG` really is
 Zug, and so on — the bare numeric codes are exactly where a silent mapping error
 would hide. Both write a Markdown report and exit non-zero on any discrepancy.
 
+Both also have a **dry-run mode that spends no network at all**, which is worth
+running first — it is instant, and it catches the failure this pair of scripts is
+most prone to:
+
+```bash
+VERIFY_PLAN=1 npm run verify:sem      # resolve every SEM cell to a sheet column
+VERIFY_BFS_PLAN=1 npm run verify:bfs  # invert every BFS cell back to PxWeb codes
+```
+
+Because each verifier deliberately re-derives its own mapping rather than
+importing the harvest's, it identifies cells by the harvest's *label strings* —
+and when a label is reworded (`"Born in Switzerland"` becoming `"Born in
+Switzerland (of Chilean nationality)"`), the verifier's rule quietly stops
+matching. The plan modes resolve **every** eligible cell, not just the sampled
+ones, and fail if any cell has no rule. Without that, a reworded label outside
+the sample stays invisible until a much later run happens to draw one.
+
 ## Develop & build
 
 ```bash

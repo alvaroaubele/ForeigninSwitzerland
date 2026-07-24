@@ -139,6 +139,18 @@ async function getSheetRows(url: string, sheetName: string): Promise<Row[] | nul
 }
 
 const norm = (s: unknown) => String(s).replace(/\s+/g, "").toLowerCase();
+
+/**
+ * True for the harvest's "Chile does not appear in this flow sheet at all" marker.
+ *
+ * Matched on the prefix rather than the exact string. The wording has already
+ * changed once ("Chile (absent = 0)" -> "Chile (absent from flow table = 0)"),
+ * and an exact match that quietly stops firing is the worst possible failure
+ * here: these cells fall through to the ordinary column path, where looking up a
+ * row that is legitimately missing fails as "row not found" — turning a correct
+ * structural zero into a fake discrepancy, or masking a real one.
+ */
+const isAbsentMarker = (rowLabel: unknown): boolean => /^chile\s*\(absent/i.test(String(rowLabel ?? ""));
 function findRow(rows: Row[], label: string): { row: Row; index: number } | null {
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i];
@@ -198,7 +210,7 @@ function resolveTarget(o: Obs): Target {
     return { kind: "cell", sheet: o.provenance.sheet, rowLabel: "gesamttotal", col: 1 };
   }
   // Flow structural-zero total: Chile genuinely absent from the sheet.
-  if (o.provenance.rowLabel === "Chile (absent = 0)") {
+  if (isAbsentMarker(o.provenance.rowLabel)) {
     return { kind: "absent", sheet: o.provenance.sheet || "ZG" };
   }
 
@@ -225,7 +237,13 @@ function resolveTarget(o: Obs): Target {
       break;
     case "2-22":
       if (c === "Permanent residents") return cell(1);
-      if (c === "Born in Switzerland") return cell(2);
+      // Prefix, not equality: the harvest qualifies this concept
+      // ("Born in Switzerland (of Chilean nationality)") and the qualifier has
+      // already been reworded once. A stale exact match here falls through to
+      // MARITAL_2_22, misses, and reports every one of these cells as an
+      // unmapped column — noisy, but at least loud. Cf. isAbsentMarker, where
+      // the same staleness fails silently instead.
+      if (/^born in switzerland/i.test(c)) return cell(2);
       if (MARITAL_2_22[c] !== undefined) return cell(MARITAL_2_22[c]);
       break;
     case "2-23":
@@ -392,7 +410,7 @@ function buildSample(eligible: Obs[]): Obs[] {
   // Special categories.
   ensure((o) => o.concept === "Chilean nationals (cantonal comparison)");
   ensure((o) => o.concept === "Foreign residents (per-capita denominator)");
-  ensure((o) => o.provenance.rowLabel === "Chile (absent = 0)");
+  ensure((o) => isAbsentMarker(o.provenance.rowLabel));
   return [...chosen.values()];
 }
 
@@ -426,8 +444,42 @@ async function main(): Promise<void> {
   console.log(`Sample: ${sample.length} cells (${coveragePct}% of eligible)`);
   const dsInSample = [...new Set(sample.map((o) => o.dataset))].sort();
   const rdInSample = [...new Set(sample.map((o) => o.provenance.referenceDate))].sort();
+  // Reported explicitly: these are checked by a different route (confirming Chile
+  // is absent from the sheet rather than reading a cell), so if the marker ever
+  // stops being recognised the count silently drops to zero. Better to see it.
+  const absentInHarvest = eligible.filter((o) => isAbsentMarker(o.provenance.rowLabel)).length;
+  const absentInSample = sample.filter((o) => isAbsentMarker(o.provenance.rowLabel)).length;
+  console.log(`  absent-from-flow-sheet structural zeros: ${absentInSample} sampled of ${absentInHarvest}`);
   console.log(`  datasets in sample: ${dsInSample.join(", ")}`);
   console.log(`  reference periods in sample: ${rdInSample.length} (${rdInSample[0]} .. ${rdInSample[rdInSample.length - 1]})`);
+
+  // Resolve EVERY eligible cell, not just the sampled ones, and report any that
+  // no column rule matches. This costs nothing (it is pure string work) and
+  // catches the failure mode that has now bitten twice: the harvest rewords a
+  // concept label, the resolver's exact-match rule stops firing, and the fact
+  // only surfaces after a full download pass has already been paid for. Cells
+  // outside the sample would not surface at all until a later run happened to
+  // draw one. VERIFY_PLAN=1 stops here, before any network traffic.
+  const planOnly = process.env.VERIFY_PLAN === "1";
+  const unmapped = new Map<string, number>();
+  for (const o of eligible) {
+    const t = resolveTarget(o);
+    if (t.kind === "unmapped") {
+      const key = `${o.dataset} :: ${o.concept}`;
+      unmapped.set(key, (unmapped.get(key) ?? 0) + 1);
+    }
+  }
+  if (unmapped.size === 0) {
+    console.log(`  column rules resolve all ${eligible.length} eligible cells`);
+  } else {
+    const total = [...unmapped.values()].reduce((a, b) => a + b, 0);
+    console.log(`  UNMAPPED: ${total} of ${eligible.length} eligible cells have no column rule:`);
+    for (const [k, n] of [...unmapped.entries()].sort((a, b) => b[1] - a[1])) console.log(`    ${n}x ${k}`);
+  }
+  if (planOnly) {
+    console.log("VERIFY_PLAN=1 — stopping before any network request.");
+    process.exit(unmapped.size === 0 ? 0 : 1);
+  }
 
   // ---- Verify sample ----
   const discrepancies: Discrepancy[] = [];
@@ -513,6 +565,7 @@ async function main(): Promise<void> {
   lines.push(`| Sample cells reproduced | ${samplePass}/${sample.length} |`);
   lines.push(`| SEM anchors reproduced | ${anchorPass}/${semAnchors.length} |`);
   lines.push(`| Distinct SEM files fetched fresh | ${bufCache.size} |`);
+  lines.push(`| Absent-from-flow-sheet zeros checked | ${absentInSample} of ${absentInHarvest} |`);
   lines.push(`| Datasets covered | ${dsInSample.join(", ")} |`);
   lines.push(`| Reference periods covered | ${rdInSample.length} (${rdInSample[0]} .. ${rdInSample[rdInSample.length - 1]}) |`);
   lines.push("");

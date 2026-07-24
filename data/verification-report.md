@@ -1,19 +1,20 @@
 # SEM Harvest Verification Report
 
-_Generated 2026-07-24T16:47:31.972Z by `scripts/verify.ts` (independent re-fetch, no local cache)._
+_Generated 2026-07-24T22:47:46.567Z by `scripts/verify.ts` (independent re-fetch, no local cache)._
 
-**Verdict: PASS.** An independent re-fetch of 296 SEM cells (16.7% of the 1772 eligible non-null SEM observations) and all 22 SEM anchors was performed directly against the recorded provenance URLs on www.sem.admin.ch, with no use of the local data/raw cache and without importing the harvest's extraction code. Column positions were derived independently from the SEM header rows. Every sampled value and every anchor reproduced exactly, so the SEM portion of the harvest faithfully reflects the published source files.
+**Verdict: PASS.** An independent re-fetch of 313 SEM cells (16.7% of the 1876 eligible non-null SEM observations) and all 22 SEM anchors was performed directly against the recorded provenance URLs on www.sem.admin.ch, with no use of the local data/raw cache and without importing the harvest's extraction code. Column positions were derived independently from the SEM header rows. Every sampled value and every anchor reproduced exactly, so the SEM portion of the harvest faithfully reflects the published source files.
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Eligible non-null SEM cells | 1772 |
-| Sample size (re-fetched & checked) | 296 |
+| Eligible non-null SEM cells | 1876 |
+| Sample size (re-fetched & checked) | 313 |
 | Coverage of eligible SEM cells | 16.7% |
-| Sample cells reproduced | 296/296 |
+| Sample cells reproduced | 313/313 |
 | SEM anchors reproduced | 22/22 |
-| Distinct SEM files fetched fresh | 113 |
+| Distinct SEM files fetched fresh | 123 |
+| Absent-from-flow-sheet zeros checked | 23 of 113 |
 | Datasets covered | 2-10, 2-20, 2-21, 2-22, 2-23, 2-40, 2-41, 3-30, 3-31, 3-55, 3-60 |
 | Reference periods covered | 14 (2017-12-31 .. 2026-05-31) |
 
@@ -24,16 +25,16 @@ Sampling method: eligible SEM cells sorted by observation `id`, every 6th taken 
 | Dataset | Sampled | Reproduced |
 | --- | --- | --- |
 | 2-10 | 53 | 53/53 |
-| 2-20 | 25 | 25/25 |
-| 2-21 | 34 | 34/34 |
-| 2-22 | 25 | 25/25 |
-| 2-23 | 46 | 46/46 |
-| 2-40 | 26 | 26/26 |
-| 2-41 | 34 | 34/34 |
-| 3-30 | 14 | 14/14 |
-| 3-31 | 7 | 7/7 |
-| 3-55 | 24 | 24/24 |
-| 3-60 | 8 | 8/8 |
+| 2-20 | 21 | 21/21 |
+| 2-21 | 38 | 38/38 |
+| 2-22 | 31 | 31/31 |
+| 2-23 | 37 | 37/37 |
+| 2-40 | 30 | 30/30 |
+| 2-41 | 22 | 22/22 |
+| 3-30 | 18 | 18/18 |
+| 3-31 | 11 | 11/11 |
+| 3-55 | 26 | 26/26 |
+| 3-60 | 26 | 26/26 |
 
 ## Anchor checks (SEM)
 
@@ -71,4 +72,4 @@ None. Every re-fetched sample cell and every SEM anchor matched.
 - Every file was fetched with a fresh HTTP GET against `www.sem.admin.ch`; the harvest's `data/raw/` disk cache was never read. Requests were bounded to <=4 concurrent with a stagger delay and retry-on-failure backoff.
 - The ZG sheet (or the recorded canton sheet for cantonal baselines) was parsed fresh; the "Chile" row was matched whitespace-tolerantly, "Gesamttotal" for the per-capita denominator, and Chile-absence confirmed for flow structural-zero totals.
 - Column indices were resolved by an independent map in this script, written from a direct reading of the SEM header rows (rows 2-4) and cross-checked against `scripts/harvest/sem.ts`. This script does not import or execute the harvest extraction code.
-- BFS observations and BFS anchors were skipped entirely; `pxweb.bfs.admin.ch` was never contacted.
+- BFS observations and BFS anchors are out of scope here and `pxweb.bfs.admin.ch` was never contacted; they are verified separately by `scripts/verify-bfs.ts`, which reports to `data/verification-bfs.md`.

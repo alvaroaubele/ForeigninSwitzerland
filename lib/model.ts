@@ -140,9 +140,18 @@ export const CELL_STATE_LABEL: Record<CellState, string> = {
   not_published: "Not published",
 };
 
+// "Structural zero" is used here in the weaker of its two senses: the source
+// published this cell and the number it published was 0. It deliberately does
+// not distinguish a count that is impossible by construction (Swiss nationals
+// in the non-permanent foreign population) from one that merely happened to be
+// empty (no Chilean nationals in Appenzell Innerrhoden in 2024). Most of these
+// cells are the second kind. The distinction the app exists to make is between
+// a published 0 and no published figure at all, and both kinds fall on the same
+// side of it.
 export const CELL_STATE_DESCRIPTION: Record<CellState, string> = {
   observed: "A real published figure from the source.",
-  structural_zero: "The combination exists in the source and the count is genuinely 0.",
+  structural_zero:
+    "The source published this cell and the count is 0 — nobody is in it, as opposed to nobody having counted.",
   suppressed: "Exists but withheld below the source's publication threshold.",
   not_published: "The source never cross-tabulated these dimensions.",
 };

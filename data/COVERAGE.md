@@ -24,6 +24,19 @@ exact register counts including explicit zeros — so almost every miss is eithe
 a genuine `structural zero` (the nation/permit/age cell is present and 0) or
 `not published` (no table crosses those two dimensions at all).
 
+**A caveat on the word "structural".** In statistical usage a structural zero is
+a cell that *cannot* be non-zero by construction. Here the term is used in a
+weaker sense: **the source published this cell and the number was 0.** A few of
+these really are structural — Swiss nationals in the non-permanent *foreign*
+population, or the asylum-seeker (N) and protection-status (S) permit categories
+within the permanent population. The large majority are ordinary empirical
+zeros: no Chilean nationals resident in Appenzell Innerrhoden in 2024, no
+non-permanent Chilean men in Zug in 2016, and some 610 empty five-year age bands.
+The two are not separated, because the distinction this project exists to draw
+is between *a published 0* and *no published figure at all*, and both kinds sit
+firmly on the published side of it. Read the open ring as "counted, and the
+answer was nobody" — never as "this could not have happened."
+
 ## Sources harvested
 
 ### SEM Ausländerstatistik (administrative register, monthly)
