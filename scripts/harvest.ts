@@ -212,7 +212,11 @@ async function runBfs(urlsAccum: Set<string>): Promise<string[]> {
     // tarpits bursts. Cached queries return instantly (the fetcher reads the disk
     // cache before any network call), so this delay only applies to live fetches.
     const cached = isCubeQueryCached(spec.cube, spec.query);
-    if (!first && !cached) await sleep(50_000);
+    // Spacing between live pxweb POSTs. pxweb tarpits bursts; a longer gap (set via
+    // BFS_SPACING_MS) is a lower-intensity mode that better survives an aggressive
+    // rate limit. Cached queries skip the delay.
+    const spacingMs = Number(process.env.BFS_SPACING_MS ?? 50_000);
+    if (!first && !cached) await sleep(spacingMs);
     first = false;
     let js;
     try {

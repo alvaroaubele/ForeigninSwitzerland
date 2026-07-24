@@ -37,3 +37,8 @@
 - pxweb POST endpoint stayed rate-limited through the session (GET works; POST tarpitted, >40min silence didn't clear). Live long-wait recovery task still running as a floor.
 - Committed two genuinely-fetched BFS json-stat2 responses (captured pre-rate-limit) under data/bfs-seed/; runBfsSeed() emits 39 real BFS cells -> hero split (99: 33/29/34) + full 2010-2024 trend. 29/30 anchors pass (only cube-423 2023=27 pending live).
 - Fixed stacked-bar flex rendering (ProvenanceTip now accepts style/className). Verified hero + trend render correctly via headless Chromium. tsc + build clean.
+
+## Phase 2 — pxweb deep-harvest: definitive blocker (2026-07-24, 19:20)
+- Long-wait recovery probed at 18:03/18:29/18:54/19:20 — all timed out. Immediately after, one manual small POST (q101, 15 cells) returned HTTP 200 — a fleeting window.
+- Ran full harvest at 19:21 while endpoint was briefly up: all 13 live BFS queries failed (retryable 400/503/empty over 40 min of 50s-spaced attempts + backoff). A follow-up tiny probe timed out again — the burst re-blocked it.
+- Conclusion: pxweb POST is intermittently but persistently blocked for this egress IP (1 success in ~3.5h; re-blocks on any burst). Deep BFS breakdowns (101 permit/sex/age, 399 sex/age, cube 423 marital) remain BLOCKED. Reached the run's stop condition (endpoint stays down / disproportionate cost). Headline BFS views (trend + hero split) remain served from the committed real-data seed; 29/30 anchors. `npm run harvest` completes the deep BFS whenever pxweb is reachable.

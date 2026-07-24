@@ -311,4 +311,7 @@ export const CUBE_423_QUERIES: CubeQuerySpec[] = [
   },
 ];
 
-export const ALL_CUBE_QUERIES = [...CUBE_101_QUERIES, ...CUBE_399_QUERIES, ...CUBE_423_QUERIES];
+// Order is correctness-independent (queries are resolved by coordinate). Cube 423
+// is listed first so a low-intensity/interrupted catcher reaches the one anchor not
+// covered by the committed seed (2023 Chilean-nationals-born-in-Chile) soonest.
+export const ALL_CUBE_QUERIES = [...CUBE_423_QUERIES, ...CUBE_399_QUERIES, ...CUBE_101_QUERIES];
