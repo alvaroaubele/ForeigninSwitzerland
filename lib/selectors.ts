@@ -1,7 +1,7 @@
 // App-specific query helpers built on the generic model. Every value returned
 // here is a harvested cell or a classified miss — never synthesised.
 import type { CellState, Observation } from "./types";
-import { resolveCell, sumMatching, type CellResult, type Dataset, type Selection } from "./model";
+import { resolveCell, type CellResult, type Dataset } from "./model";
 
 export const YEARS = Array.from({ length: 15 }, (_, i) => 2010 + i); // 2010–2024 (BFS span)
 export const CUBE_101 = "px-x-0103010000_101";
@@ -86,8 +86,16 @@ export function passportSplit(ds: Dataset, year = 2024): PassportSplitRow[] {
   })).filter((r) => r.cell.observation !== null || r.cell.state !== "not_published");
 }
 
+export interface AnnualPoint {
+  year: number;
+  value: number | null;
+  state: CellState;
+  refDate?: string;
+  source?: string;
+}
+
 /** BFS Chilean-nationals stock time series (permanent) for the annual chart. */
-export function bfsStockSeries(ds: Dataset, years = YEARS): { year: number; value: number | null; state: CellState }[] {
+export function bfsStockSeries(ds: Dataset, years = YEARS): AnnualPoint[] {
   return years.map((year) => {
     const c = resolveCell(ds, {
       source: "BFS",
@@ -95,12 +103,12 @@ export function bfsStockSeries(ds: Dataset, years = YEARS): { year: number; valu
       populationType: "permanent",
       dim: { canton: "ZG", year, nationality: "CL", sex: "total" },
     });
-    return { year, value: c.value, state: c.state };
+    return { year, value: c.value, state: c.state, refDate: c.observation?.provenance.referenceDate, source: "BFS" };
   });
 }
 
 /** SEM December stock series (permanent), for years where a December snapshot exists. */
-export function semDecemberSeries(ds: Dataset): { year: number; value: number | null; state: CellState }[] {
+export function semDecemberSeries(ds: Dataset): AnnualPoint[] {
   const years = Array.from(
     new Set(
       ds.observations
@@ -116,13 +124,8 @@ export function semDecemberSeries(ds: Dataset): { year: number; value: number | 
       populationType: "permanent",
       dim: { canton: "ZG", year, month: 12, nationality: "CL", sex: "total" },
     });
-    return { year, value: c.value, state: c.state };
+    return { year, value: c.value, state: c.state, refDate: c.observation?.provenance.referenceDate, source: "SEM" };
   });
-}
-
-/** Sum of a metric across a breakdown dimension (source-consistent, never imputed). */
-export function sumOver(ds: Dataset, base: Selection): CellResult {
-  return sumMatching(ds, base);
 }
 
 export function isBfsLoaded(ds: Dataset): boolean {

@@ -105,7 +105,9 @@ const STOCK_MARITAL: TableDef = {
   extract: (r) => {
     const cells: Cell[] = [
       { metric: "stock", pop: "permanent", concept: "Permanent residents", dim: { sex: "total" }, value: n(r[1]) },
-      { metric: "stock", pop: "permanent", concept: "Born in Switzerland", dim: { sex: "total", birthCountry: "other" }, value: n(r[2]) },
+      // Subset of Chilean nationals born in Switzerland. Left un-dimensioned on
+      // birthCountry to avoid conflating "born in CH" with "born outside Chile".
+      { metric: "stock", pop: "permanent", concept: "Born in Switzerland (of Chilean nationality)", dim: { sex: "total" }, value: n(r[2]) },
     ];
     for (const [col, concept, dim] of MARITAL_LABELS) {
       cells.push({ metric: "stock", pop: "permanent", concept, dim: { sex: "total", ...dim }, value: n(r[col]) });

@@ -96,7 +96,13 @@ export function CrossFilter({
               <Field label="Metric">
                 <select
                   value={filter.metric}
-                  onChange={(e) => setFilter({ ...filter, metric: e.target.value as Observation["metric"], dim: {} })}
+                  onChange={(e) => {
+                    const metric = e.target.value as Observation["metric"];
+                    // Naturalisation is not split by permanent/non-permanent — the
+                    // source reports it as a single total, so match that population type.
+                    const populationType = metric === "naturalisation" ? "total" : "permanent";
+                    setFilter({ ...filter, metric, populationType, dim: {} });
+                  }}
                 >
                   {(Object.keys(METRIC_LABELS) as Observation["metric"][]).map((m) => (
                     <option key={m} value={m}>
@@ -137,10 +143,13 @@ export function CrossFilter({
               <select
                 value={filter.populationType}
                 onChange={(e) => setFilter({ ...filter, populationType: e.target.value as Observation["populationType"] })}
+                disabled={filter.metric === "naturalisation"}
               >
-                <option value="permanent">Permanent</option>
-                <option value="non_permanent">Non-permanent</option>
-                {filter.metric === "stock" && <option value="total">Total (perm + non-perm)</option>}
+                {filter.metric !== "naturalisation" && <option value="permanent">Permanent</option>}
+                {filter.metric !== "naturalisation" && <option value="non_permanent">Non-permanent</option>}
+                {(filter.metric === "stock" || filter.metric === "naturalisation") && (
+                  <option value="total">{filter.metric === "naturalisation" ? "Total" : "Total (perm + non-perm)"}</option>
+                )}
               </select>
             </Field>
 

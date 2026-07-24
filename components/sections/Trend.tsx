@@ -52,7 +52,7 @@ export function Trend() {
             ...(breakdown === "sex" ? { sex: cat.code as "male" | "female" } : { permit: cat.code, sex: "total" }),
           },
         });
-        return { year, value: c.value, state: c.state as CellState };
+        return { year, value: c.value, state: c.state as CellState, refDate: c.observation?.provenance.referenceDate, source: "BFS" };
       });
       return { id: cat.code, label: cat.label, data, color: cat.color };
     });

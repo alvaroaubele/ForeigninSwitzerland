@@ -101,7 +101,7 @@ high-level charting library was used, on purpose:
    we draw straight segments between observed points only, and break the line at
    unpublished gaps rather than interpolating across them.
 3. **Weight.** The whole chart layer is a few hundred lines and adds only
-   `d3-scale`/`d3-shape` to the bundle; first load stays ~124 kB.
+   `d3-scale` to the bundle; first load stays ~124 kB.
 
 ## Reproducing the harvest
 

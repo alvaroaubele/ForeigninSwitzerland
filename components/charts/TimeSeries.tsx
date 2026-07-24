@@ -8,6 +8,9 @@ export interface SeriesDatum {
   year: number;
   value: number | null;
   state: CellState;
+  /** optional source + reference date for the on-hover tooltip */
+  refDate?: string;
+  source?: string;
 }
 
 export interface Series {
@@ -99,7 +102,15 @@ export function TimeSeries({
             />
           ))}
           {s.data.map((d) => (
-            <StateMark key={d.year} state={d.state} x={x(d.year)} y={y(d.value ?? 0)} r={3.6} color={s.color} />
+            <StateMark
+              key={d.year}
+              state={d.state}
+              x={x(d.year)}
+              y={y(d.value ?? 0)}
+              r={3.6}
+              color={s.color}
+              title={`${s.label} · ${d.year}: ${d.value === null ? "—" : fmtInt(d.value)} (${d.state.replace("_", " ")})${d.refDate ? ` · ${d.source ?? ""} ref ${d.refDate}` : ""}`}
+            />
           ))}
         </g>
       ))}

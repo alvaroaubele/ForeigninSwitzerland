@@ -24,3 +24,11 @@
 - Charting: custom SVG over d3-scale (straight segments, per-point state markers) — chosen for 4-state honesty and no false-precision smoothing.
 - Visual direction built against "Federal Register" (recommended); token-based so swappable. Four directions to be presented for choice.
 - BLOCKER: pxweb.bfs.admin.ch POST endpoint blocked after harvest burst (~since 16:08). Gentle 3-min poller running; app handles missing BFS via not_published state.
+
+## Phase 2 — Adversarial review + fixes (2026-07-24)
+- Ran a 5-dimension adversarial review workflow (17 agents). 10 findings confirmed after independent verification; all fixed:
+  - HIGH: absent-Chile flow structural zeros now run through the same extractor over a zero row -> carry nationality:CL + correct populationType/concept (reachable by app queries, no longer mis-read as not_published). 113 such cells corrected.
+  - MED: chart points now expose hover provenance (SVG <title> with source+refdate); Baselines figures wrapped in ProvenanceTip; national figure uses latestSemMonth not hardcoded date; CSV/JSON export no longer substitutes a parent aggregate for an empty view.
+  - LOW: fetcher honours cached 404 markers; 2-22 "born in Switzerland" no longer tagged birthCountry:other; removed dead double-counting sumMatching/sumOver; removed unused d3-shape/d3-array deps + fixed README.
+  - Bonus (found while verifying): naturalisation metric now uses populationType "total" in the cross-filter (was unqueryable).
+- SEM harvest regenerated: 1876 obs (1094 observed, 782 structural_zero), 22/22 SEM anchors still pass. tsc + next build clean.

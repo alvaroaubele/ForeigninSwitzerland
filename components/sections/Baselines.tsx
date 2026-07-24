@@ -1,9 +1,11 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
-import { cantonBaselines, cantonsWithChile, cantonName, passportHeadline, totalHeadline } from "@/lib/selectors";
-import { fmtInt, fmtPer1000 } from "@/lib/format";
+import { cantonBaselines, cantonsWithChile, cantonName, passportHeadline, totalHeadline, latestSemMonth } from "@/lib/selectors";
+import { fmtInt, fmtPer1000, fmtDate } from "@/lib/format";
 import { resolveCell } from "@/lib/model";
+import { ProvenanceTip } from "../Provenance";
+import type { CellResult } from "@/lib/model";
 
 type View = "count" | "per1000" | "index";
 const TOP = ["VD", "ZH", "GE", "BE", "FR", "ZG"];
@@ -24,12 +26,13 @@ export function Baselines() {
   const zg = baselines.find((b) => b.canton === "ZG");
   const foreignZg = zg?.foreign.value ?? null;
   const chileZg = zg?.chile.value ?? null;
+  const sem = latestSemMonth(dataset);
   const national = resolveCell(dataset, {
     source: "SEM",
     dataset: "2-10",
     metric: "stock",
     populationType: "permanent",
-    dim: { canton: "CH", nationality: "CL", sex: "total", year: 2026, month: 5 },
+    dim: { canton: "CH", nationality: "CL", sex: "total", year: sem.year, month: sem.month },
   });
 
   const max =
@@ -51,15 +54,16 @@ export function Baselines() {
           <p>
             Zug is a small canton, so absolute counts mislead. Against the cantons where Chileans actually cluster — Vaud,
             Zürich, Geneva — Zug barely registers. But normalised per 1,000 foreign residents, or indexed against the
-            national rate, the picture shifts. All figures are SEM permanent residents at 31 May 2026.
+            national rate, the picture shifts. All figures are SEM permanent residents at{" "}
+            {fmtDate(`${sem.year}-${String(sem.month).padStart(2, "0")}-28`).replace(/^\d+ /, "")}.
           </p>
         </div>
 
         <div className="baseline-cards">
-          <MiniStat label="Chileans in Zug" value={chileZg} sub="of whom permanent" />
-          <MiniStat label="Share of Zug’s foreign residents" value={null} display={foreignZg && chileZg ? `${((chileZg / foreignZg) * 100).toFixed(2)}%` : "—"} sub={`${fmtInt(foreignZg)} foreign residents`} />
-          <MiniStat label="Share of all Chileans in Switzerland" value={null} display={national.value && chileZg ? `${((chileZg / national.value) * 100).toFixed(1)}%` : "—"} sub={`${fmtInt(national.value)} in Switzerland`} />
-          <MiniStat label="Total incl. non-permanent" value={total.value} sub={`${fmtInt(passport.value)} permanent`} />
+          <MiniStat label="Chileans in Zug" value={chileZg} sub="of whom permanent" cell={zg?.chile} />
+          <MiniStat label="Share of Zug’s foreign residents" value={null} display={foreignZg && chileZg ? `${((chileZg / foreignZg) * 100).toFixed(2)}%` : "—"} sub={`${fmtInt(foreignZg)} foreign residents`} cell={zg?.foreign} />
+          <MiniStat label="Share of all Chileans in Switzerland" value={null} display={national.value && chileZg ? `${((chileZg / national.value) * 100).toFixed(1)}%` : "—"} sub={`${fmtInt(national.value)} in Switzerland`} cell={national} />
+          <MiniStat label="Total incl. non-permanent" value={total.value} sub={`${fmtInt(passport.value)} permanent`} cell={total} />
         </div>
 
         <div className="controls-row">
@@ -99,7 +103,11 @@ export function Baselines() {
                       <div className="barrow-ref" style={{ left: `${(100 / (max || 1)) * 100}%` }} title="National average = 100" />
                     )}
                   </div>
-                  <div className="barrow-value mono">{display}</div>
+                  <div className="barrow-value mono">
+                    <ProvenanceTip observation={b.chile.observation} state={b.chile.state}>
+                      {display}
+                    </ProvenanceTip>
+                  </div>
                 </div>
               );
             })}
@@ -118,11 +126,20 @@ export function Baselines() {
   );
 }
 
-function MiniStat({ label, value, display, sub }: { label: string; value?: number | null; display?: string; sub: string }) {
+function MiniStat({ label, value, display, sub, cell }: { label: string; value?: number | null; display?: string; sub: string; cell?: CellResult }) {
+  const inner = <span>{display ?? fmtInt(value ?? null)}</span>;
   return (
     <div className="mini-stat panel">
       <div className="mini-stat-label">{label}</div>
-      <div className="mini-stat-value mono">{display ?? fmtInt(value ?? null)}</div>
+      <div className="mini-stat-value mono">
+        {cell ? (
+          <ProvenanceTip observation={cell.observation} state={cell.state}>
+            {inner}
+          </ProvenanceTip>
+        ) : (
+          inner
+        )}
+      </div>
       <div className="mini-stat-sub">{sub}</div>
     </div>
   );

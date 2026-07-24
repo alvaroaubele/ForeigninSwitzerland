@@ -84,8 +84,10 @@ export function Explorer() {
           ...filter.dim,
         },
       };
-      const view: Observation[] = dataset.observations.filter((o) => matches(o, sel));
-      const rows = view.length ? view : dataset.observations.filter((o) => matches(o, { ...sel, dim: { ...sel.dim, ...clearBreak(filter.dim) } }));
+      // Export exactly the current view. If the selected cross-tab was never
+      // published, the view is empty and we export just the header row / an empty
+      // set — we never silently substitute a different aggregate.
+      const rows: Observation[] = dataset.observations.filter((o) => matches(o, sel));
       const stamp = `${filter.source.toLowerCase()}-${filter.metric}-${filter.year}${filter.month ? "-" + filter.month : ""}`;
       if (fmt === "csv") download(`chileans-zug-${stamp}.csv`, toCsv(rows), "text/csv");
       else download(`chileans-zug-${stamp}.json`, toJson(rows), "application/json");
@@ -109,10 +111,4 @@ export function Explorer() {
       </div>
     </>
   );
-}
-
-function clearBreak(dim: Partial<Dimensions>): Partial<Dimensions> {
-  const out: Partial<Dimensions> = {};
-  for (const k of DIM_KEYS) if (dim[k] !== undefined) (out as Record<string, unknown>)[k] = undefined;
-  return out;
 }

@@ -17930,12 +17930,11 @@
     "year": 2017,
     "month": 12,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 4,
    "state": "observed",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-22-Best-Stae-Ziv-d-2017-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2017-12.xlsx",
     "referenceDate": "2017-12-31",
@@ -17944,7 +17943,7 @@
     "rowLabel": "Chile",
     "rowIndex": 105
    },
-   "id": "869f88662ec935ca",
+   "id": "2b615834ac8717a2",
    "unit": "persons"
   },
   {
@@ -18228,12 +18227,11 @@
     "year": 2018,
     "month": 12,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 3,
    "state": "observed",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-22-Best-Stae-Ziv-d-2018-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2018-12.xlsx",
     "referenceDate": "2018-12-31",
@@ -18242,7 +18240,7 @@
     "rowLabel": "Chile",
     "rowIndex": 103
    },
-   "id": "dac5bc8e8cc2d636",
+   "id": "46183ae77e045a99",
    "unit": "persons"
   },
   {
@@ -18526,12 +18524,11 @@
     "year": 2019,
     "month": 12,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 2,
    "state": "observed",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/2-22-Best-Stae-Ziv-d-2019-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2019-12.xlsx",
     "referenceDate": "2019-12-31",
@@ -18540,7 +18537,7 @@
     "rowLabel": "Chile",
     "rowIndex": 101
    },
-   "id": "d7cd32239db25ba1",
+   "id": "e0a68a807866d580",
    "unit": "persons"
   },
   {
@@ -18824,12 +18821,11 @@
     "year": 2020,
     "month": 12,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/2-22-Best-Stae-Ziv-d-2020-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2020-12.xlsx",
     "referenceDate": "2020-12-31",
@@ -18838,7 +18834,7 @@
     "rowLabel": "Chile",
     "rowIndex": 102
    },
-   "id": "2e64e3cb96b4b3f1",
+   "id": "773232605b426cec",
    "unit": "persons"
   },
   {
@@ -19122,12 +19118,11 @@
     "year": 2021,
     "month": 12,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/2-22-Best-Stae-Ziv-d-2021-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2021-12.xlsx",
     "referenceDate": "2021-12-31",
@@ -19136,7 +19131,7 @@
     "rowLabel": "Chile",
     "rowIndex": 98
    },
-   "id": "88209dc6aa3fa224",
+   "id": "ddd4b603a0ed7a5b",
    "unit": "persons"
   },
   {
@@ -19420,12 +19415,11 @@
     "year": 2022,
     "month": 12,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/2-22-Best-Stae-Ziv-d-2022-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2022-12.xlsx",
     "referenceDate": "2022-12-31",
@@ -19434,7 +19428,7 @@
     "rowLabel": "Chile",
     "rowIndex": 96
    },
-   "id": "dc363363b58afe17",
+   "id": "ac4e64c04e6bea45",
    "unit": "persons"
   },
   {
@@ -19718,12 +19712,11 @@
     "year": 2023,
     "month": 12,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/2-22-Best-Stae-Ziv-d-2023-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2023-12.xlsx",
     "referenceDate": "2023-12-31",
@@ -19732,7 +19725,7 @@
     "rowLabel": "Chile",
     "rowIndex": 98
    },
-   "id": "a31a183cdce25294",
+   "id": "c9ca207f41668e36",
    "unit": "persons"
   },
   {
@@ -20016,12 +20009,11 @@
     "year": 2024,
     "month": 12,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2024/12/2-22-Best-Stae-Ziv-d-2024-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2024-12.xlsx",
     "referenceDate": "2024-12-31",
@@ -20030,7 +20022,7 @@
     "rowLabel": "Chile",
     "rowIndex": 100
    },
-   "id": "4a89df9e605d76fc",
+   "id": "4ce3bf92e033723c",
    "unit": "persons"
   },
   {
@@ -20314,12 +20306,11 @@
     "year": 2025,
     "month": 12,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 1,
    "state": "observed",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/2-22-best-stae-ziv-2025-12.xlsx.download.xlsx/2-22-best-stae-ziv-2025-12.xlsx",
     "referenceDate": "2025-12-31",
@@ -20328,7 +20319,7 @@
     "rowLabel": "Chile",
     "rowIndex": 99
    },
-   "id": "0b6f2211f11e200b",
+   "id": "c4aade3e2f383d32",
    "unit": "persons"
   },
   {
@@ -20612,12 +20603,11 @@
     "year": 2026,
     "month": 1,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 1,
    "state": "observed",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/01/2-22-best-stae-ziv-2026-01.xlsx.download.xlsx/2-22-best-stae-ziv-2026-01-d.xlsx",
     "referenceDate": "2026-01-31",
@@ -20626,7 +20616,7 @@
     "rowLabel": "Chile",
     "rowIndex": 99
    },
-   "id": "bb31cdc5e423f9a3",
+   "id": "0cee0a8f9e634709",
    "unit": "persons"
   },
   {
@@ -20910,12 +20900,11 @@
     "year": 2026,
     "month": 2,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 1,
    "state": "observed",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/02/2-22-best-stae-ziv-2026-02.xlsx.download.xlsx/2-22-best-stae-ziv-2026-02-d.xlsx",
     "referenceDate": "2026-02-28",
@@ -20924,7 +20913,7 @@
     "rowLabel": "Chile",
     "rowIndex": 99
    },
-   "id": "245aadeecbf121e0",
+   "id": "cbdf7688555788ae",
    "unit": "persons"
   },
   {
@@ -21208,12 +21197,11 @@
     "year": 2026,
     "month": 3,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 1,
    "state": "observed",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/03/2-22-best-stae-ziv-2026-03.xlsx.download.xlsx/2-22-best-stae-ziv-2026-03-d.xlsx",
     "referenceDate": "2026-03-31",
@@ -21222,7 +21210,7 @@
     "rowLabel": "Chile",
     "rowIndex": 99
    },
-   "id": "e54ef99bf6bd622c",
+   "id": "ffb007fb7a2b1e97",
    "unit": "persons"
   },
   {
@@ -21506,12 +21494,11 @@
     "year": 2026,
     "month": 4,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 1,
    "state": "observed",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/04/2-22-best-stae-ziv-2026-04.xlsx.download.xlsx/2-22-best-stae-ziv-2026-04-d.xlsx",
     "referenceDate": "2026-04-30",
@@ -21520,7 +21507,7 @@
     "rowLabel": "Chile",
     "rowIndex": 100
    },
-   "id": "c94399c295ee1978",
+   "id": "d0ab4e01c35f1377",
    "unit": "persons"
   },
   {
@@ -21804,12 +21791,11 @@
     "year": 2026,
     "month": 5,
     "nationality": "CL",
-    "sex": "total",
-    "birthCountry": "other"
+    "sex": "total"
    },
    "value": 1,
    "state": "observed",
-   "concept": "Born in Switzerland",
+   "concept": "Born in Switzerland (of Chilean nationality)",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/2-22-best-stae-ziv-2026-05.xlsx.download.xlsx/2-22-best-stae-ziv-2026-05-d.xlsx",
     "referenceDate": "2026-05-31",
@@ -21818,7 +21804,7 @@
     "rowLabel": "Chile",
     "rowIndex": 100
    },
-   "id": "1754c9e29cd3468c",
+   "id": "3bc41d8128146919",
    "unit": "persons"
   },
   {
@@ -41354,24 +41340,181 @@
    "source": "SEM",
    "dataset": "3-31",
    "metric": "immigration",
-   "populationType": "total",
+   "populationType": "non_permanent",
    "dim": {
     "canton": "ZG",
     "year": 2020,
     "month": 12,
+    "nationality": "CL",
     "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Immigration by reason (non_permanent) — total",
+   "concept": "Total immigration",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-31-Bew-In-NStae-d-J-2020-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2020-12.xlsx",
     "referenceDate": "2020-12-31",
     "retrievedAt": "2026-07-24T15:54:21.254Z",
     "sheet": "ZG",
-    "rowLabel": "Chile (absent = 0)"
+    "rowLabel": "Chile (absent from flow table = 0)"
    },
-   "id": "31165237c7e8ac8a",
+   "id": "790e538d49db6647",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-31",
+   "metric": "immigration",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "total",
+    "reason": "quota_employment"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Quota employment",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-31-Bew-In-NStae-d-J-2020-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:21.254Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "5a72dee0c02cfcef",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-31",
+   "metric": "immigration",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "total",
+    "reason": "nonquota_employment"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Non-quota employment",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-31-Bew-In-NStae-d-J-2020-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:21.254Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "80ed7f38cc1cf7a1",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-31",
+   "metric": "immigration",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "total",
+    "reason": "family_reunification"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Family reunification",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-31-Bew-In-NStae-d-J-2020-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:21.254Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "1766e501e48b184c",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-31",
+   "metric": "immigration",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "total",
+    "reason": "education"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Education and training",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-31-Bew-In-NStae-d-J-2020-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:21.254Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "bdab52da2551460d",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-31",
+   "metric": "immigration",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "total",
+    "reason": "residence_no_employment"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Residence without employment",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-31-Bew-In-NStae-d-J-2020-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:21.254Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "0a2a1bab72c95540",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-31",
+   "metric": "immigration",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "total",
+    "reason": "other"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Other",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-31-Bew-In-NStae-d-J-2020-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:21.254Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "8bf5f149e30dfed9",
    "unit": "persons"
   },
   {
@@ -44102,24 +44245,384 @@
    "source": "SEM",
    "dataset": "3-55",
    "metric": "emigration",
-   "populationType": "total",
+   "populationType": "permanent",
    "dim": {
     "canton": "ZG",
     "year": 2021,
     "month": 12,
+    "nationality": "CL",
     "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Emigration by permit category — total",
+   "concept": "Permanent emigration",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
     "referenceDate": "2021-12-31",
     "retrievedAt": "2026-07-24T15:54:25.487Z",
     "sheet": "ZG",
-    "rowLabel": "Chile (absent = 0)"
+    "rowLabel": "Chile (absent from flow table = 0)"
    },
-   "id": "37a9e073fcaa03c5",
+   "id": "fc601570cdc7f0f1",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permanent emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "43759607c31039e6",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permanent emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "186f3a901eb869d2",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "permit": "L",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permit L emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "31d271628e279fe8",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "permit": "L",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permit L emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "82c18441634e24e8",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "permit": "L",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permit L emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "f99ff7ab3b1cf6be",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "permit": "B",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permit B emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "8885b186d80e6fb4",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "permit": "B",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permit B emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "810e96806a430564",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "permit": "B",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permit B emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "ba755338184803b2",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "permit": "C",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permit C emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "2f71f8da0b9ebe51",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "permit": "C",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permit C emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "5b853cc041b6dd3e",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "permit": "C",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Permit C emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "a5de50c040e2ba14",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Non-permanent emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "47b8c786ed0d9357",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Non-permanent emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "a76c9cd4cac9c1d8",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-55",
+   "metric": "emigration",
+   "populationType": "non_permanent",
+   "dim": {
+    "canton": "ZG",
+    "year": 2021,
+    "month": 12,
+    "nationality": "CL",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Non-permanent emigration",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/3-55-Ausw-Tot-d-J-2021-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2021-12.xlsx",
+    "referenceDate": "2021-12-31",
+    "retrievedAt": "2026-07-24T15:54:25.487Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "f781fdfec6f64533",
    "unit": "persons"
   },
   {
@@ -46126,19 +46629,332 @@
     "canton": "ZG",
     "year": 2017,
     "month": 12,
+    "nationality": "CL",
     "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Acquisition of Swiss citizenship — total",
+   "concept": "Total acquisition of citizenship",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
     "referenceDate": "2017-12-31",
     "retrievedAt": "2026-07-24T15:54:15.079Z",
     "sheet": "ZG",
-    "rowLabel": "Chile (absent = 0)"
+    "rowLabel": "Chile (absent from flow table = 0)"
    },
-   "id": "8269eff1c2a45b31",
+   "id": "99f0691a3af0afca",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "be1eb101930b34fb",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "1fef40a45efee97f",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "026930115c5a4c30",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "002e5355bb3b8bb7",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "ebc05dc922af1ad2",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "c8356a538240de4e",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "b0e034f29c0b8e6d",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "0ff4052300300662",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "58c70b93f59190e9",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "d48d079143315660",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "20a32afcc4cab0f3",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2017,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
+    "referenceDate": "2017-12-31",
+    "retrievedAt": "2026-07-24T15:54:15.079Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "c6bf20b6ec8fa475",
    "unit": "persons"
   },
   {
@@ -46500,19 +47316,332 @@
     "canton": "ZG",
     "year": 2019,
     "month": 12,
+    "nationality": "CL",
     "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Acquisition of Swiss citizenship — total",
+   "concept": "Total acquisition of citizenship",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
     "referenceDate": "2019-12-31",
     "retrievedAt": "2026-07-24T15:54:20.262Z",
     "sheet": "ZG",
-    "rowLabel": "Chile (absent = 0)"
+    "rowLabel": "Chile (absent from flow table = 0)"
    },
-   "id": "a23c879e34127f44",
+   "id": "5868ff3eb7257fcc",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "b06b9860d099b1d7",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "994fe144062c17b5",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "e104fbfea3dc8d2f",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "66e714962e6a3a6e",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "9755f01b63cdb053",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "baed503639cf6862",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "db03a5a2980774b2",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "178ddf99a7d72d6a",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "0477cf080479840d",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "de70713e38b01f46",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "dc021e87a67aed17",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2019,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/3-60-Bew-BR-d-J-2019-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2019-12.xlsx",
+    "referenceDate": "2019-12-31",
+    "retrievedAt": "2026-07-24T15:54:20.262Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "cf3bad98657927ee",
    "unit": "persons"
   },
   {
@@ -46524,19 +47653,332 @@
     "canton": "ZG",
     "year": 2020,
     "month": 12,
+    "nationality": "CL",
     "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Acquisition of Swiss citizenship — total",
+   "concept": "Total acquisition of citizenship",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
     "referenceDate": "2020-12-31",
     "retrievedAt": "2026-07-24T15:54:23.705Z",
     "sheet": "ZG",
-    "rowLabel": "Chile (absent = 0)"
+    "rowLabel": "Chile (absent from flow table = 0)"
    },
-   "id": "2ccb74ff28c2ba53",
+   "id": "3cca0bb08d1f99c4",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "b2c2ed8fb188b9fa",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "787d1e9b8a9af037",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "e3d9ad2578c71050",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "28180d5e77b6eb63",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "a624a675852d873f",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "222655854aa47ab7",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "17b76a5a075df3c6",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "b31c896a9a401e69",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "f257e8a5085ef180",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "bb78e13d63196824",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "05b6d571a0b42cd2",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2020,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/3-60-Bew-BR-d-J-2020-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2020-12.xlsx",
+    "referenceDate": "2020-12-31",
+    "retrievedAt": "2026-07-24T15:54:23.705Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "d1ba4dfd8429de99",
    "unit": "persons"
   },
   {
@@ -46898,19 +48340,332 @@
     "canton": "ZG",
     "year": 2022,
     "month": 12,
+    "nationality": "CL",
     "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Acquisition of Swiss citizenship — total",
+   "concept": "Total acquisition of citizenship",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
     "referenceDate": "2022-12-31",
     "retrievedAt": "2026-07-24T15:54:28.104Z",
     "sheet": "ZG",
-    "rowLabel": "Chile (absent = 0)"
+    "rowLabel": "Chile (absent from flow table = 0)"
    },
-   "id": "49f4641d814fc768",
+   "id": "06a77fb5f8ea0137",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "3e8b2a4744962564",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "b41c0ef3faaee383",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "27b32d2091b898e1",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "9c38cd3647372514",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "b993baa7e59081c0",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "4e76ffa85026ed41",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "86521888c275460a",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "1fbe28d47a6de98d",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "131aec8c1e6b3d8f",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "46b4f8f622399921",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "84c7c5789d90eb05",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2022,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2022/12/3-60-Bew-BR-d-J-2022-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2022-12.xlsx",
+    "referenceDate": "2022-12-31",
+    "retrievedAt": "2026-07-24T15:54:28.104Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "5448649d1a71d526",
    "unit": "persons"
   },
   {
@@ -46922,19 +48677,332 @@
     "canton": "ZG",
     "year": 2023,
     "month": 12,
+    "nationality": "CL",
     "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Acquisition of Swiss citizenship — total",
+   "concept": "Total acquisition of citizenship",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
     "referenceDate": "2023-12-31",
     "retrievedAt": "2026-07-24T15:54:30.005Z",
     "sheet": "ZG",
-    "rowLabel": "Chile (absent = 0)"
+    "rowLabel": "Chile (absent from flow table = 0)"
    },
-   "id": "2ee4c69f33cfe142",
+   "id": "57e851485cc78207",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "8e49c9fa3d56d39e",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "af474a633e64a70c",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "ae9ba07d60b7c8f6",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "dc55da735d02d0a2",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "cc6e663cb8f7ec41",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "9beb3f89317bca55",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "589bd0005592fe63",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "87fd68cb5a6a64a2",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "97182ac5c902931b",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "8985bf98b4e7dcf9",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "f8fc99a921b159c4",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2023,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2023/12/3-60-Bew-BR-d-J-2023-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2023-12.xlsx",
+    "referenceDate": "2023-12-31",
+    "retrievedAt": "2026-07-24T15:54:30.005Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "32f463f3739343cc",
    "unit": "persons"
   },
   {
@@ -47296,19 +49364,332 @@
     "canton": "ZG",
     "year": 2025,
     "month": 12,
+    "nationality": "CL",
     "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Acquisition of Swiss citizenship — total",
+   "concept": "Total acquisition of citizenship",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
     "referenceDate": "2025-12-31",
     "retrievedAt": "2026-07-24T15:54:34.430Z",
     "sheet": "ZG",
-    "rowLabel": "Chile (absent = 0)"
+    "rowLabel": "Chile (absent from flow table = 0)"
    },
-   "id": "f6bd0d1e586f7501",
+   "id": "781645a7f23c0a38",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "efb56e99ba4d7e3f",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "9f875dfd604f051e",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "244e792c1fe9e78c",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "0967fa6176cb34cb",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "ea1ee30100dbad59",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "5f2cb7698d9fce2d",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "43773308a035420f",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "dcb26f127eaf726a",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "a977b8fdc77bba09",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "366d187c85cf062d",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "e4527d5034084c8b",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2025,
+    "month": 12,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2025/12/3-60-bew-br-j-2025-12.xlsx.download.xlsx/3-60-bew-br-j-2025-12-d.xlsx",
+    "referenceDate": "2025-12-31",
+    "retrievedAt": "2026-07-24T15:54:34.430Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "76864c2c903d9fd2",
    "unit": "persons"
   },
   {
@@ -47320,19 +49701,332 @@
     "canton": "ZG",
     "year": 2026,
     "month": 5,
+    "nationality": "CL",
     "sex": "total"
    },
    "value": 0,
    "state": "structural_zero",
-   "concept": "Acquisition of Swiss citizenship — total",
+   "concept": "Total acquisition of citizenship",
    "provenance": {
     "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
     "referenceDate": "2026-05-31",
     "retrievedAt": "2026-07-24T15:54:39.364Z",
     "sheet": "ZG",
-    "rowLabel": "Chile (absent = 0)"
+    "rowLabel": "Chile (absent from flow table = 0)"
    },
-   "id": "f8bd5ad5247938df",
+   "id": "05fd8e31dd35edf1",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "7a9c1b59d83204d7",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "7119fb8ec80fef74",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "all",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Naturalisations (total)",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "5effc05f6f410192",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "4adddebe14fb65e3",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "22ac9c32d6347eb5",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "ordinary",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Ordinary naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "2ac7a51542a2f70f",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "56f8c8d95511638c",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "6cbac43c5bc827df",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "facilitated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Facilitated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "b6491f15858f96ca",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "total"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "f66142e204bdc8ab",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "female"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "150c971bb30b1838",
+   "unit": "persons"
+  },
+  {
+   "source": "SEM",
+   "dataset": "3-60",
+   "metric": "naturalisation",
+   "populationType": "total",
+   "dim": {
+    "canton": "ZG",
+    "year": 2026,
+    "month": 5,
+    "nationality": "CL",
+    "naturalisationType": "reinstated",
+    "sex": "male"
+   },
+   "value": 0,
+   "state": "structural_zero",
+   "concept": "Reinstated naturalisations",
+   "provenance": {
+    "url": "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2026/05/3-60-bew-br-12mt-2026-05.xlsx.download.xlsx/3-60-bew-br-12mt-2026-05-d.xlsx",
+    "referenceDate": "2026-05-31",
+    "retrievedAt": "2026-07-24T15:54:39.364Z",
+    "sheet": "ZG",
+    "rowLabel": "Chile (absent from flow table = 0)"
+   },
+   "id": "14578d9641adfb57",
    "unit": "persons"
   }
  ]

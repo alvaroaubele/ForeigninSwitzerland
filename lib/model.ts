@@ -119,21 +119,6 @@ export function pairAvailable(
   );
 }
 
-/** Sum a set of matching observations (used only for source-consistent aggregation, never imputation). */
-export function sumMatching(ds: Dataset, sel: Selection): CellResult {
-  const hits = ds.observations.filter((o) => matches(o, sel));
-  if (hits.length === 0) return resolveCell(ds, sel);
-  const withVals = hits.filter((o) => o.value !== null);
-  if (withVals.length === 0) return { value: null, state: "suppressed", observation: null };
-  const total = withVals.reduce((s, o) => s + (o.value ?? 0), 0);
-  const anyObserved = withVals.some((o) => o.state === "observed");
-  return {
-    value: total,
-    state: anyObserved ? "observed" : "structural_zero",
-    observation: withVals[0],
-  };
-}
-
 /** A single point in a time series. */
 export interface SeriesPoint {
   year: number;

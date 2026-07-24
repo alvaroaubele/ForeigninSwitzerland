@@ -115,30 +115,15 @@ async function runSem(run: SemRun, urlsAccum: Set<string>): Promise<void> {
       if (res.notFound || res.buffer.length === 0) continue;
       const isFlow = def.metric !== "stock";
       const found = findChileRow(res.buffer);
-      if (!found) {
-        if (isFlow) {
-          // Absent nation in a flow table => no movement => structural zero total.
-          pushObs({
-            source: "SEM",
-            dataset: def.table,
-            metric: def.metric,
-            populationType: "total",
-            dim: { canton: "ZG", year, month, sex: "total" },
-            value: 0,
-            state: "structural_zero",
-            concept: `${def.concept} — total`,
-            provenance: {
-              url,
-              referenceDate,
-              retrievedAt: res.retrievedAt,
-              sheet: "ZG",
-              rowLabel: "Chile (absent = 0)",
-            },
-          });
-        }
-        continue;
-      }
-      const cells = def.extract(found.row);
+      // Flow tables list only nations with movement. When Chile is absent it means
+      // zero movement — a genuine structural zero. We run the SAME extractor over a
+      // zero-filled row so the absent case produces cells with IDENTICAL coordinates
+      // (nationality "CL", the table's own populationType and concept) to the present
+      // case; every value is 0 and classifies to structural_zero. This keeps a
+      // zero-flow reachable by exactly the coordinates used when Chile is present.
+      if (!found && !isFlow) continue; // stock tables always list Chile
+      const row = found ? found.row : ["Chile", ...(Array(48).fill(0) as number[])];
+      const cells = def.extract(row);
       for (const cell of cells) {
         const { value, state } = classify(cell.value, false);
         pushObs({
@@ -155,8 +140,8 @@ async function runSem(run: SemRun, urlsAccum: Set<string>): Promise<void> {
             referenceDate,
             retrievedAt: res.retrievedAt,
             sheet: "ZG",
-            rowLabel: "Chile",
-            rowIndex: found.index,
+            rowLabel: found ? "Chile" : "Chile (absent from flow table = 0)",
+            rowIndex: found ? found.index : undefined,
           },
         });
       }

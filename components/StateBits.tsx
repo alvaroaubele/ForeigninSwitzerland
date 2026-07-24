@@ -46,34 +46,36 @@ export function StateMark({
   y,
   r = 4,
   color,
+  title,
 }: {
   state: CellState;
   x: number;
   y: number;
   r?: number;
   color?: string;
+  title?: string;
 }) {
   const c = color ?? "var(--state-observed)";
-  if (state === "observed") {
-    return <circle cx={x} cy={y} r={r} fill={c} />;
-  }
-  if (state === "structural_zero") {
-    return <circle cx={x} cy={y} r={r} fill="var(--bg)" stroke="var(--state-zero)" strokeWidth={1.6} />;
-  }
-  if (state === "suppressed") {
-    return (
-      <rect
-        x={x - r}
-        y={y - r}
-        width={r * 2}
-        height={r * 2}
-        fill="url(#hatch-suppressed)"
-        stroke="var(--state-suppressed)"
-        strokeWidth={1}
-      />
+  const mark =
+    state === "observed" ? (
+      <circle cx={x} cy={y} r={r} fill={c} />
+    ) : state === "structural_zero" ? (
+      <circle cx={x} cy={y} r={r} fill="var(--bg)" stroke="var(--state-zero)" strokeWidth={1.6} />
+    ) : state === "suppressed" ? (
+      <rect x={x - r} y={y - r} width={r * 2} height={r * 2} fill="url(#hatch-suppressed)" stroke="var(--state-suppressed)" strokeWidth={1} />
+    ) : (
+      <circle cx={x} cy={y} r={r} fill="var(--bg)" stroke="var(--state-missing)" strokeWidth={1.4} strokeDasharray="1.5 1.5" />
     );
-  }
-  return <circle cx={x} cy={y} r={r} fill="var(--bg)" stroke="var(--state-missing)" strokeWidth={1.4} strokeDasharray="1.5 1.5" />;
+  if (!title) return mark;
+  // A larger transparent hit-target improves hover reach for the native SVG tooltip.
+  return (
+    <g>
+      {mark}
+      <circle cx={x} cy={y} r={Math.max(r + 4, 7)} fill="transparent">
+        <title>{title}</title>
+      </circle>
+    </g>
+  );
 }
 
 /** Shared SVG <defs> (hatch pattern) — include once per SVG that uses StateMark. */

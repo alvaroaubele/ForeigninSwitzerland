@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-24T16:25:09.655Z",
-  "observationCount": 1772,
+  "generatedAt": "2026-07-24T17:19:31.312Z",
+  "observationCount": 1876,
   "cellStateCounts": {
     "observed": 1094,
-    "structural_zero": 678,
+    "structural_zero": 782,
     "suppressed": 0,
     "not_published": 0
   },
@@ -133,8 +133,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 3-31 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "64 cells",
-      "observationCount": 64,
+      "yielded": "70 cells",
+      "observationCount": 70,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-31-Bew-In-NStae-d-J-2017-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/3-31-Bew-In-NStae-d-J-2018-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2018-12.xlsx",
@@ -148,8 +148,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 3-55 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "136 cells",
-      "observationCount": 136,
+      "yielded": "150 cells",
+      "observationCount": 150,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-55-Ausw-Tot-d-J-2017-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/3-55-Ausw-Tot-d-J-2018-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2018-12.xlsx",
@@ -163,8 +163,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 3-60 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "46 cells",
-      "observationCount": 46,
+      "yielded": "130 cells",
+      "observationCount": 130,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/3-60-Bew-BR-d-J-2018-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2018-12.xlsx",

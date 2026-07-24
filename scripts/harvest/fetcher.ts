@@ -78,6 +78,25 @@ export async function fetchRaw(url: string, opts: FetchOpts): Promise<RawResult>
       retrievedAt: meta.retrievedAt,
     };
   }
+  // A cached non-retryable failure marker (e.g. a 404 archive month) has a meta
+  // file but no data file — honour it so we don't re-fetch known-missing URLs.
+  if (opts.useCache !== false && !existsSync(path) && existsSync(metaPath)) {
+    try {
+      const meta = JSON.parse(readFileSync(metaPath, "utf8"));
+      if (meta.status && meta.status >= 400 && meta.status !== 429) {
+        return {
+          key,
+          path,
+          buffer: Buffer.from(""),
+          fromCache: true,
+          retrievedAt: meta.retrievedAt,
+          notFound: true,
+        } as RawResult & { notFound: true };
+      }
+    } catch {
+      /* fall through to a live fetch */
+    }
+  }
 
   return gate(async () => {
     let lastErr: unknown;
