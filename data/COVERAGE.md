@@ -51,12 +51,18 @@ uses lowercase).
 is **2026-05**. Pre-2017 is not available in this URL scheme (2016-12 and
 earlier return 404).
 
-**Harvest scope (a deliberate, documented sampling):** for a population whose
-month-to-month change is at most one or two people, we harvest the **year-end
-(December) snapshot for each year 2017–2025** as the annual series, plus **every
-2026 month to date (Jan–May)** for recency. Monthly archives back to 2021 exist
-and can be added by extending `STOCK_MONTHS` in `scripts/harvest.ts`; harvesting
-every one of ~190 months was judged disproportionate to the information gained.
+**Harvest scope: everything the archive publishes.** All **69 reference
+periods** — the December snapshot for 2017–2020, where that is the only file
+exposed, then **every month from 2021-01 to 2026-05**.
+
+An earlier build sampled this down to the 14 December snapshots, on the argument
+that a population moving by one or two people a year is fully described by its
+year-end level. That was wrong on both counts. The month-to-month path is where
+the information is at this size: the recovery from the 2020 trough turns out to
+be a staircase of long flat runs with single-person steps between them, which
+the annual series renders as a smooth slope that never happened. And the weight
+objection did not survive the arithmetic — 7 228 SEM cells across 69 periods
+gzip to 192 kB, against 83 kB for the 14. Nothing serves raw JSON.
 
 | Table | Concept | Dimensions carried for Chile × ZG |
 |---|---|---|

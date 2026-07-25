@@ -19,8 +19,6 @@ interface Row {
   key: Key;
   segments: Seg[];
   total: number;
-  /** False when the source never splits this attribute by sex. */
-  bySexPublished: boolean;
 }
 
 /**
@@ -111,7 +109,7 @@ export function Portrait() {
               <div className="portrait-dim">{DIM_LABELS[r.key]}</div>
               {!bySex ? (
                 <Bar row={r} />
-              ) : r.bySexPublished ? (
+              ) : isSplittable(female[i]) ? (
                 <div className="portrait-split">
                   <Bar row={female[i]} caption="Women" />
                   <Bar row={male[i]} caption="Men" />
@@ -192,6 +190,18 @@ function Bar({ row, caption }: { row: Row; caption?: string }) {
 }
 
 /**
+ * Whether a row can honestly be drawn split by sex.
+ *
+ * Read from the already-computed female row rather than from a probe of one
+ * representative value: probing a single category assumes the whole row shares
+ * its fate, which happens to hold today but would silently mis-draw a row that
+ * the source crosses for some categories and not others.
+ */
+function isSplittable(row: Row | undefined): boolean {
+  return !!row && row.segments.some((s) => s.state !== "not_published");
+}
+
+/**
  * Position of a segment among *all* of its row's categories, so a category keeps
  * the same shade whichever bar it is drawn in. Capped so the ramp never runs
  * lighter than white text can sit on.
@@ -226,28 +236,10 @@ function buildRows(
       return { value: v, label: label(v), count: c.value, state: c.state };
     });
 
-    // Published by sex only if a real male/female split resolves to figures.
-    const probe = values.length
-      ? resolveCell(ds, {
-          source: "SEM",
-          metric: "stock",
-          populationType: "permanent",
-          dim: {
-            canton: "ZG",
-            nationality: "CL",
-            year: sem.year,
-            month: sem.month,
-            sex: "female",
-            [key]: values[0],
-          } as Partial<Dimensions>,
-        })
-      : null;
-
     return {
       key,
       segments,
       total: segments.reduce((n, s) => n + (s.count ?? 0), 0),
-      bySexPublished: probe !== null && probe.state !== "not_published",
     };
   });
 }

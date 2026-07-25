@@ -81,8 +81,16 @@ offers the single filter to drop to reach a populated view.
 - **Comparison baselines** — Zug against all Chileans in Switzerland, against
   Zug’s foreign population, and against the top cantons (VD 989, ZH 554, GE 503,
   BE 284, FR 222), with per-1,000 normalisation and an index-vs-national view.
-- **Time series 2010–2024** with the 2017 peak (34) and 2020 trough (20) visible
-  and the SEM and BFS series distinguishable (solid vs dashed).
+- **Population portrait** — every attribute the register carries drawn at once,
+  with a sex split. That split is the ceiling and the section says so: SEM
+  crosses each attribute with sex and with nothing else, so no combination of
+  two non-sex attributes exists to drill into. Marital status is not crossed
+  even with sex, and shows that wall explicitly rather than rendering a blank.
+- **Time series 2010–2026**, yearly or monthly, with the 2017 peak (34) and 2020
+  trough (20) visible and the SEM and BFS series distinguishable (solid vs
+  dashed). At monthly resolution the two stop reading as one wobbling line:
+  SEM is a monthly administrative count running to May 2026, BFS an annual
+  register snapshot ending December 2024.
 - **Small-n honesty** encoded in the marks: straight segments (never smoothed),
   per-point cell-state markers, percentages always shown with their denominator,
   and every figure traceable to its source URL and query on hover/click.
@@ -119,6 +127,12 @@ sheets and BFS json-stat2 responses, classifies each cell into one of the four
 states, verifies against a fixed anchor list, and writes `harvest.json` +
 `manifest.json`. Re-runs are incremental — cached responses are not re-fetched —
 so refreshing when SEM publishes a new month only downloads the new files.
+
+It covers **69 SEM reference periods** (the December snapshot for 2017–2020,
+then every month from 2021-01 to 2026-05) and three BFS cubes, producing
+**8 877 observations** — 7 228 SEM, 1 649 BFS. A full cold run takes about 32
+minutes and fetches ~1 200 files; the resulting `harvest.json` is 9.5 MB raw and
+**192 kB gzipped**, which is what actually ships.
 
 > **Note on the BFS PxWeb endpoint.** `pxweb.bfs.admin.ch` sits behind a WAF
 > that rejects requests before they reach the query engine, in two ways that
