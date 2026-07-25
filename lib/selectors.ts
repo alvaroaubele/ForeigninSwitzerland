@@ -92,6 +92,8 @@ export interface AnnualPoint {
   state: CellState;
   refDate?: string;
   source?: string;
+  /** Printed period name, when `year` is a fractional month position. */
+  label?: string;
 }
 
 /** BFS Chilean-nationals stock time series (permanent) for the annual chart. */
@@ -127,6 +129,43 @@ export function semDecemberSeries(ds: Dataset): AnnualPoint[] {
     return { year, value: c.value, state: c.state, refDate: c.observation?.provenance.referenceDate, source: "SEM" };
   });
 }
+
+/**
+ * SEM stock at every month the archive publishes, not just year-ends.
+ *
+ * The x value is a fractional year (2023-04 -> 2023.25) so the same linear
+ * year scale carries both resolutions and the two series stay comparable; the
+ * printed month label rides along on the point for the tooltip.
+ */
+export function semMonthlySeries(ds: Dataset): AnnualPoint[] {
+  const periods = new Map<string, { year: number; month: number }>();
+  for (const o of ds.observations) {
+    if (o.source === "SEM" && o.dataset === "2-10" && o.dim.year !== undefined && o.dim.month !== undefined) {
+      periods.set(`${o.dim.year}-${o.dim.month}`, { year: o.dim.year, month: o.dim.month });
+    }
+  }
+  return [...periods.values()]
+    .sort((a, b) => a.year - b.year || a.month - b.month)
+    .map(({ year, month }) => {
+      const c = resolveCell(ds, {
+        source: "SEM",
+        dataset: "2-10",
+        metric: "stock",
+        populationType: "permanent",
+        dim: { canton: "ZG", year, month, nationality: "CL", sex: "total" },
+      });
+      return {
+        year: year + (month - 1) / 12,
+        value: c.value,
+        state: c.state,
+        refDate: c.observation?.provenance.referenceDate,
+        source: "SEM",
+        label: `${MONTH_NAMES[month - 1]} ${year}`,
+      };
+    });
+}
+
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 export function isBfsLoaded(ds: Dataset): boolean {
   return ds.observations.some((o) => o.source === "BFS");

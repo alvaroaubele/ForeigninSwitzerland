@@ -6,12 +6,15 @@ import { StateMark, SvgDefs } from "../StateBits";
 import { fmtInt } from "@/lib/format";
 
 export interface SeriesDatum {
+  /** Position on the year axis; fractional for monthly points (2023-04 = 2023.25). */
   year: number;
   value: number | null;
   state: CellState;
   /** optional source + reference date for the on-hover tooltip */
   refDate?: string;
   source?: string;
+  /** Printed period name, used instead of the raw axis position when set. */
+  label?: string;
 }
 
 export interface Series {
@@ -104,7 +107,7 @@ export function TimeSeries({
       aria-label={
         active === null
           ? `Time series ${minYear} to ${maxYear}. Focus and use arrow keys to read each year.`
-          : `${active}: ` +
+          : `${readout?.find((r) => r.d.label)?.d.label ?? formatAxisYear(active)}: ` +
             (readout ?? [])
               .map((r) => `${r.s.label} ${r.d.value === null ? "no figure" : r.d.value}`)
               .join("; ")
@@ -226,7 +229,9 @@ function Tooltip({
     <g transform={`translate(${bx},${by})`}>
       <rect width={w} height={h} rx={3} fill="var(--bg)" stroke="var(--border-strong)" opacity={0.98} />
       <text x={9} y={14} fontSize={11} className="mono" fill="var(--fg-subtle)">
-        {year}
+        {/* A fractional axis position is meaningless to read; prefer the
+            period's own name where a point carries one. */}
+        {rows.find((r) => r.d.label)?.d.label ?? formatAxisYear(year)}
       </text>
       {rows.map((r, i) => (
         <g key={r.s.id} transform={`translate(9,${24 + i * lh})`}>
@@ -260,6 +265,14 @@ function segments(data: SeriesDatum[]): SeriesDatum[][] {
   return out;
 }
 
+/** Whole years print bare; a fractional position falls back to its month. */
+function formatAxisYear(v: number): string {
+  if (Number.isInteger(v)) return String(v);
+  const y = Math.floor(v);
+  const m = Math.round((v - y) * 12) + 1;
+  return `${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][m - 1]} ${y}`;
+}
+
 function niceCeil(v: number): number {
   if (v <= 5) return 5;
   if (v <= 10) return 10;
@@ -273,10 +286,14 @@ function integerTicks(max: number, count: number): number[] {
   return ticks;
 }
 function yearTicks(min: number, max: number): number[] {
+  // Axis positions may be fractional (monthly points), but the ruler should
+  // still be whole years — a tick reading "2023.25" labels nothing.
+  const lo = Math.ceil(min);
+  const hi = Math.floor(max);
   const ticks: number[] = [];
-  const step = max - min > 10 ? 2 : 1;
-  for (let t = min; t <= max; t += step) ticks.push(t);
-  if (ticks[ticks.length - 1] !== max) ticks.push(max);
+  const step = hi - lo > 10 ? 2 : 1;
+  for (let t = lo; t <= hi; t += step) ticks.push(t);
+  if (ticks.length && ticks[ticks.length - 1] !== hi) ticks.push(hi);
   return ticks;
 }
 

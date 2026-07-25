@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
-import { bfsStockSeries, semDecemberSeries } from "@/lib/selectors";
+import { bfsStockSeries, semDecemberSeries, semMonthlySeries } from "@/lib/selectors";
 import { resolveCell } from "@/lib/model";
 import { TimeSeries, SeriesLegend, type Series } from "../charts/TimeSeries";
 import { StateLegend } from "../StateBits";
@@ -22,18 +22,28 @@ const SEXES = [
 export function Trend() {
   const { dataset, loading } = useDataset();
   const [breakdown, setBreakdown] = useState<Breakdown>("none");
+  const [monthly, setMonthly] = useState(false);
 
   const series = useMemo<Series[]>(() => {
     if (!dataset) return [];
     if (breakdown === "none") {
       const bfs = bfsStockSeries(dataset);
-      const sem = semDecemberSeries(dataset);
+      // BFS is annual by construction (31 December), so only the SEM line gains
+      // resolution — which is the point: at monthly resolution the two registers
+      // stop looking like one wobbling series.
+      const sem = monthly ? semMonthlySeries(dataset) : semDecemberSeries(dataset);
       const out: Series[] = [];
       if (bfs.some((d) => d.state === "observed")) {
         out.push({ id: "bfs", label: "BFS STATPOP (register, 31 Dec)", data: bfs, color: "var(--accent)" });
       }
       if (sem.length) {
-        out.push({ id: "sem", label: "SEM (administrative, 31 Dec)", data: sem, color: "var(--series-2)", dashed: true });
+        out.push({
+          id: "sem",
+          label: monthly ? "SEM (administrative, monthly)" : "SEM (administrative, 31 Dec)",
+          data: sem,
+          color: "var(--series-2)",
+          dashed: true,
+        });
       }
       return out;
     }
@@ -56,7 +66,7 @@ export function Trend() {
       });
       return { id: cat.code, label: cat.label, data, color: cat.color };
     });
-  }, [dataset, breakdown]);
+  }, [dataset, breakdown, monthly]);
 
   if (loading || !dataset) return <SectionSkeleton title="A 15-year view" />;
 
@@ -89,6 +99,18 @@ export function Trend() {
               </button>
             ))}
           </div>
+          {/* Only the total view has a monthly source; the sex and permit
+              breakdowns come from the BFS cube, which is annual by construction. */}
+          {breakdown === "none" && (
+            <div className="seg">
+              <button className={`seg-btn ${!monthly ? "is-on" : ""}`} onClick={() => setMonthly(false)}>
+                Yearly
+              </button>
+              <button className={`seg-btn ${monthly ? "is-on" : ""}`} onClick={() => setMonthly(true)}>
+                Monthly
+              </button>
+            </div>
+          )}
           <StateLegend compact />
         </div>
 
