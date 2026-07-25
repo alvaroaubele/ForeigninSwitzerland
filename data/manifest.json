@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-24T22:25:31.024Z",
-  "observationCount": 3525,
+  "generatedAt": "2026-07-25T15:07:21.860Z",
+  "observationCount": 8877,
   "cellStateCounts": {
-    "observed": 1810,
-    "structural_zero": 1715,
+    "observed": 5184,
+    "structural_zero": 3693,
     "suppressed": 0,
     "not_published": 0
   },
@@ -13,14 +13,14 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-10 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "326 cells",
-      "observationCount": 326,
+      "yielded": "1206 cells",
+      "observationCount": 1206,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-10-Best-Tot-Kat-d-2017-12.xlsx.download.xlsx/2-10-Best-Tot-Kat-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-10-Best-Tot-Kat-d-2018-12.xlsx.download.xlsx/2-10-Best-Tot-Kat-d-2018-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/2-10-Best-Tot-Kat-d-2019-12.xlsx.download.xlsx/2-10-Best-Tot-Kat-d-2019-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/2-10-Best-Tot-Kat-d-2020-12.xlsx.download.xlsx/2-10-Best-Tot-Kat-d-2020-12.xlsx",
-        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/2-10-Best-Tot-Kat-d-2021-12.xlsx.download.xlsx/2-10-Best-Tot-Kat-d-2021-12.xlsx"
+        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/01/2-10-Best-Tot-Kat-d-2021-01.xlsx.download.xlsx/2-10-Best-Tot-Kat-d-2021-01.xlsx"
       ]
     },
     {
@@ -28,14 +28,14 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-20 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "126 cells",
-      "observationCount": 126,
+      "yielded": "621 cells",
+      "observationCount": 621,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-20-Best-Stae-Bewi-d-2017-12.xlsx.download.xlsx/2-20-Best-Stae-Bewi-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-20-Best-Stae-Bewi-d-2018-12.xlsx.download.xlsx/2-20-Best-Stae-Bewi-d-2018-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/2-20-Best-Stae-Bewi-d-2019-12.xlsx.download.xlsx/2-20-Best-Stae-Bewi-d-2019-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/2-20-Best-Stae-Bewi-d-2020-12.xlsx.download.xlsx/2-20-Best-Stae-Bewi-d-2020-12.xlsx",
-        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/2-20-Best-Stae-Bewi-d-2021-12.xlsx.download.xlsx/2-20-Best-Stae-Bewi-d-2021-12.xlsx"
+        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/01/2-20-Best-Stae-Bewi-d-2021-01.xlsx.download.xlsx/2-20-Best-Stae-Bewi-d-2021-01.xlsx"
       ]
     },
     {
@@ -43,14 +43,14 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-21 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "224 cells",
-      "observationCount": 224,
+      "yielded": "1104 cells",
+      "observationCount": 1104,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-21-Best-Stae-Alter-d-2017-12.xlsx.download.xlsx/2-21-Best-Stae-Alter-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-21-Best-Stae-Alter-d-2018-12.xlsx.download.xlsx/2-21-Best-Stae-Alter-d-2018-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/2-21-Best-Stae-Alter-d-2019-12.xlsx.download.xlsx/2-21-Best-Stae-Alter-d-2019-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/2-21-Best-Stae-Alter-d-2020-12.xlsx.download.xlsx/2-21-Best-Stae-Alter-d-2020-12.xlsx",
-        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/2-21-Best-Stae-Alter-d-2021-12.xlsx.download.xlsx/2-21-Best-Stae-Alter-d-2021-12.xlsx"
+        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/01/2-21-Best-Stae-Alter-d-2021-01.xlsx.download.xlsx/2-21-Best-Stae-Alter-d-2021-01.xlsx"
       ]
     },
     {
@@ -58,14 +58,14 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-22 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "154 cells",
-      "observationCount": 154,
+      "yielded": "759 cells",
+      "observationCount": 759,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-22-Best-Stae-Ziv-d-2017-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-22-Best-Stae-Ziv-d-2018-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2018-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/2-22-Best-Stae-Ziv-d-2019-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2019-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/2-22-Best-Stae-Ziv-d-2020-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2020-12.xlsx",
-        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/2-22-Best-Stae-Ziv-d-2021-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2021-12.xlsx"
+        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/01/2-22-Best-Stae-Ziv-d-2021-01.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2021-01.xlsx"
       ]
     },
     {
@@ -73,14 +73,14 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-23 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "224 cells",
-      "observationCount": 224,
+      "yielded": "1104 cells",
+      "observationCount": 1104,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-23-Best-Stae-Dau-d-2017-12.xlsx.download.xlsx/2-23-Best-Stae-Dau-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-23-Best-Stae-Dau-d-2018-12.xlsx.download.xlsx/2-23-Best-Stae-Dau-d-2018-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/2-23-Best-Stae-Dau-d-2019-12.xlsx.download.xlsx/2-23-Best-Stae-Dau-d-2019-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/2-23-Best-Stae-Dau-d-2020-12.xlsx.download.xlsx/2-23-Best-Stae-Dau-d-2020-12.xlsx",
-        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/2-23-Best-Stae-Dau-d-2021-12.xlsx.download.xlsx/2-23-Best-Stae-Dau-d-2021-12.xlsx"
+        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/01/2-23-Best-Stae-Dau-d-2021-01.xlsx.download.xlsx/2-23-Best-Stae-Dau-d-2021-01.xlsx"
       ]
     },
     {
@@ -88,14 +88,14 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-40 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "180 cells",
-      "observationCount": 180,
+      "yielded": "960 cells",
+      "observationCount": 960,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-40-Best-NStae-Kat-d-2017-12.xlsx.download.xlsx/2-40-Best-NStae-Kat-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-40-Best-NStae-Kat-d-2018-12.xlsx.download.xlsx/2-40-Best-NStae-Kat-d-2018-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/2-40-Best-NStae-Kat-d-2019-12.xlsx.download.xlsx/2-40-Best-NStae-Kat-d-2019-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/2-40-Best-NStae-Kat-d-2020-12.xlsx.download.xlsx/2-40-Best-NStae-Kat-d-2020-12.xlsx",
-        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/2-40-Best-NStae-Kat-d-2021-12.xlsx.download.xlsx/2-40-Best-NStae-Kat-d-2021-12.xlsx"
+        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/01/2-40-Best-NStae-Kat-d-2021-01.xlsx.download.xlsx/2-40-Best-NStae-Kat-d-2021-01.xlsx"
       ]
     },
     {
@@ -103,14 +103,14 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-41 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "192 cells",
-      "observationCount": 192,
+      "yielded": "1024 cells",
+      "observationCount": 1024,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-41-Best-NStae-Alter-d-2017-12.xlsx.download.xlsx/2-41-Best-NStae-Alter-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-41-Best-NStae-Alter-d-2018-12.xlsx.download.xlsx/2-41-Best-NStae-Alter-d-2018-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2019/12/2-41-Best-NStae-Alter-d-2019-12.xlsx.download.xlsx/2-41-Best-NStae-Alter-d-2019-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2020/12/2-41-Best-NStae-Alter-d-2020-12.xlsx.download.xlsx/2-41-Best-NStae-Alter-d-2020-12.xlsx",
-        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/12/2-41-Best-NStae-Alter-d-2021-12.xlsx.download.xlsx/2-41-Best-NStae-Alter-d-2021-12.xlsx"
+        "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2021/01/2-41-Best-NStae-Alter-d-2021-01.xlsx.download.xlsx/2-41-Best-NStae-Alter-d-2021-01.xlsx"
       ]
     },
     {

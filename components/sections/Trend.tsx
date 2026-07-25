@@ -68,7 +68,7 @@ export function Trend() {
     });
   }, [dataset, breakdown, monthly]);
 
-  if (loading || !dataset) return <SectionSkeleton title="A 15-year view" />;
+  if (loading || !dataset) return <SectionSkeleton title="A 16-year view" />;
 
   const bfs = bfsStockSeries(dataset);
   const observedBfs = bfs.filter((d) => d.state === "observed");
@@ -79,7 +79,7 @@ export function Trend() {
     <section className="section" id="trend">
       <div className="wrap">
         <div className="section-head">
-          <span className="eyebrow">Time · 2010–2024</span>
+          <span className="eyebrow">Time · 2010–2026</span>
           <h2>A population that never left the low tens</h2>
           <p>
             Chilean nationals in Zug peaked at {peak?.value ? fmtInt(peak.value) : "34"} in 2017, fell to 20 in 2020,
