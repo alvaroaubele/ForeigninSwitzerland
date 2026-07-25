@@ -1,4 +1,5 @@
 "use client";
+import { useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 import { scaleLinear } from "d3-scale";
 import type { CellState } from "@/lib/types";
 import { StateMark, SvgDefs } from "../StateBits";
@@ -42,6 +43,10 @@ export function TimeSeries({
   yMax?: number;
   height?: number;
 }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  /** Year under the cursor or keyboard caret; null when the chart is at rest. */
+  const [active, setActive] = useState<number | null>(null);
+
   const allYears = Array.from(new Set(series.flatMap((s) => s.data.map((d) => d.year)))).sort((a, b) => a - b);
   if (allYears.length === 0) return null;
   const minYear = allYears[0];
@@ -60,8 +65,56 @@ export function TimeSeries({
   const yTicks = integerTicks(niceMax, 5);
   const xTicks = yearTicks(minYear, maxYear);
 
+  /** Snap a viewBox x-coordinate to the nearest year that actually has data. */
+  const yearAt = (vx: number): number => {
+    const raw = x.invert(vx);
+    return allYears.reduce((best, yr) => (Math.abs(yr - raw) < Math.abs(best - raw) ? yr : best), allYears[0]);
+  };
+
+  const onMove = (e: MouseEvent<SVGSVGElement>) => {
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    // The SVG scales to its container, so client pixels must be mapped back
+    // into viewBox units before the scale can invert them.
+    setActive(yearAt(((e.clientX - rect.left) * W) / rect.width));
+  };
+
+  const onKey = (e: KeyboardEvent<SVGSVGElement>) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    const i = active === null ? allYears.length - 1 : allYears.indexOf(active);
+    const next = Math.min(allYears.length - 1, Math.max(0, i + (e.key === "ArrowRight" ? 1 : -1)));
+    setActive(allYears[next]);
+  };
+
+  const readout =
+    active === null
+      ? null
+      : series
+          .map((s) => ({ s, d: s.data.find((p) => p.year === active) }))
+          .filter((r): r is { s: Series; d: SeriesDatum } => !!r.d);
+
   return (
-    <svg viewBox={`0 0 ${W} ${height}`} width="100%" role="img" style={{ display: "block" }}>
+    <svg
+      ref={svgRef}
+      viewBox={`0 0 ${W} ${height}`}
+      width="100%"
+      role="img"
+      tabIndex={0}
+      aria-label={
+        active === null
+          ? `Time series ${minYear} to ${maxYear}. Focus and use arrow keys to read each year.`
+          : `${active}: ` +
+            (readout ?? [])
+              .map((r) => `${r.s.label} ${r.d.value === null ? "no figure" : r.d.value}`)
+              .join("; ")
+      }
+      style={{ display: "block", outlineOffset: -2 }}
+      onMouseMove={onMove}
+      onMouseLeave={() => setActive(null)}
+      onKeyDown={onKey}
+      onBlur={() => setActive(null)}
+    >
       <SvgDefs />
       {/* y grid + labels */}
       {yTicks.map((t) => (
@@ -116,7 +169,77 @@ export function TimeSeries({
       ))}
       {/* axes baselines */}
       <line x1={M.left} x2={W - M.right} y1={height - M.bottom} y2={height - M.bottom} stroke="var(--border-strong)" strokeWidth={1} />
+
+      {/* crosshair — reading both series at one year is the whole offset story */}
+      {active !== null && readout && readout.length > 0 && (
+        <g pointerEvents="none">
+          <line
+            x1={x(active)}
+            x2={x(active)}
+            y1={M.top}
+            y2={height - M.bottom}
+            stroke="var(--fg)"
+            strokeWidth={1}
+            opacity={0.35}
+          />
+          {readout.map((r) => (
+            <circle
+              key={r.s.id}
+              cx={x(active)}
+              cy={y(r.d.value ?? 0)}
+              r={6}
+              fill="none"
+              stroke={r.s.color}
+              strokeWidth={1.4}
+              opacity={0.9}
+            />
+          ))}
+          <Tooltip x={x(active)} year={active} rows={readout} height={height} />
+        </g>
+      )}
     </svg>
+  );
+}
+
+/** Crosshair readout. Flips to the left of the caret when it would overflow. */
+function Tooltip({
+  x: cx,
+  year,
+  rows,
+  height,
+}: {
+  x: number;
+  year: number;
+  rows: { s: Series; d: SeriesDatum }[];
+  height: number;
+}) {
+  // Wide enough for the full source labels — "BFS STATPOP (register, 31 Dec)"
+  // truncated to "BFS STATPOP (regist…" loses exactly the part that says which
+  // register and as of when, which is the distinction the chart is making.
+  const w = 258;
+  const lh = 15;
+  const h = 20 + rows.length * lh;
+  const flip = cx + w + 12 > W - M.right;
+  const bx = flip ? cx - w - 10 : cx + 10;
+  const by = Math.min(M.top + 4, height - M.bottom - h);
+  return (
+    <g transform={`translate(${bx},${by})`}>
+      <rect width={w} height={h} rx={3} fill="var(--bg)" stroke="var(--border-strong)" opacity={0.98} />
+      <text x={9} y={14} fontSize={11} className="mono" fill="var(--fg-subtle)">
+        {year}
+      </text>
+      {rows.map((r, i) => (
+        <g key={r.s.id} transform={`translate(9,${24 + i * lh})`}>
+          <circle cx={3} cy={-3} r={3} fill={r.s.color} />
+          <text x={12} y={0} fontSize={11} fill="var(--fg-muted)" fontFamily="var(--font-sans-stack)">
+            {r.s.label.length > 32 ? r.s.label.slice(0, 31) + "…" : r.s.label}
+          </text>
+          <text x={w - 18} y={0} fontSize={11} textAnchor="end" className="mono" fill="var(--fg)">
+            {r.d.state === "not_published" ? "—" : fmtInt(r.d.value)}
+          </text>
+        </g>
+      ))}
+    </g>
   );
 }
 

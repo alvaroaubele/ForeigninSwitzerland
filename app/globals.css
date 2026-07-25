@@ -1156,3 +1156,27 @@ button {
     position: static;
   }
 }
+
+/* --- nav reflects where you are in the page --- */
+.header-nav a {
+  position: relative;
+  transition: color 0.15s ease;
+}
+.header-nav a.is-active {
+  color: var(--fg);
+  font-weight: 600;
+}
+.header-nav a.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* --- the trend chart takes focus for keyboard reading --- */
+svg[tabindex="0"]:focus-visible {
+  outline: 2px solid var(--accent);
+}
