@@ -1,5 +1,5 @@
 "use client";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { resolveCell, type Dataset, type Selection } from "@/lib/model";
 import { distinctValues, latestSemMonth } from "@/lib/selectors";
@@ -7,6 +7,7 @@ import { fmtInt, label, DIM_LABELS, METRIC_LABELS, fmtDate } from "@/lib/format"
 import { CELL_STATE_LABEL, CELL_STATE_DESCRIPTION } from "@/lib/model";
 import { StateSwatch, StateLegend } from "../StateBits";
 import { ProvenanceTip } from "../Provenance";
+import { OptionChips, type ChipOption } from "../OptionChips";
 import type { Dimensions, Observation } from "@/lib/types";
 
 export interface FilterState {
@@ -35,12 +36,39 @@ export function CrossFilter({
   setFilter: (f: FilterState) => void;
 }) {
   const { dataset, loading } = useDataset();
+  /** The option currently hovered or focused, previewed but not committed. */
+  const [preview, setPreview] = useState<{ key: BreakdownKey; option: ChipOption } | null>(null);
 
   const result = useMemo(() => (dataset ? resolve(dataset, filter) : null), [dataset, filter]);
   const drop = useMemo(
     () => (dataset && result && result.cell.state === "not_published" ? findDropSuggestion(dataset, filter) : null),
     [dataset, result, filter],
   );
+
+  /**
+   * Resolve every option of every breakdown against the rest of the current
+   * filter, so each chip can carry its own outcome. ~50 resolutions over 3.5k
+   * observations; memoised on the filter, so it runs once per interaction.
+   */
+  const chipsByKey = useMemo(() => {
+    if (!dataset) return {} as Record<string, ChipOption[]>;
+    const out: Record<string, ChipOption[]> = {};
+    for (const k of BREAKDOWNS_BY_METRIC[filter.metric]) {
+      const values = optionValues(dataset, filter, k);
+      if (values.length === 0) continue;
+      const chip = (value: string, text: string, dim: Partial<Dimensions>): ChipOption => {
+        const cell = resolveCell(dataset, toSelection({ ...filter, dim }));
+        return { value, label: text, state: cell.state, result: cell.value };
+      };
+      const withoutK = { ...filter.dim };
+      delete withoutK[k];
+      out[k] = [
+        chip("", "Any", withoutK),
+        ...values.map((v) => chip(v, label(v), { ...filter.dim, [k]: v })),
+      ];
+    }
+    return out;
+  }, [dataset, filter]);
 
   if (loading || !dataset) return <SectionSkeleton />;
 
@@ -55,6 +83,12 @@ export function CrossFilter({
     setFilter({ ...filter, dim });
   };
 
+  const activeCount = Object.keys(filter.dim).length;
+  // Only a preview of a *different* option is worth showing; echoing the
+  // committed figure back would just make the panel flicker on hover.
+  const showPreview =
+    preview && preview.option.value !== ((filter.dim[preview.key] as string) ?? "") ? preview : null;
+
   return (
     <section className="section" id="cross-filter">
       <div className="wrap">
@@ -62,9 +96,10 @@ export function CrossFilter({
           <span className="eyebrow">Cross-filter</span>
           <h2>Build a query — and see when the answer was never published</h2>
           <p>
-            Combine any dimensions. When you pick a cross-tab the sources actually carry, you get a figure. When you pick
-            one they never published, the panel says so and names the source that would have carried it — then offers the
-            single filter to drop to reach a populated view.
+            Combine any dimensions. Every option carries its own answer before you pick it, so you can see which
+            cross-tabs the sources actually published and which were never produced. Choose one that was never
+            published and the panel names the table that would have carried it, then offers the single filter to drop
+            to reach a populated view.
           </p>
         </div>
 
@@ -75,6 +110,8 @@ export function CrossFilter({
                 {(["SEM", "BFS"] as const).map((s) => (
                   <button
                     key={s}
+                    type="button"
+                    aria-pressed={filter.source === s}
                     className={`seg-btn ${filter.source === s ? "is-on" : ""}`}
                     onClick={() =>
                       setFilter({
@@ -154,27 +191,31 @@ export function CrossFilter({
             </Field>
 
             <div className="xf-divider" />
+            <p className="xf-hint">
+              Each option shows what it resolves to. A dotted mark means the sources never crossed those dimensions —
+              still selectable, because that absence is itself the finding.
+            </p>
 
             {breakdowns.map((k) => {
-              const opts = optionValues(dataset, filter, k);
-              if (opts.length === 0) return null;
+              const chips = chipsByKey[k];
+              if (!chips || chips.length === 0) return null;
               return (
-                <Field key={k} label={DIM_LABELS[k]}>
-                  <select value={(filter.dim[k] as string) ?? ""} onChange={(e) => setDim(k, e.target.value || undefined)}>
-                    <option value="">Any</option>
-                    {opts.map((v) => (
-                      <option key={v} value={v}>
-                        {label(v)}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
+                <div className="xf-field" key={k}>
+                  <span className="xf-field-label">{DIM_LABELS[k]}</span>
+                  <OptionChips
+                    name={DIM_LABELS[k]}
+                    options={chips}
+                    value={(filter.dim[k] as string) ?? ""}
+                    onChange={(v) => setDim(k, v || undefined)}
+                    onPreview={(o) => setPreview(o ? { key: k, option: o } : null)}
+                  />
+                </div>
               );
             })}
 
-            {(filter.dim.sex === undefined || Object.keys(filter.dim).length > 0) && (
+            {activeCount > 0 && (
               <button className="xf-reset" onClick={() => setFilter({ ...filter, dim: {} })}>
-                Clear breakdowns
+                Clear {activeCount} breakdown{activeCount > 1 ? "s" : ""}
               </button>
             )}
           </div>
@@ -214,12 +255,36 @@ export function CrossFilter({
                     </div>
                   ) : (
                     <ProvenanceTip observation={result.cell.observation} state={result.cell.state}>
-                      <div className={`xf-number mono ${result.cell.state === "structural_zero" ? "is-zero" : ""}`}>
+                      {/* Keyed so a changed figure replays the swap animation. No
+                          numeric tween: counting up through 21, 22, 23 would draw
+                          values that were never observed. */}
+                      <div
+                        key={`${result.cell.value}-${result.cell.state}`}
+                        className={`xf-number mono fig-swap ${result.cell.state === "structural_zero" ? "is-zero" : ""}`}
+                      >
                         {result.cell.value === null ? "—" : fmtInt(result.cell.value)}
                       </div>
                     </ProvenanceTip>
                   )}
                   <div className="xf-unit">persons{result.cell.state === "structural_zero" ? " · a genuine zero, not missing data" : ""}</div>
+                </div>
+
+                <div className={`xf-preview ${showPreview ? "is-live" : ""}`} aria-live="polite">
+                  {showPreview ? (
+                    <>
+                      <StateSwatch state={showPreview.option.state} />
+                      <span>
+                        {DIM_LABELS[showPreview.key]} <strong>{showPreview.option.label}</strong> →{" "}
+                        {showPreview.option.state === "not_published" ? (
+                          <em>never published</em>
+                        ) : (
+                          <span className="mono">{fmtInt(showPreview.option.result)}</span>
+                        )}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="xf-preview-idle">Hover an option to preview its answer</span>
+                  )}
                 </div>
 
                 {result.cell.observation && (
@@ -272,6 +337,12 @@ function findDropSuggestion(ds: Dataset, filter: FilterState) {
   return null;
 }
 
+/** Leading integer of a band label ("18-64" -> 18, "65+" -> 65, "B" -> null). */
+function leadingNumber(s: string): number | null {
+  const m = /^(\d+)/.exec(s);
+  return m ? Number(m[1]) : null;
+}
+
 function optionValues(ds: Dataset, filter: FilterState, k: BreakdownKey): string[] {
   const vals = distinctValues(
     ds,
@@ -284,6 +355,12 @@ function optionValues(ds: Dataset, filter: FilterState, k: BreakdownKey): string
     const ia = order.indexOf(a);
     const ib = order.indexOf(b);
     if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+    // Age and length-of-stay bands are labelled by their lower bound, so sorting
+    // them as text puts "10-14" before "5-9" and reads as scrambled. Order by the
+    // bound where there is one, and fall back to text for everything else.
+    const na = leadingNumber(a);
+    const nb = leadingNumber(b);
+    if (na !== null && nb !== null && na !== nb) return na - nb;
     return a.localeCompare(b);
   });
 }

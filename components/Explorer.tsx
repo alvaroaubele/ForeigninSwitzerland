@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { latestSemMonth } from "@/lib/selectors";
 import { matches } from "@/lib/model";
@@ -46,6 +46,13 @@ function decodeState(qs: string, fallback: FilterState): FilterState {
 export function Explorer() {
   const { dataset } = useDataset();
   const [filter, setFilter] = useState<FilterState | null>(null);
+  /**
+   * Set while we are applying a filter that came *from* the history stack, so the
+   * sync effect below restores instead of pushing. Without it, going back would
+   * push the state you just left and the button would never escape.
+   */
+  const fromHistory = useRef(false);
+  const lastQs = useRef<string | null>(null);
 
   // Initialise from URL once the dataset is available.
   useEffect(() => {
@@ -59,15 +66,43 @@ export function Explorer() {
       populationType: "permanent",
       dim: {},
     };
+    fromHistory.current = true;
     setFilter(decodeState(window.location.search.replace(/^\?/, ""), fallback));
   }, [dataset, filter]);
+
+  // Back/forward should walk the queries you built, not leave the page. Each
+  // committed filter change is a history entry; popstate replays it.
+  useEffect(() => {
+    const onPop = () => {
+      if (!dataset) return;
+      const latest = latestSemMonth(dataset);
+      fromHistory.current = true;
+      setFilter(
+        decodeState(window.location.search.replace(/^\?/, ""), {
+          source: "SEM",
+          metric: "stock",
+          year: latest.year,
+          month: latest.month,
+          populationType: "permanent",
+          dim: {},
+        }),
+      );
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [dataset]);
 
   // Sync URL when filter changes (shareable views).
   useEffect(() => {
     if (!filter) return;
     const qs = encodeState(filter);
+    if (qs === lastQs.current) return;
     const url = `${window.location.pathname}?${qs}${window.location.hash || "#cross-filter"}`;
-    window.history.replaceState(null, "", url);
+    // First paint and history-driven changes replace; a user's own change pushes.
+    if (fromHistory.current || lastQs.current === null) window.history.replaceState(null, "", url);
+    else window.history.pushState(null, "", url);
+    lastQs.current = qs;
+    fromHistory.current = false;
   }, [filter]);
 
   const exportView = useCallback(

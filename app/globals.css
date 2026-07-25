@@ -990,3 +990,169 @@ button {
 .stackseg-anchor .stackseg {
   height: 100%;
 }
+
+/* =========================================================================
+   Interaction layer
+   Outcome-annotated option chips, preview line, focus system, motion.
+   ========================================================================= */
+
+/* --- option chips: each carries the answer it would produce --- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  font-family: var(--font-sans-stack);
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--fg-muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.chip:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-sunken);
+}
+.chip.is-on {
+  background: var(--fg);
+  border-color: var(--fg);
+  color: var(--bg);
+}
+.chip.is-on .chip-val {
+  color: var(--bg);
+  opacity: 0.75;
+}
+/* Never-published options recede but stay reachable — the absence is the point. */
+.chip.is-unpublished {
+  color: var(--fg-subtle);
+  border-style: dashed;
+  border-color: var(--state-missing);
+}
+.chip.is-unpublished.is-on {
+  background: var(--state-missing-wash);
+  color: var(--fg-muted);
+  border-color: var(--state-missing);
+}
+.chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--state-observed);
+}
+.chip-dot.sw-zero {
+  background: var(--bg);
+  border: 1.5px solid var(--state-zero);
+}
+.chip-dot.sw-suppressed {
+  background: var(--state-suppressed);
+  border-radius: 1px;
+}
+.chip-dot.sw-missing {
+  background: var(--bg);
+  border: 1.4px dotted var(--state-missing);
+}
+.chip.is-on .chip-dot {
+  background: var(--bg);
+}
+.chip.is-on .chip-dot.sw-zero,
+.chip.is-on .chip-dot.sw-missing {
+  background: transparent;
+  border-color: var(--bg);
+}
+.chip-val {
+  font-size: 11px;
+  color: var(--fg-subtle);
+  font-variant-numeric: tabular-nums;
+}
+.xf-hint {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: var(--fg-subtle);
+}
+
+/* --- preview line: what the hovered option would answer --- */
+.xf-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  font-size: 12.5px;
+  color: var(--fg-muted);
+  background: var(--bg-sunken);
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.xf-preview.is-live {
+  border-color: var(--border);
+  background: var(--bg);
+}
+.xf-preview-idle {
+  color: var(--fg-subtle);
+  font-style: italic;
+}
+
+/* --- figure swap: crossfade, never a numeric tween --- */
+.fig-swap {
+  animation: fig-in 0.22s ease-out;
+}
+@keyframes fig-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* --- focus system: visible for keyboard, quiet for pointer --- */
+:where(a, button, select, input, [role="radio"], [tabindex]):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+:where(a, button, select, input, [role="radio"]):focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* --- motion: opt out entirely when the reader asks --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* --- anchored sections must clear the sticky header --- */
+:where(.section, [id]) {
+  scroll-margin-top: 132px;
+}
+
+/* --- the answer stays in view while you work the options --- */
+.xf-result {
+  position: sticky;
+  top: 132px;
+}
+@media (max-width: 900px) {
+  .xf-result {
+    position: static;
+  }
+}
