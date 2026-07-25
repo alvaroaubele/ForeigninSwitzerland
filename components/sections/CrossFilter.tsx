@@ -19,14 +19,31 @@ export interface FilterState {
   dim: Partial<Dimensions>;
 }
 
-type BreakdownKey = "sex" | "permit" | "legalBasis" | "ageClass" | "marital" | "lengthOfStay" | "reason" | "naturalisationType";
+type BreakdownKey =
+  | "sex" | "permit" | "legalBasis" | "ageClass" | "marital" | "lengthOfStay"
+  | "reason" | "naturalisationType" | "birthCountry" | "nationalityGroup";
 
 const BREAKDOWNS_BY_METRIC: Record<Observation["metric"], BreakdownKey[]> = {
-  stock: ["sex", "permit", "legalBasis", "ageClass", "marital", "lengthOfStay"],
+  // nationalityGroup only exists in the BFS birthplace cube; optionValues returns
+  // nothing for SEM and the row is skipped, so one list covers both. birthCountry
+  // is deliberately not offered: it has exactly one real value ("Chile"), and a
+  // row whose only choice re-bases the whole question onto a different
+  // population is a trap rather than a filter.
+  stock: ["sex", "permit", "legalBasis", "ageClass", "marital", "lengthOfStay", "nationalityGroup"],
   immigration: ["reason"],
   emigration: ["permit"],
   naturalisation: ["naturalisationType"],
 };
+
+/**
+ * True when the selection is asking about the Chilean-*born* population rather
+ * than Chilean passport holders. BFS carries these in different cubes, and the
+ * birthplace cube has no nationality dimension at all — so pinning
+ * nationality = CL would exclude every one of its cells and report the page's
+ * central finding as "never published".
+ */
+const isBirthplaceSide = (dim: Partial<Dimensions>): boolean =>
+  dim.birthCountry !== undefined || dim.nationalityGroup !== undefined;
 
 export function CrossFilter({
   filter,
@@ -199,7 +216,12 @@ export function CrossFilter({
               if (!chips || chips.length === 0) return null;
               return (
                 <div className="xf-field" key={k}>
-                  <span className="xf-field-label">{DIM_LABELS[k]}</span>
+                  {/* Named explicitly, because choosing one of these switches the
+                      question from "Chilean passport holders" to "people born in
+                      Chile" — two populations of very different size. */}
+                  <span className="xf-field-label">
+                    {k === "nationalityGroup" ? "Passport group · of the Chilean-born" : DIM_LABELS[k]}
+                  </span>
                   <OptionChips
                     name={DIM_LABELS[k]}
                     options={chips}
@@ -312,7 +334,11 @@ function toSelection(filter: FilterState): Selection {
       canton: "ZG",
       year: filter.year,
       ...(filter.source === "SEM" ? { month: filter.month } : {}),
-      ...(filter.source === "SEM" ? { nationality: "CL" } : filter.metric === "stock" ? { nationality: "CL" } : {}),
+      ...(filter.source === "SEM"
+        ? { nationality: "CL" }
+        : filter.metric === "stock" && !isBirthplaceSide(filter.dim)
+          ? { nationality: "CL" }
+          : {}),
       ...filter.dim,
     },
   };

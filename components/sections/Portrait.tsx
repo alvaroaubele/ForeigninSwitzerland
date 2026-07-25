@@ -50,6 +50,23 @@ export function Portrait() {
     [dataset, sem, bySex],
   );
 
+  // SEM 2-22 carries this as a subset flag on the married row rather than as a
+  // dimension of its own, so it has no place among the bars — but it is one of
+  // the more telling numbers on the page, and was previously not shown at all.
+  const marriedToSwiss = useMemo(() => {
+    if (!dataset || !sem) return null;
+    const c = resolveCell(dataset, {
+      source: "SEM",
+      metric: "stock",
+      populationType: "permanent",
+      dim: {
+        canton: "ZG", nationality: "CL", year: sem.year, month: sem.month,
+        sex: "total", marital: "married", marriedToSwiss: true,
+      },
+    });
+    return c.state === "observed" ? c.value : null;
+  }, [dataset, sem]);
+
   if (loading || !dataset || !sem) {
     return (
       <section className="section" id="portrait">
@@ -106,6 +123,11 @@ export function Portrait() {
                     Not published by sex — SEM reports marital status for the group as a whole only.
                   </p>
                 </div>
+              )}
+              {r.key === "marital" && marriedToSwiss !== null && (
+                <p className="portrait-note">
+                  Of the married, <strong>{fmtInt(marriedToSwiss)}</strong> are married to a Swiss national.
+                </p>
               )}
             </div>
           ))}
