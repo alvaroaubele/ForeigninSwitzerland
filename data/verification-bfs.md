@@ -1,6 +1,6 @@
 # BFS Harvest Verification Report
 
-_Generated 2026-07-24T23:10:54.080Z by `scripts/verify-bfs.ts` (independent re-fetch, no local cache)._
+_Generated 2026-07-25T16:03:51.223Z by `scripts/verify-bfs.ts` (independent re-fetch, no local cache)._
 
 **Verdict: PASS.** All 1649 non-null BFS cells (100% — not a sample) and all 8 BFS anchors were re-fetched directly from `www.pxweb.bfs.admin.ch` and reproduced exactly. Queries were reconstructed by inverting the harvested dimensions back to PxWeb codes with a map written in this script; json-stat2 was decoded by a decoder written in this script; the harvest's fetcher, walker, and query definitions were not imported. Each cube's metadata was also re-fetched and the source's own labels confirm the code meanings the harvest relied on.
 
@@ -13,7 +13,7 @@ _Generated 2026-07-24T23:10:54.080Z by `scripts/verify-bfs.ts` (independent re-f
 | Coordinates absent from the fresh response | 0 |
 | BFS anchors reproduced | 8/8 |
 | Code-meaning claims confirmed from metadata | 14/14 |
-| HTTP requests issued | 19 (sequential, 6s apart) |
+| HTTP requests issued | 18 (sequential, 6s apart) |
 
 ## Per-cube reproduction
 

@@ -1,22 +1,22 @@
 # SEM Harvest Verification Report
 
-_Generated 2026-07-24T22:47:46.567Z by `scripts/verify.ts` (independent re-fetch, no local cache)._
+_Generated 2026-07-25T16:00:53.934Z by `scripts/verify.ts` (independent re-fetch, no local cache)._
 
-**Verdict: PASS.** An independent re-fetch of 313 SEM cells (16.7% of the 1876 eligible non-null SEM observations) and all 22 SEM anchors was performed directly against the recorded provenance URLs on www.sem.admin.ch, with no use of the local data/raw cache and without importing the harvest's extraction code. Column positions were derived independently from the SEM header rows. Every sampled value and every anchor reproduced exactly, so the SEM portion of the harvest faithfully reflects the published source files.
+**Verdict: PASS.** An independent re-fetch of 1205 SEM cells (16.7% of the 7228 eligible non-null SEM observations) and all 22 SEM anchors was performed directly against the recorded provenance URLs on www.sem.admin.ch, with no use of the local data/raw cache and without importing the harvest's extraction code. Column positions were derived independently from the SEM header rows. Every sampled value and every anchor reproduced exactly, so the SEM portion of the harvest faithfully reflects the published source files.
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Eligible non-null SEM cells | 1876 |
-| Sample size (re-fetched & checked) | 313 |
+| Eligible non-null SEM cells | 7228 |
+| Sample size (re-fetched & checked) | 1205 |
 | Coverage of eligible SEM cells | 16.7% |
-| Sample cells reproduced | 313/313 |
+| Sample cells reproduced | 1205/1205 |
 | SEM anchors reproduced | 22/22 |
-| Distinct SEM files fetched fresh | 123 |
-| Absent-from-flow-sheet zeros checked | 23 of 113 |
+| Distinct SEM files fetched fresh | 468 |
+| Absent-from-flow-sheet zeros checked | 11 of 113 |
 | Datasets covered | 2-10, 2-20, 2-21, 2-22, 2-23, 2-40, 2-41, 3-30, 3-31, 3-55, 3-60 |
-| Reference periods covered | 14 (2017-12-31 .. 2026-05-31) |
+| Reference periods covered | 69 (2017-12-31 .. 2026-05-31) |
 
 Sampling method: eligible SEM cells sorted by observation `id`, every 6th taken (16.7% >= 15% floor), then augmented to guarantee at least one cell per dataset, per reference period, and per special category (cantonal comparison, per-capita denominator, absent-Chile structural zero). The sample is fully deterministic across runs.
 
@@ -24,17 +24,17 @@ Sampling method: eligible SEM cells sorted by observation `id`, every 6th taken 
 
 | Dataset | Sampled | Reproduced |
 | --- | --- | --- |
-| 2-10 | 53 | 53/53 |
-| 2-20 | 21 | 21/21 |
-| 2-21 | 38 | 38/38 |
-| 2-22 | 31 | 31/31 |
-| 2-23 | 37 | 37/37 |
-| 2-40 | 30 | 30/30 |
-| 2-41 | 22 | 22/22 |
-| 3-30 | 18 | 18/18 |
-| 3-31 | 11 | 11/11 |
-| 3-55 | 26 | 26/26 |
-| 3-60 | 26 | 26/26 |
+| 2-10 | 198 | 198/198 |
+| 2-20 | 108 | 108/108 |
+| 2-21 | 177 | 177/177 |
+| 2-22 | 126 | 126/126 |
+| 2-23 | 206 | 206/206 |
+| 2-40 | 180 | 180/180 |
+| 2-41 | 144 | 144/144 |
+| 3-30 | 17 | 17/17 |
+| 3-31 | 14 | 14/14 |
+| 3-55 | 23 | 23/23 |
+| 3-60 | 12 | 12/12 |
 
 ## Anchor checks (SEM)
 
