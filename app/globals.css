@@ -1180,3 +1180,99 @@ button {
 svg[tabindex="0"]:focus-visible {
   outline: 2px solid var(--accent);
 }
+
+/* =========================================================================
+   Population portrait — every attribute at once
+   ========================================================================= */
+.portrait {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.portrait-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.portrait-dim {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-subtle);
+  padding-top: 6px;
+}
+.portrait-bar-wrap {
+  min-width: 0;
+}
+.portrait-caption {
+  font-size: 11.5px;
+  color: var(--fg-muted);
+  margin-bottom: 4px;
+}
+.portrait-bar {
+  display: flex;
+  height: 30px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-sunken);
+}
+.portrait-seg {
+  min-width: 3px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  overflow: hidden;
+  transition: filter 0.12s ease;
+}
+.portrait-seg:hover {
+  filter: brightness(1.25);
+}
+.portrait-seg.is-empty {
+  flex: 1;
+  background: repeating-linear-gradient(45deg, var(--bg-sunken), var(--bg-sunken) 4px, var(--bg) 4px, var(--bg) 8px);
+}
+.portrait-seg-label {
+  font-size: 11.5px;
+  color: var(--bg);
+  white-space: nowrap;
+}
+.portrait-keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 6px;
+}
+.portrait-key {
+  font-size: 11.5px;
+  color: var(--fg-muted);
+}
+.portrait-key.is-zero {
+  color: var(--fg-subtle);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.portrait-ring {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--state-zero);
+  display: inline-block;
+}
+.portrait-split {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.portrait-wall-note {
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  color: var(--fg-subtle);
+  border-left: 2px solid var(--state-missing);
+  padding-left: 8px;
+}
+.portrait-ref {
+  font-size: 11px;
+  color: var(--fg-subtle);
+}

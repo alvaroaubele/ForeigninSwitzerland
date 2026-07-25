@@ -94,12 +94,10 @@ export function CrossFilter({
       <div className="wrap">
         <div className="section-head">
           <span className="eyebrow">Cross-filter</span>
-          <h2>Build a query — and see when the answer was never published</h2>
+          <h2>Ask your own question</h2>
           <p>
-            Combine any dimensions. Every option carries its own answer before you pick it, so you can see which
-            cross-tabs the sources actually published and which were never produced. Choose one that was never
-            published and the panel names the table that would have carried it, then offers the single filter to drop
-            to reach a populated view.
+            Every option shows its answer before you pick it. Dashed options were never published — the offices did not
+            cross those two things for a population this small.
           </p>
         </div>
 

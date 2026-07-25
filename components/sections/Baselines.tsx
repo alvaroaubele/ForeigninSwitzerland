@@ -52,9 +52,8 @@ export function Baselines() {
           <span className="eyebrow">Comparison</span>
           <h2>A count of 35 means little on its own</h2>
           <p>
-            Zug is a small canton, so absolute counts mislead. Against the cantons where Chileans actually cluster — Vaud,
-            Zürich, Geneva — Zug barely registers. But normalised per 1,000 foreign residents, or indexed against the
-            national rate, the picture shifts. All figures are SEM permanent residents at{" "}
+            Vaud, Zürich and Geneva hold far more Chileans than Zug. Measured per 1,000 foreign residents, the gap
+            narrows sharply. SEM permanent residents,{" "}
             {fmtDate(`${sem.year}-${String(sem.month).padStart(2, "0")}-28`).replace(/^\d+ /, "")}.
           </p>
         </div>

@@ -45,10 +45,14 @@ mkdirSync(OUT_DIR, { recursive: true });
 
 const nowIso = () => new Date().toISOString();
 
-// Months to harvest for SEM stock: December snapshots 2017-2025 (annual series)
-// plus every 2026 month to date (monthly recency; latest published = 2026-05).
+// Months to harvest for SEM stock. The archive exposes only the December
+// snapshot before 2021 and every month from 2021 on, so take everything it has:
+// 69 reference periods, monthly wherever monthly exists.
 const STOCK_MONTHS: [number, number][] = [
-  ...Array.from({ length: 9 }, (_, i) => [2017 + i, 12] as [number, number]),
+  ...[2017, 2018, 2019, 2020].map((y) => [y, 12] as [number, number]),
+  ...Array.from({ length: 5 }, (_, i) => 2021 + i).flatMap((y) =>
+    Array.from({ length: 12 }, (_, m) => [y, m + 1] as [number, number]),
+  ),
   ...[1, 2, 3, 4, 5].map((m) => [2026, m] as [number, number]),
 ];
 // Flow (annual calendar-year "-J-") harvested from December releases.

@@ -31,11 +31,9 @@ export function AvailabilityMatrix() {
       <div className="wrap">
         <div className="section-head">
           <span className="eyebrow">What is knowable</span>
-          <h2>The dimension-availability map</h2>
+          <h2>What can be known at all</h2>
           <p>
-            Before building a query that cannot be answered, see the shape of what the sources actually cross-tabulate.
-            A filled square means at least one source publishes that pair of dimensions for this population; an empty
-            square means the pair was never crossed. Most of this grid is empty — that is the finding, not a failure.
+            A filled square means some source publishes those two things together. Most of this grid is empty.
           </p>
         </div>
 

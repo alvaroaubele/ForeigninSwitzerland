@@ -1,6 +1,7 @@
 import { DataProvider } from "@/lib/data-context";
 import { Header } from "@/components/Header";
 import { PassportBirthplace } from "@/components/sections/PassportBirthplace";
+import { Portrait } from "@/components/sections/Portrait";
 import { Trend } from "@/components/sections/Trend";
 import { Explorer } from "@/components/Explorer";
 import { Baselines } from "@/components/sections/Baselines";
@@ -14,6 +15,7 @@ export default function Page() {
       <Header />
       <main>
         <PassportBirthplace />
+        <Portrait />
         <Trend />
         <Explorer />
         <Baselines />

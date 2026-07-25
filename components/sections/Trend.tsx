@@ -72,10 +72,8 @@ export function Trend() {
           <span className="eyebrow">Time · 2010–2024</span>
           <h2>A population that never left the low tens</h2>
           <p>
-            Chilean nationals in Zug rose to a peak of {peak?.value ? fmtInt(peak.value) : "34"} around 2017, fell to a
-            trough of 20 in 2020, and have since settled onto a plateau in the high twenties to low thirties. At these
-            counts every point is an individual or two — so the line is drawn straight between observed points, never
-            smoothed, and each marker shows its own cell state.
+            Chilean nationals in Zug peaked at {peak?.value ? fmtInt(peak.value) : "34"} in 2017, fell to 20 in 2020,
+            and have since climbed back to the low thirties. At this size one family arriving moves the line.
           </p>
         </div>
 

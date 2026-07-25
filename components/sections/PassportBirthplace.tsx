@@ -38,9 +38,8 @@ export function PassportBirthplace() {
           <span className="eyebrow">The central contrast</span>
           <h2 style={{ fontSize: 26, marginTop: 8 }}>Citizenship is not birthplace</h2>
           <p>
-            Two official sources count two different populations. Roughly three dozen people in Canton Zug hold a Chilean
-            passport; about a hundred were born in Chile — and most of the latter carry a Swiss or European passport. A
-            filter-and-chart dashboard would blur these into one number. They are not one number.
+            Zug has about three dozen Chilean passport holders and about a hundred residents born in Chile. They are
+            largely different people: most of the Chilean-born now hold a Swiss or EU passport.
           </p>
         </div>
 

@@ -6,6 +6,7 @@ import { fmtInt } from "@/lib/format";
 
 const NAV = [
   { id: "passport-birthplace", label: "Contrast" },
+  { id: "portrait", label: "Portrait" },
   { id: "trend", label: "Trend" },
   { id: "cross-filter", label: "Cross-filter" },
   { id: "baselines", label: "Comparison" },

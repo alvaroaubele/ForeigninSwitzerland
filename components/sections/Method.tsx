@@ -19,9 +19,8 @@ export function Method() {
           <span className="eyebrow">Method</span>
           <h2>Four states, two sources, one honest offset</h2>
           <p>
-            Every cell in this explorer resolves to one of four states. The distinction between a genuine zero and an
-            unpublished cross-tab is the whole point: at a population of about 35, a blank panel usually means “never
-            measured”, not “nobody here”.
+            At a population of 35, a blank usually means “never measured”, not “nobody here”. Every figure on this page
+            says which of the two it is.
           </p>
         </div>
 
