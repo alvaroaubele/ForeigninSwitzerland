@@ -1,17 +1,17 @@
 # BFS Harvest Verification Report
 
-_Generated 2026-07-27T10:03:45.866Z by `scripts/verify-bfs.ts` (independent re-fetch, no local cache)._
+_Generated 2026-07-27T12:05:29.190Z by `scripts/verify-bfs.ts` (independent re-fetch, no local cache)._
 
-**Verdict: PASS.** All 5333 non-null BFS cells (100% — not a sample) and all 8 BFS anchors were re-fetched directly from `www.pxweb.bfs.admin.ch` and reproduced exactly. Queries were reconstructed by inverting the harvested dimensions back to PxWeb codes with a map written in this script; json-stat2 was decoded by a decoder written in this script; the harvest's fetcher, walker, and query definitions were not imported. Each cube's metadata was also re-fetched and the source's own labels confirm the code meanings the harvest relied on.
+**Verdict: ATTENTION.** 9 discrepancy(ies) across 139389 cells, 9 anchors and 14 code-meaning claims. See the tables below.
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Eligible non-null BFS cells | 5333 |
-| Cells re-fetched and reproduced | 5333 (100.0%) |
+| Eligible non-null BFS cells | 139389 |
+| Cells re-fetched and reproduced | 139389 (100.0%) |
 | Coordinates absent from the fresh response | 0 |
-| BFS anchors reproduced | 8/8 |
+| BFS anchors reproduced | 0/9 |
 | Code-meaning claims confirmed from metadata | 14/14 |
 | HTTP requests issued | 22 (sequential, 6s apart) |
 
@@ -19,9 +19,9 @@ _Generated 2026-07-27T10:03:45.866Z by `scripts/verify-bfs.ts` (independent re-f
 
 | Cube | Cells checked | Reproduced |
 | --- | --- | --- |
-| `px-x-0103010000_101` | 2259 | 2259/2259 |
-| `px-x-0103010000_399` | 2998 | 2998/2998 |
-| `px-x-0103010000_423` | 76 | 76/76 |
+| `px-x-0103010000_101` | 57015 | 57015/57015 |
+| `px-x-0103010000_399` | 80322 | 80322/80322 |
+| `px-x-0103010000_423` | 2052 | 2052/2052 |
 
 ## Code meanings, confirmed against cube metadata
 
@@ -50,42 +50,53 @@ Each block is the per-dimension union of the coordinates of the cells that claim
 
 | Cube | Concept | Harvested cells | Cells returned fresh | |
 | --- | --- | --- | --- | --- |
-| 423 | Chilean nationals in Zug born in Chile vs elsewhere, 2023 | 4 | 4 | OK |
 | 101 | Chilean nationals in Zug by year (permanent) | 15 | 15 | OK |
 | 399 | Chilean-born residents of Zug by passport group | 24 | 24 | OK |
 | 101 | All Chilean nationals in Switzerland by year (baseline) | 30 | 30 | OK |
-| 399 | Chilean-born residents of Zug by sex and year | 30 | 30 | OK |
-| 423 | Chilean nationals in Zug by marital status and sex, 2023 | 36 | 36 | OK |
-| 423 | Chilean-born residents of Zug by marital status and sex, 2023 | 36 | 36 | OK |
 | 101 | Chilean nationals by canton, 2024 (baseline) | 54 | 54 | OK |
 | 101 | Total resident population by canton, 2024 (per-capita denominator) | 54 | 54 | OK |
-| 101 | Zug total and Swiss population by year (foreign-total baseline) | 60 | 60 | OK |
-| 101 | Chilean nationals in Zug by sex and year | 90 | 90 | OK |
-| 399 | Chilean-born residents of Zug by passport group and year | 120 | 120 | OK |
-| 399 | Chilean-born residents of Zug by 5-year age class and year | 220 | 220 | OK |
-| 101 | Chilean nationals in Zug by permit category and year | 240 | 240 | OK |
-| 399 | Chilean-born residents of Zug by passport group and sex | 360 | 360 | OK |
-| 101 | Chilean nationals in Zug by 5-year age class and year | 660 | 660 | OK |
-| 399 | Chilean-born residents of Zug by 5-year age class and sex | 660 | 660 | OK |
-| 101 | Chilean nationals in Zug by permit, sex and age (latest year) | 1056 | 1056 | OK |
-| 399 | Chilean-born residents of Zug by passport group, sex and age (latest year) | 1584 | 1584 | OK |
+| 423 | Chilean nationals in Zug born in Chile vs elsewhere, 2023 | 108 | 108 | OK |
+| 399 | Chilean-born residents of Zug by sex and year | 810 | 810 | OK |
+| 423 | Chilean nationals in Zug by marital status and sex, 2023 | 972 | 972 | OK |
+| 423 | Chilean-born residents of Zug by marital status and sex, 2023 | 972 | 972 | OK |
+| 101 | Zug total and Swiss population by year (foreign-total baseline) | 1620 | 1620 | OK |
+| 101 | Chilean nationals in Zug by sex and year | 2430 | 2430 | OK |
+| 399 | Chilean-born residents of Zug by passport group and year | 3240 | 3240 | OK |
+| 399 | Chilean-born residents of Zug by 5-year age class and year | 5940 | 5940 | OK |
+| 101 | Chilean nationals in Zug by permit category and year | 6480 | 6480 | OK |
+| 399 | Chilean-born residents of Zug by passport group and sex | 9720 | 9720 | OK |
+| 101 | Chilean nationals in Zug by 5-year age class and year | 17820 | 17820 | OK |
+| 399 | Chilean-born residents of Zug by 5-year age class and sex | 17820 | 17820 | OK |
+| 101 | Chilean nationals in Zug by permit, sex and age (latest year) | 28512 | 28512 | OK |
+| 399 | Chilean-born residents of Zug by passport group, sex and age (latest year) | 42768 | 42768 | OK |
 
 ## Anchor checks (BFS)
 
 | Anchor | Source | Expected | Re-fetched | Result |
 | --- | --- | --- | --- | --- |
-| BFS 2024 Chilean nationals (perm) | BFS 101 | 33 | 33 | PASS |
-| BFS 2017 Chilean nationals (perm) | BFS 101 | 34 | 34 | PASS |
-| BFS 2020 Chilean nationals (perm) | BFS 101 | 20 | 20 | PASS |
-| BFS 2024 Chilean-born (perm) | BFS 399 | 99 | 99 | PASS |
-| BFS 2024 Chilean-born Swiss passport | BFS 399 | 33 | 33 | PASS |
-| BFS 2024 Chilean-born LatAm passport | BFS 399 | 34 | 34 | PASS |
-| BFS 2024 Chilean-born EU passport | BFS 399 | 29 | 29 | PASS |
-| BFS 2023 Chilean nationals born in Chile | BFS 423 | 27 | 27 | PASS |
+| Zug BFS 2024 Chilean nationals (perm) | BFS 101 | 33 | — | FAIL |
+| Zug BFS 2017 Chilean nationals (perm) | BFS 101 | 34 | — | FAIL |
+| Zug BFS 2020 Chilean nationals (perm) | BFS 101 | 20 | — | FAIL |
+| Zug BFS 2024 Chilean-born (perm) | BFS 399 | 99 | — | FAIL |
+| Zug BFS 2024 Chilean-born Swiss passport | BFS 399 | 33 | — | FAIL |
+| Zug BFS 2024 Chilean-born LatAm passport | BFS 399 | 34 | — | FAIL |
+| Zug BFS 2024 Chilean-born EU passport | BFS 399 | 29 | — | FAIL |
+| Zug BFS 2023 Chilean nationals born in Chile | BFS 423 | 27 | — | FAIL |
+| Switzerland BFS 2024 Chilean nationals (perm) | BFS 101 CH | 3394 | — | FAIL |
 
 ## Discrepancies
 
-None. Every re-fetched cell, every anchor, and every code meaning matched.
+| Kind | Cube/Source | Dim/Label | Expected (harvest) | Got (fresh) | Note |
+| --- | --- | --- | --- | --- | --- |
+| anchor | BFS 101 | `Zug BFS 2024 Chilean nationals (perm)` | 33 | — | no independent predicate written for this anchor |
+| anchor | BFS 101 | `Zug BFS 2017 Chilean nationals (perm)` | 34 | — | no independent predicate written for this anchor |
+| anchor | BFS 101 | `Zug BFS 2020 Chilean nationals (perm)` | 20 | — | no independent predicate written for this anchor |
+| anchor | BFS 399 | `Zug BFS 2024 Chilean-born (perm)` | 99 | — | no independent predicate written for this anchor |
+| anchor | BFS 399 | `Zug BFS 2024 Chilean-born Swiss passport` | 33 | — | no independent predicate written for this anchor |
+| anchor | BFS 399 | `Zug BFS 2024 Chilean-born LatAm passport` | 34 | — | no independent predicate written for this anchor |
+| anchor | BFS 399 | `Zug BFS 2024 Chilean-born EU passport` | 29 | — | no independent predicate written for this anchor |
+| anchor | BFS 423 | `Zug BFS 2023 Chilean nationals born in Chile` | 27 | — | no independent predicate written for this anchor |
+| anchor | BFS 101 CH | `Switzerland BFS 2024 Chilean nationals (perm)` | 3394 | — | no independent predicate written for this anchor |
 
 ## Method notes
 

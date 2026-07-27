@@ -10,7 +10,7 @@ import type { CellResult } from "@/lib/model";
 type View = "count" | "per1000" | "index";
 
 export function Baselines() {
-  const { dataset, summary, manifest, canton, loading } = useDataset();
+  const { dataset, summary, manifest, canton, setCanton, loading } = useDataset();
   const [view, setView] = useState<View>("count");
 
   // Ranking every canton needs every canton, which no single canton file holds.
@@ -102,7 +102,23 @@ export function Baselines() {
               const display =
                 view === "count" ? fmtInt(b.chile.value) : view === "per1000" ? fmtPer1000(b.per1000Foreign) : b.indexVsNational !== null ? `${Math.round(b.indexVsNational)}` : "—";
               return (
-                <div className={`barrow ${b.canton === canton ? "is-hl" : ""}`} key={b.canton}>
+                // The row is the most natural place to ask "show me that canton",
+                // so it is a real control: clicking re-scopes the whole page, the
+                // same as picking the canton in the header.
+                <div
+                  className={`barrow is-clickable ${b.canton === canton ? "is-hl" : ""}`}
+                  key={b.canton}
+                  role="button"
+                  tabIndex={0}
+                  title={`Show ${cantonName(b.canton)} across the whole page`}
+                  onClick={() => setCanton(b.canton)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setCanton(b.canton);
+                    }
+                  }}
+                >
                   <div className="barrow-label">{cantonName(b.canton)}</div>
                   <div className="barrow-track">
                     <div

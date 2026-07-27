@@ -1721,3 +1721,27 @@ svg[tabindex="0"]:focus-visible {
   color: var(--bg);
   opacity: 0.7;
 }
+
+/* --- canton rows in the comparison are controls, and look like it --- */
+.barrow.is-clickable {
+  cursor: pointer;
+  border-radius: var(--radius);
+  transition: background 0.12s ease;
+}
+.barrow.is-clickable:hover {
+  background: var(--bg-sunken);
+}
+.barrow.is-clickable:hover .barrow-label {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.reasons-period select {
+  font-family: var(--font-sans-stack);
+  font-size: 13px;
+  padding: 6px 9px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+}

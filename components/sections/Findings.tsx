@@ -76,7 +76,7 @@ export function Findings() {
       headline: "Have become Swiss",
       detail: `Of the ${fmtInt(born.value)} born in Chile, ${fmtInt(swiss)} now hold a Swiss passport and ${fmtInt(latAm)} a Latin-American one.`,
       href: "#portrait",
-      cta: "Meet the 99",
+      cta: `Meet the ${fmtInt(born.value)}`,
     },
     {
       figure: familyShare !== null ? `${familyShare}%` : "—",

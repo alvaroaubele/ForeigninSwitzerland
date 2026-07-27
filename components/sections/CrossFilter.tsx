@@ -81,10 +81,10 @@ const PRESETS: Preset[] = [
     }),
   },
   {
-    label: "A combination nobody published",
+    label: "Of retirement age",
     apply: (f, latest) => ({
       ...f, source: "SEM", metric: "stock", populationType: "permanent",
-      year: latest.year, month: latest.month, dim: { marital: "married", lengthOfStay: "0-4" },
+      year: latest.year, month: latest.month, dim: { ageClass: "65+" },
     }),
   },
 ];
@@ -314,15 +314,13 @@ export function CrossFilter({
                     <div className="xf-notpub">
                       <div className="xf-notpub-x">—</div>
                       <p>
-                        {CELL_STATE_DESCRIPTION.not_published}
                         {result.cell.wouldBeCarriedBy ? (
                           <>
-                            {" "}
-                            This combination would be carried by <strong>{result.cell.wouldBeCarriedBy}</strong>, but the
-                            sources never cross-tabulated it for this population.
+                            The sources never cross-tabulated these dimensions for this population — the nearest table,{" "}
+                            <strong>{result.cell.wouldBeCarriedBy}</strong>, does not combine them.
                           </>
                         ) : (
-                          " No harvested source cross-tabulates these dimensions."
+                          CELL_STATE_DESCRIPTION.not_published
                         )}
                       </p>
                       {drop && (

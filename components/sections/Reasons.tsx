@@ -42,10 +42,26 @@ export function Reasons() {
   const { dataset, loading } = useDataset();
   const [view, setView] = useState<View>("arrivals");
   const [bySex, setBySex] = useState(false);
+  /** null = the full published run; a year narrows every figure to that calendar year. */
+  const [period, setPeriod] = useState<number | null>(null);
+
+  const allYears = useMemo(
+    () =>
+      dataset
+        ? [
+            ...new Set(
+              dataset.observations
+                .filter((o) => o.metric !== "stock" && o.provenance.referenceDate.endsWith("-12-31"))
+                .map((o) => o.dim.year as number),
+            ),
+          ].sort((a, b) => a - b)
+        : [],
+    [dataset],
+  );
 
   const model = useMemo(
-    () => (dataset ? build(dataset, view, view !== "arrivals" && bySex) : null),
-    [dataset, view, bySex],
+    () => (dataset ? build(dataset, view, view !== "arrivals" && bySex, period) : null),
+    [dataset, view, bySex, period],
   );
 
   if (loading || !dataset || !model) {
@@ -68,10 +84,10 @@ export function Reasons() {
       <div className="wrap">
         <div className="section-head">
           <span className="eyebrow">
-            Movement · {years[0]}–{years[years.length - 1]}
+            Movement · {years.length === 1 ? years[0] : `${years[0]}–${years[years.length - 1]}`}
           </span>
           <h2>{meta.heading}</h2>
-          <p>{lead(view, rows, totalA, totalB, years.length)}</p>
+          <p>{lead(view, rows, totalA, totalB, years)}</p>
         </div>
 
         <div className="controls-row">
@@ -105,6 +121,22 @@ export function Reasons() {
               </button>
             </div>
           )}
+          <label className="xf-field reasons-period">
+            <span className="xf-field-label">Period</span>
+            <select
+              value={period ?? "all"}
+              onChange={(e) => setPeriod(e.target.value === "all" ? null : Number(e.target.value))}
+            >
+              <option value="all">
+                Full period {allYears[0]}–{allYears[allYears.length - 1]}
+              </option>
+              {[...allYears].reverse().map((y) => (
+                <option key={y} value={y}>
+                  {y}
+                </option>
+              ))}
+            </select>
+          </label>
           <span className="portrait-ref mono">{sourceNote(view)}</span>
         </div>
 
@@ -165,22 +197,26 @@ export function Reasons() {
 
 function totalTitle(total: number, partial: boolean): string {
   if (partial) return `${fmtInt(total)} counted; one of the two tables does not carry this category, so this is a floor.`;
-  if (total === 0) return "A counted zero — the category exists and nobody used it in nine years.";
-  return `${fmtInt(total)} people over nine years.`;
+  if (total === 0) return "A counted zero — the category exists and nobody used it in this period.";
+  return `${fmtInt(total)} people in this period.`;
 }
 
-function lead(view: View, rows: Row[], totalA: number, totalB: number, nYears: number) {
+function lead(view: View, rows: Row[], totalA: number, totalB: number, years: number[]) {
   const grand = totalA + totalB;
+  const span = years.length === 1 ? `in ${years[0]}` : `over ${years.length} years`;
   if (view === "arrivals") {
     const family = rows.find((r) => r.key === "family_reunification");
+    const refugeeZero = rows
+      .filter((r) => ["refugee", "hardship", "asylum_ruling"].includes(r.key))
+      .every((r) => (r.a ?? 0) + (r.b ?? 0) === 0);
     return (
       <>
-        {fmtInt(grand)} people arrived over {nYears} years — too few for any single year to mean much, so these are
-        totals for the whole run.{" "}
+        {fmtInt(grand)} people arrived {span}.{" "}
         {family && (
           <>
-            Family reunification is the largest single reason at <strong>{fmtInt((family.a ?? 0) + (family.b ?? 0))}</strong>.
-            Nobody at all arrived as a refugee, on hardship grounds, or through an asylum ruling.
+            Family reunification is the largest single reason at{" "}
+            <strong>{fmtInt((family.a ?? 0) + (family.b ?? 0))}</strong>.
+            {refugeeZero && " Nobody arrived as a refugee, on hardship grounds, or through an asylum ruling."}
           </>
         )}
       </>
@@ -189,15 +225,15 @@ function lead(view: View, rows: Row[], totalA: number, totalB: number, nYears: n
   if (view === "departures") {
     return (
       <>
-        {fmtInt(grand)} people left over {nYears} years — close to the number who arrived, which is why the population
-        has stayed in the low tens for a decade and a half.
+        {fmtInt(grand)} people left {span} — close to the number who arrived, which is why the population changes so
+        slowly.
       </>
     );
   }
   return (
     <>
-      {fmtInt(grand)} Chilean nationals became Swiss citizens over {nYears} years. Every one of them leaves the
-      Chilean-passport count and joins the Chilean-born count — which is a large part of why the two differ so much.
+      {fmtInt(grand)} Chilean nationals became Swiss citizens {span}. Every one of them leaves the Chilean-passport
+      count and joins the Chilean-born count — a large part of why the two differ so much.
     </>
   );
 }
@@ -252,7 +288,7 @@ function ReasonBar({
 
 // ---------------------------------------------------------------------------
 
-function build(ds: Dataset, view: View, bySex: boolean) {
+function build(ds: Dataset, view: View, bySex: boolean, period: number | null) {
   const datasets = view === "arrivals" ? ["3-30", "3-31"] : view === "departures" ? ["3-55"] : ["3-60"];
 
   const years = [
@@ -264,7 +300,11 @@ function build(ds: Dataset, view: View, bySex: boolean) {
         )
         .map((o) => o.dim.year as number),
     ),
-  ].sort((a, b) => a - b);
+  ]
+    .sort((a, b) => a - b)
+    // A chosen year narrows the sums to that calendar year; the caller keeps
+    // the full list for its picker, so this filter stays local.
+    .filter((y) => period === null || y === period);
 
   /** Sum a cell across every calendar year, keeping unpublished distinct from zero. */
   const sumYears = (
