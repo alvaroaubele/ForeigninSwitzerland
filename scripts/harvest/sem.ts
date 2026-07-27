@@ -296,10 +296,14 @@ export function resolveTableUrl(index: ArchiveIndex, table: string, variant?: "J
   return href.startsWith("http") ? href : SEM_ORIGIN + href;
 }
 
-/** Find the Chile row in a ZG sheet (whitespace-tolerant). Returns null if absent. */
-export function findChileRow(buffer: Buffer): { row: (number | string | null)[]; index: number } | null {
-  const wb = XLSX.read(buffer, { type: "buffer" });
-  const sheet = wb.Sheets["ZG"];
+export interface ChileRow {
+  row: (number | string | null)[];
+  index: number;
+}
+
+/** Find the Chile row in one already-parsed sheet (whitespace-tolerant). */
+function chileRowOf(wb: XLSX.WorkBook, sheetName: string): ChileRow | null {
+  const sheet = wb.Sheets[sheetName];
   if (!sheet) return null;
   const rows = XLSX.utils.sheet_to_json<(number | string | null)[]>(sheet, {
     header: 1,
@@ -313,6 +317,30 @@ export function findChileRow(buffer: Buffer): { row: (number | string | null)[];
     }
   }
   return null;
+}
+
+/** Find the Chile row in a ZG sheet (whitespace-tolerant). Returns null if absent. */
+export function findChileRow(buffer: Buffer): ChileRow | null {
+  return chileRowOf(XLSX.read(buffer, { type: "buffer" }), "ZG");
+}
+
+/**
+ * Chile rows for many sheets from one workbook.
+ *
+ * The workbook is parsed once and every requested sheet read from that parse.
+ * Calling findChileRow per sheet would re-parse the whole file 27 times, and at
+ * 759 workbooks that is the difference between a harvest that takes minutes and
+ * one that takes hours. Sheets absent from the workbook map to null, which for a
+ * flow table is meaningful (no movement) rather than an error.
+ */
+export function findChileRowsForSheets(
+  buffer: Buffer,
+  sheetNames: string[],
+): Map<string, ChileRow | null> {
+  const wb = XLSX.read(buffer, { type: "buffer" });
+  const out = new Map<string, ChileRow | null>();
+  for (const name of sheetNames) out.set(name, chileRowOf(wb, name));
+  return out;
 }
 
 /**
@@ -345,6 +373,20 @@ export function readCantonSheet(
   }
   return { chile, foreignTotal };
 }
+
+/**
+ * Every sheet carrying a nation-by-canton breakdown, as [sheet name, canton code].
+ *
+ * "CH-Nati" is the national table — Switzerland by nationality — and becomes the
+ * canton code "CH", the app's default view. "CH-Kt" is Switzerland by canton and
+ * carries no nation rows, so it is not read here.
+ */
+export const SHEET_SCOPES: [string, string][] = [
+  ["CH-Nati", "CH"],
+  ...["AG", "AI", "AR", "BE", "BL", "BS", "FR", "GE", "GL", "GR", "JU", "LU", "NE",
+    "NW", "OW", "SG", "SH", "SO", "SZ", "TG", "TI", "UR", "VD", "VS", "ZG", "ZH",
+  ].map((c) => [c, c] as [string, string]),
+];
 
 /** The 26 canton sheet codes in the 2-10 workbook (excludes CH-Kt/CH-Nati). */
 export const CANTON_SHEETS = [

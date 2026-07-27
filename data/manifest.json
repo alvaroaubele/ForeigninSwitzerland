@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-27T09:40:06.846Z",
-  "observationCount": 12561,
+  "generatedAt": "2026-07-27T11:42:17.592Z",
+  "observationCount": 336084,
   "cellStateCounts": {
-    "observed": 5864,
-    "structural_zero": 6697,
+    "observed": 134364,
+    "structural_zero": 201720,
     "suppressed": 0,
     "not_published": 0
   },
@@ -13,8 +13,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-10 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "1206 cells",
-      "observationCount": 1206,
+      "yielded": "29916 cells",
+      "observationCount": 29916,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-10-Best-Tot-Kat-d-2017-12.xlsx.download.xlsx/2-10-Best-Tot-Kat-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-10-Best-Tot-Kat-d-2018-12.xlsx.download.xlsx/2-10-Best-Tot-Kat-d-2018-12.xlsx",
@@ -28,8 +28,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-20 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "621 cells",
-      "observationCount": 621,
+      "yielded": "16767 cells",
+      "observationCount": 16767,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-20-Best-Stae-Bewi-d-2017-12.xlsx.download.xlsx/2-20-Best-Stae-Bewi-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-20-Best-Stae-Bewi-d-2018-12.xlsx.download.xlsx/2-20-Best-Stae-Bewi-d-2018-12.xlsx",
@@ -43,8 +43,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-21 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "1104 cells",
-      "observationCount": 1104,
+      "yielded": "29808 cells",
+      "observationCount": 29808,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-21-Best-Stae-Alter-d-2017-12.xlsx.download.xlsx/2-21-Best-Stae-Alter-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-21-Best-Stae-Alter-d-2018-12.xlsx.download.xlsx/2-21-Best-Stae-Alter-d-2018-12.xlsx",
@@ -58,8 +58,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-22 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "759 cells",
-      "observationCount": 759,
+      "yielded": "20493 cells",
+      "observationCount": 20493,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-22-Best-Stae-Ziv-d-2017-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-22-Best-Stae-Ziv-d-2018-12.xlsx.download.xlsx/2-22-Best-Stae-Ziv-d-2018-12.xlsx",
@@ -73,8 +73,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-23 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "1104 cells",
-      "observationCount": 1104,
+      "yielded": "29808 cells",
+      "observationCount": 29808,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-23-Best-Stae-Dau-d-2017-12.xlsx.download.xlsx/2-23-Best-Stae-Dau-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-23-Best-Stae-Dau-d-2018-12.xlsx.download.xlsx/2-23-Best-Stae-Dau-d-2018-12.xlsx",
@@ -88,8 +88,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-40 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "960 cells",
-      "observationCount": 960,
+      "yielded": "27945 cells",
+      "observationCount": 27945,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-40-Best-NStae-Kat-d-2017-12.xlsx.download.xlsx/2-40-Best-NStae-Kat-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-40-Best-NStae-Kat-d-2018-12.xlsx.download.xlsx/2-40-Best-NStae-Kat-d-2018-12.xlsx",
@@ -103,8 +103,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-41 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "1024 cells",
-      "observationCount": 1024,
+      "yielded": "29808 cells",
+      "observationCount": 29808,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/2-41-Best-NStae-Alter-d-2017-12.xlsx.download.xlsx/2-41-Best-NStae-Alter-d-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/2-41-Best-NStae-Alter-d-2018-12.xlsx.download.xlsx/2-41-Best-NStae-Alter-d-2018-12.xlsx",
@@ -118,8 +118,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 3-30 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "100 cells",
-      "observationCount": 100,
+      "yielded": "2700 cells",
+      "observationCount": 2700,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-30-Bew-In-Stae-d-J-2017-12.xlsx.download.xlsx/3-30-Bew-In-Stae-d-J-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/3-30-Bew-In-Stae-d-J-2018-12.xlsx.download.xlsx/3-30-Bew-In-Stae-d-J-2018-12.xlsx",
@@ -133,8 +133,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 3-31 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "70 cells",
-      "observationCount": 70,
+      "yielded": "1890 cells",
+      "observationCount": 1890,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-31-Bew-In-NStae-d-J-2017-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/3-31-Bew-In-NStae-d-J-2018-12.xlsx.download.xlsx/3-31-Bew-In-NStae-d-J-2018-12.xlsx",
@@ -148,8 +148,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 3-55 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "150 cells",
-      "observationCount": 150,
+      "yielded": "4050 cells",
+      "observationCount": 4050,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-55-Ausw-Tot-d-J-2017-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/3-55-Ausw-Tot-d-J-2018-12.xlsx.download.xlsx/3-55-Ausw-Tot-d-J-2018-12.xlsx",
@@ -163,8 +163,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 3-60 (sheet ZG, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
-      "yielded": "130 cells",
-      "observationCount": 130,
+      "yielded": "3510 cells",
+      "observationCount": 3510,
       "urls": [
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2017/12/3-60-Bew-BR-d-J-2017-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2017-12.xlsx",
         "https://www.sem.admin.ch/dam/sem/de/data/publiservice/statistik/auslaenderstatistik/2018/12/3-60-Bew-BR-d-J-2018-12.xlsx.download.xlsx/3-60-Bew-BR-d-J-2018-12.xlsx",
@@ -178,8 +178,8 @@
       "source": "BFS",
       "title": "BFS STATPOP cube px-x-0103010000_101",
       "checkedFor": "Chile x Zug slices (nationality / birth country / marital)",
-      "yielded": "2259 cells",
-      "observationCount": 2259,
+      "yielded": "57015 cells",
+      "observationCount": 57015,
       "urls": [
         "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
         "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_101"
@@ -190,8 +190,8 @@
       "source": "BFS",
       "title": "BFS STATPOP cube px-x-0103010000_399",
       "checkedFor": "Chile x Zug slices (nationality / birth country / marital)",
-      "yielded": "2998 cells",
-      "observationCount": 2998,
+      "yielded": "80322 cells",
+      "observationCount": 80322,
       "urls": [
         "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
         "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_399"
@@ -202,8 +202,8 @@
       "source": "BFS",
       "title": "BFS STATPOP cube px-x-0103010000_423",
       "checkedFor": "Chile x Zug slices (nationality / birth country / marital)",
-      "yielded": "76 cells",
-      "observationCount": 76,
+      "yielded": "2052 cells",
+      "observationCount": 2052,
       "urls": [
         "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_423/px-x-0103010000_423.px",
         "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_423"
@@ -384,189 +384,189 @@
   ],
   "anchors": [
     {
-      "label": "SEM 2026-05 permanent total",
+      "label": "Zug 2026-05 permanent total",
       "expected": 35,
       "observed": 35,
       "pass": true,
       "source": "SEM 2-10"
     },
     {
-      "label": "SEM 2026-05 permanent female",
+      "label": "Zug 2026-05 permanent female",
       "expected": 20,
       "observed": 20,
       "pass": true,
       "source": "SEM 2-10"
     },
     {
-      "label": "SEM 2026-05 permit B",
+      "label": "Zug 2026-05 permit B",
       "expected": 22,
       "observed": 22,
       "pass": true,
       "source": "SEM 2-10"
     },
     {
-      "label": "SEM 2026-05 permit C",
+      "label": "Zug 2026-05 permit C",
       "expected": 11,
       "observed": 11,
       "pass": true,
       "source": "SEM 2-10"
     },
     {
-      "label": "SEM 2026-05 permit L",
+      "label": "Zug 2026-05 permit L",
       "expected": 2,
       "observed": 2,
       "pass": true,
       "source": "SEM 2-10"
     },
     {
-      "label": "SEM 2026-05 FZA",
+      "label": "Zug 2026-05 FZA",
       "expected": 17,
       "observed": 17,
       "pass": true,
       "source": "SEM 2-20"
     },
     {
-      "label": "SEM 2026-05 AIG",
+      "label": "Zug 2026-05 AIG",
       "expected": 18,
       "observed": 18,
       "pass": true,
       "source": "SEM 2-20"
     },
     {
-      "label": "SEM 2026-05 married",
+      "label": "Zug 2026-05 married",
       "expected": 23,
       "observed": 23,
       "pass": true,
       "source": "SEM 2-22"
     },
     {
-      "label": "SEM 2026-05 married to Swiss",
+      "label": "Zug 2026-05 married to Swiss",
       "expected": 6,
       "observed": 6,
       "pass": true,
       "source": "SEM 2-22"
     },
     {
-      "label": "SEM 2026-05 single",
+      "label": "Zug 2026-05 single",
       "expected": 10,
       "observed": 10,
       "pass": true,
       "source": "SEM 2-22"
     },
     {
-      "label": "SEM 2026-05 age 18-64",
+      "label": "Zug 2026-05 age 18-64",
       "expected": 27,
       "observed": 27,
       "pass": true,
       "source": "SEM 2-21"
     },
     {
-      "label": "SEM 2026-05 age 65+",
+      "label": "Zug 2026-05 age 65+",
       "expected": 0,
       "observed": 0,
       "pass": true,
       "source": "SEM 2-21"
     },
     {
-      "label": "SEM 2026-05 stay 0-4y",
+      "label": "Zug 2026-05 stay 0-4y",
       "expected": 17,
       "observed": 17,
       "pass": true,
       "source": "SEM 2-23"
     },
     {
-      "label": "SEM 2026-05 stay 20+y",
+      "label": "Zug 2026-05 stay 20+y",
       "expected": 0,
       "observed": 0,
       "pass": true,
       "source": "SEM 2-23"
     },
     {
-      "label": "SEM 12mo permanent immigration total",
+      "label": "Zug 12mo permanent immigration total",
       "expected": 3,
       "observed": 3,
       "pass": true,
       "source": "SEM 3-30 12Mt"
     },
     {
-      "label": "SEM 12mo non-permanent immigration total",
+      "label": "Zug 12mo non-permanent immigration total",
       "expected": 2,
       "observed": 2,
       "pass": true,
       "source": "SEM 3-31 12Mt"
     },
     {
-      "label": "SEM 12mo permanent emigration",
+      "label": "Zug 12mo permanent emigration",
       "expected": 1,
       "observed": 1,
       "pass": true,
       "source": "SEM 3-55 12Mt"
     },
     {
-      "label": "SEM 12mo non-permanent emigration",
+      "label": "Zug 12mo non-permanent emigration",
       "expected": 3,
       "observed": 3,
       "pass": true,
       "source": "SEM 3-55 12Mt"
     },
     {
-      "label": "SEM 12mo naturalisations",
+      "label": "Zug 12mo naturalisations",
       "expected": 0,
       "observed": 0,
       "pass": true,
       "source": "SEM 3-60 12Mt"
     },
     {
-      "label": "BFS 2024 Chilean nationals (perm)",
+      "label": "Zug BFS 2024 Chilean nationals (perm)",
       "expected": 33,
       "observed": 33,
       "pass": true,
       "source": "BFS 101"
     },
     {
-      "label": "BFS 2017 Chilean nationals (perm)",
+      "label": "Zug BFS 2017 Chilean nationals (perm)",
       "expected": 34,
       "observed": 34,
       "pass": true,
       "source": "BFS 101"
     },
     {
-      "label": "BFS 2020 Chilean nationals (perm)",
+      "label": "Zug BFS 2020 Chilean nationals (perm)",
       "expected": 20,
       "observed": 20,
       "pass": true,
       "source": "BFS 101"
     },
     {
-      "label": "BFS 2024 Chilean-born (perm)",
+      "label": "Zug BFS 2024 Chilean-born (perm)",
       "expected": 99,
       "observed": 99,
       "pass": true,
       "source": "BFS 399"
     },
     {
-      "label": "BFS 2024 Chilean-born Swiss passport",
+      "label": "Zug BFS 2024 Chilean-born Swiss passport",
       "expected": 33,
       "observed": 33,
       "pass": true,
       "source": "BFS 399"
     },
     {
-      "label": "BFS 2024 Chilean-born LatAm passport",
+      "label": "Zug BFS 2024 Chilean-born LatAm passport",
       "expected": 34,
       "observed": 34,
       "pass": true,
       "source": "BFS 399"
     },
     {
-      "label": "BFS 2024 Chilean-born EU passport",
+      "label": "Zug BFS 2024 Chilean-born EU passport",
       "expected": 29,
       "observed": 29,
       "pass": true,
       "source": "BFS 399"
     },
     {
-      "label": "BFS 2023 Chilean nationals born in Chile",
+      "label": "Zug BFS 2023 Chilean nationals born in Chile",
       "expected": 27,
       "observed": 27,
       "pass": true,
@@ -587,6 +587,27 @@
       "source": "SEM 2-10 ZH"
     },
     {
+      "label": "Switzerland 2026-05 permanent total",
+      "expected": 3303,
+      "observed": 3303,
+      "pass": true,
+      "source": "SEM 2-10 CH-Nati"
+    },
+    {
+      "label": "Switzerland BFS 2024 Chilean nationals (perm)",
+      "expected": 3394,
+      "observed": 3394,
+      "pass": true,
+      "source": "BFS 101 CH"
+    },
+    {
+      "label": "Vaud 2026-05 permanent total",
+      "expected": 989,
+      "observed": 989,
+      "pass": true,
+      "source": "SEM 2-10 VD"
+    },
+    {
       "label": "SEM Chile Switzerland total",
       "expected": 3303,
       "observed": 3303,
@@ -597,5 +618,143 @@
   "referenceDates": {
     "sem": "2026-05-31",
     "bfsStatpop": "2024-12-31"
-  }
+  },
+  "cantons": [
+    {
+      "code": "AG",
+      "observations": 12445,
+      "bytes": 2189354
+    },
+    {
+      "code": "AI",
+      "observations": 12445,
+      "bytes": 2186393
+    },
+    {
+      "code": "AR",
+      "observations": 12445,
+      "bytes": 2186473
+    },
+    {
+      "code": "BE",
+      "observations": 12445,
+      "bytes": 2192291
+    },
+    {
+      "code": "BL",
+      "observations": 12445,
+      "bytes": 2188884
+    },
+    {
+      "code": "BS",
+      "observations": 12445,
+      "bytes": 2189026
+    },
+    {
+      "code": "CH",
+      "observations": 12475,
+      "bytes": 2204557
+    },
+    {
+      "code": "FR",
+      "observations": 12445,
+      "bytes": 2191312
+    },
+    {
+      "code": "GE",
+      "observations": 12445,
+      "bytes": 2193224
+    },
+    {
+      "code": "GL",
+      "observations": 12445,
+      "bytes": 2186423
+    },
+    {
+      "code": "GR",
+      "observations": 12445,
+      "bytes": 2187336
+    },
+    {
+      "code": "JU",
+      "observations": 12445,
+      "bytes": 2187024
+    },
+    {
+      "code": "LU",
+      "observations": 12445,
+      "bytes": 2188767
+    },
+    {
+      "code": "NE",
+      "observations": 12445,
+      "bytes": 2189038
+    },
+    {
+      "code": "NW",
+      "observations": 12445,
+      "bytes": 2186449
+    },
+    {
+      "code": "OW",
+      "observations": 12445,
+      "bytes": 2186441
+    },
+    {
+      "code": "SG",
+      "observations": 12445,
+      "bytes": 2188871
+    },
+    {
+      "code": "SH",
+      "observations": 12445,
+      "bytes": 2187014
+    },
+    {
+      "code": "SO",
+      "observations": 12445,
+      "bytes": 2187975
+    },
+    {
+      "code": "SZ",
+      "observations": 12445,
+      "bytes": 2187228
+    },
+    {
+      "code": "TG",
+      "observations": 12445,
+      "bytes": 2188382
+    },
+    {
+      "code": "TI",
+      "observations": 12445,
+      "bytes": 2190153
+    },
+    {
+      "code": "UR",
+      "observations": 12445,
+      "bytes": 2186406
+    },
+    {
+      "code": "VD",
+      "observations": 12445,
+      "bytes": 2194766
+    },
+    {
+      "code": "VS",
+      "observations": 12445,
+      "bytes": 2189151
+    },
+    {
+      "code": "ZG",
+      "observations": 12484,
+      "bytes": 2194478
+    },
+    {
+      "code": "ZH",
+      "observations": 12445,
+      "bytes": 2193695
+    }
+  ],
+  "payloadVersion": 1
 }

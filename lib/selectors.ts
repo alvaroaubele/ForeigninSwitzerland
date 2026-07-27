@@ -42,7 +42,7 @@ export function passportHeadline(ds: Dataset): CellResult {
     dataset: "2-10",
     metric: "stock",
     populationType: "permanent",
-    dim: { canton: "ZG", year, month, nationality: "CL", sex: "total" },
+    dim: { year, month, nationality: "CL", sex: "total" },
   });
 }
 
@@ -54,7 +54,7 @@ export function totalHeadline(ds: Dataset): CellResult {
     dataset: "2-10",
     metric: "stock",
     populationType: "total",
-    dim: { canton: "ZG", year, month, nationality: "CL", sex: "total" },
+    dim: { year, month, nationality: "CL", sex: "total" },
   });
 }
 
@@ -64,7 +64,7 @@ export function bornHeadline(ds: Dataset, year = 2024): CellResult {
     source: "BFS",
     dataset: CUBE_399,
     populationType: "permanent",
-    dim: { canton: "ZG", year, birthCountry: "CL", nationalityGroup: "total", sex: "total" },
+    dim: { year, birthCountry: "CL", nationalityGroup: "total", sex: "total" },
   });
 }
 
@@ -81,7 +81,7 @@ export function passportSplit(ds: Dataset, year = 2024): PassportSplitRow[] {
       source: "BFS",
       dataset: CUBE_399,
       populationType: "permanent",
-      dim: { canton: "ZG", year, birthCountry: "CL", nationalityGroup: group, sex: "total" },
+      dim: { year, birthCountry: "CL", nationalityGroup: group, sex: "total" },
     }),
   })).filter((r) => r.cell.observation !== null || r.cell.state !== "not_published");
 }
@@ -103,7 +103,7 @@ export function bfsStockSeries(ds: Dataset, years = YEARS): AnnualPoint[] {
       source: "BFS",
       dataset: CUBE_101,
       populationType: "permanent",
-      dim: { canton: "ZG", year, nationality: "CL", sex: "total" },
+      dim: { year, nationality: "CL", sex: "total" },
     });
     return { year, value: c.value, state: c.state, refDate: c.observation?.provenance.referenceDate, source: "BFS" };
   });
@@ -124,7 +124,7 @@ export function semDecemberSeries(ds: Dataset): AnnualPoint[] {
       dataset: "2-10",
       metric: "stock",
       populationType: "permanent",
-      dim: { canton: "ZG", year, month: 12, nationality: "CL", sex: "total" },
+      dim: { year, month: 12, nationality: "CL", sex: "total" },
     });
     return { year, value: c.value, state: c.state, refDate: c.observation?.provenance.referenceDate, source: "SEM" };
   });
@@ -152,7 +152,7 @@ export function semMonthlySeries(ds: Dataset): AnnualPoint[] {
         dataset: "2-10",
         metric: "stock",
         populationType: "permanent",
-        dim: { canton: "ZG", year, month, nationality: "CL", sex: "total" },
+        dim: { year, month, nationality: "CL", sex: "total" },
       });
       return {
         year: year + (month - 1) / 12,

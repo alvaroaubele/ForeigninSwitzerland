@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { StateLegend } from "./StateBits";
 import { ThemeToggle } from "./ThemeToggle";
+import { CantonPicker } from "./CantonPicker";
 import { fmtInt } from "@/lib/format";
 
 const NAV = [
@@ -20,8 +21,12 @@ const NAV = [
 const NAV_IDS = NAV.map((s) => s.id);
 
 export function Header() {
-  const { dataset } = useDataset();
-  const n = dataset?.observations.length ?? null;
+  // The count is the whole harvest, not the canton in view: the page loads one
+  // canton at a time, but "12 475 harvested cells" next to a Switzerland heading
+  // reads as the size of the project, and understating it by a factor of 27 is
+  // worse than saying nothing.
+  const { dataset, cantons } = useDataset();
+  const n = cantons.length ? cantons.reduce((sum, c) => sum + c.observations, 0) : (dataset?.observations.length ?? null);
   // The observed sections only exist once the dataset has rendered them, so the
   // observer has to be (re)built at that point — the header mounts well before.
   const active = useActiveSection(NAV_IDS, dataset !== null);
@@ -33,7 +38,7 @@ export function Header() {
           <div className="header-mark">
             <span className="header-flag" aria-hidden />
             <span className="header-title">
-              Chileans in Canton Zug
+              Chileans in Switzerland
               <span className="header-sub">A data explorer for a very small population</span>
             </span>
           </div>
@@ -49,6 +54,7 @@ export function Header() {
               </a>
             ))}
           </nav>
+          <CantonPicker />
           <ThemeToggle />
         </div>
         <div className="header-legend">

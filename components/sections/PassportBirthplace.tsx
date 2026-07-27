@@ -1,6 +1,6 @@
 "use client";
 import { useDataset } from "@/lib/data-context";
-import { bornHeadline, passportHeadline, passportSplit, latestSemMonth } from "@/lib/selectors";
+import { bornHeadline, passportHeadline, passportSplit, latestSemMonth, cantonName } from "@/lib/selectors";
 import { fmtInt, fmtDate, label } from "@/lib/format";
 import { ProvenanceTip } from "../Provenance";
 import { StateSwatch } from "../StateBits";
@@ -19,7 +19,7 @@ const GROUP_COLORS: Record<string, string> = {
 };
 
 export function PassportBirthplace() {
-  const { dataset, loading } = useDataset();
+  const { dataset, canton, loading } = useDataset();
   if (loading || !dataset) return <HeroSkeleton />;
 
   const passport = passportHeadline(dataset);
@@ -38,8 +38,9 @@ export function PassportBirthplace() {
           <span className="eyebrow">Two ways to count</span>
           <h2 style={{ fontSize: 26, marginTop: 8 }}>The community is bigger than the passport count</h2>
           <p>
-            Zug has about three dozen Chilean passport holders — and about a hundred residents born in Chile. Most of
-            the Chilean-born have since taken Swiss or EU citizenship, so counting passports misses two thirds of them.
+            {cantonName(canton)} counts {fmtInt(passport.value)} Chilean passport holders — and {fmtInt(born.value)}{" "}
+            residents born in Chile. Many of the Chilean-born have since taken Swiss or EU citizenship, so counting
+            passports alone misses a large part of the community.
           </p>
         </div>
 

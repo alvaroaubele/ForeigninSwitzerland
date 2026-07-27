@@ -8,26 +8,40 @@ import { ProvenanceTip } from "../Provenance";
 import type { CellResult } from "@/lib/model";
 
 type View = "count" | "per1000" | "index";
-const TOP = ["VD", "ZH", "GE", "BE", "FR", "ZG"];
 
 export function Baselines() {
-  const { dataset, loading } = useDataset();
+  const { dataset, summary, manifest, canton, loading } = useDataset();
   const [view, setView] = useState<View>("count");
 
+  // Ranking every canton needs every canton, which no single canton file holds.
+  // The cross-canton figures ship separately for exactly this view.
+  const comparisonSet = useMemo(
+    () => (summary && manifest ? { observations: summary, manifest } : null),
+    [summary, manifest],
+  );
+
   const baselines = useMemo(() => {
-    if (!dataset) return [];
-    const all = cantonsWithChile(dataset);
-    const cantons = Array.from(new Set([...TOP, ...all]));
-    return cantonBaselines(dataset, cantons).sort((a, b) => (b.chile.value ?? 0) - (a.chile.value ?? 0));
-  }, [dataset]);
+    if (!comparisonSet) return [];
+    return cantonBaselines(comparisonSet, cantonsWithChile(comparisonSet)).sort(
+      (a, b) => (b.chile.value ?? 0) - (a.chile.value ?? 0),
+    );
+  }, [comparisonSet]);
 
   if (loading || !dataset) return <Skeleton />;
 
-  const zg = baselines.find((b) => b.canton === "ZG");
-  const foreignZg = zg?.foreign.value ?? null;
-  const chileZg = zg?.chile.value ?? null;
+  // The ranked bars deliberately exclude Switzerland — it would be six times the
+  // largest canton and flatten everything else. But the summary cards describe
+  // whatever is selected, Switzerland included, so "here" is resolved on its own
+  // rather than looked up in the ranking. Cantons with no Chilean residents at
+  // all are equally absent from the ranking and equally need a card.
+  const here = comparisonSet ? cantonBaselines(comparisonSet, [canton])[0] : undefined;
+  const foreignZg = here?.foreign.value ?? null;
+  const chileZg = here?.chile.value ?? null;
   const sem = latestSemMonth(dataset);
-  const national = resolveCell(dataset, {
+  // Resolved against the cross-canton summary, not the canton in view: a canton
+  // file has no Switzerland row, so this read used to come back "—" everywhere
+  // except the national view.
+  const national = resolveCell(comparisonSet ?? dataset, {
     source: "SEM",
     dataset: "2-10",
     metric: "stock",
@@ -50,18 +64,18 @@ export function Baselines() {
       <div className="wrap">
         <div className="section-head">
           <span className="eyebrow">Comparison</span>
-          <h2>A count of 35 means little on its own</h2>
+          <h2>Where Chileans actually live</h2>
           <p>
-            Vaud, Zürich and Geneva hold far more Chileans than Zug. Measured per 1,000 foreign residents, the gap
-            narrows sharply. SEM permanent residents,{" "}
+            Vaud, Zürich and Geneva hold the largest communities. Measured per 1,000 foreign residents the ranking
+            changes, because a big canton has more of everyone. SEM permanent residents,{" "}
             {fmtDate(`${sem.year}-${String(sem.month).padStart(2, "0")}-28`).replace(/^\d+ /, "")}.
           </p>
         </div>
 
         <div className="baseline-cards">
-          <MiniStat label="Chileans in Zug" value={chileZg} sub="of whom permanent" cell={zg?.chile} />
-          <MiniStat label="Share of Zug’s foreign residents" value={null} display={foreignZg && chileZg ? `${((chileZg / foreignZg) * 100).toFixed(2)}%` : "—"} sub={`${fmtInt(foreignZg)} foreign residents`} cell={zg?.foreign} />
-          <MiniStat label="Share of all Chileans in Switzerland" value={null} display={national.value && chileZg ? `${((chileZg / national.value) * 100).toFixed(1)}%` : "—"} sub={`${fmtInt(national.value)} in Switzerland`} cell={national} />
+          <MiniStat label={`Chileans in ${cantonName(canton)}`} value={chileZg} sub="of whom permanent" cell={here?.chile} />
+          <MiniStat label={`Share of ${cantonName(canton)}\u2019s foreign residents`} value={null} display={foreignZg !== null && foreignZg > 0 && chileZg !== null ? `${((chileZg / foreignZg) * 100).toFixed(2)}%` : "—"} sub={`${fmtInt(foreignZg)} foreign residents`} cell={here?.foreign} />
+          <MiniStat label="Share of all Chileans in Switzerland" value={null} display={national.value !== null && national.value > 0 && chileZg !== null ? `${((chileZg / national.value) * 100).toFixed(1)}%` : "—"} sub={`${fmtInt(national.value)} in Switzerland`} cell={national} />
           <MiniStat label="Total incl. non-permanent" value={total.value} sub={`${fmtInt(passport.value)} permanent`} cell={total} />
         </div>
 
@@ -88,14 +102,14 @@ export function Baselines() {
               const display =
                 view === "count" ? fmtInt(b.chile.value) : view === "per1000" ? fmtPer1000(b.per1000Foreign) : b.indexVsNational !== null ? `${Math.round(b.indexVsNational)}` : "—";
               return (
-                <div className={`barrow ${b.canton === "ZG" ? "is-hl" : ""}`} key={b.canton}>
+                <div className={`barrow ${b.canton === canton ? "is-hl" : ""}`} key={b.canton}>
                   <div className="barrow-label">{cantonName(b.canton)}</div>
                   <div className="barrow-track">
                     <div
                       className="barrow-fill"
                       style={{
                         width: `${Math.max(0, ((val ?? 0) / (max || 1)) * 100)}%`,
-                        background: b.canton === "ZG" ? "var(--accent)" : "var(--series-2)",
+                        background: b.canton === canton ? "var(--accent)" : "var(--series-2)",
                       }}
                     />
                     {view === "index" && (

@@ -1626,3 +1626,98 @@ svg[tabindex="0"]:focus-visible {
   background: var(--bg);
   border-color: var(--border-strong);
 }
+
+/* =========================================================================
+   Canton picker — the control that changes every figure on the page
+   ========================================================================= */
+.canton-picker {
+  position: relative;
+  margin-left: 18px;
+}
+.canton-picker.is-switching .canton-trigger-name {
+  opacity: 0.45;
+}
+.canton-trigger {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 6px 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+  cursor: pointer;
+  font-family: var(--font-sans-stack);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.canton-trigger:hover {
+  border-color: var(--fg-subtle);
+  background: var(--bg-sunken);
+}
+.canton-trigger-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-subtle);
+}
+.canton-trigger-name {
+  font-size: 14px;
+  font-weight: 600;
+  transition: opacity 0.15s ease;
+}
+.canton-trigger svg {
+  align-self: center;
+  color: var(--fg-subtle);
+}
+.canton-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 40;
+  width: 240px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 5px;
+  background: var(--panel);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+.canton-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 7px 10px;
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--fg);
+  font-family: var(--font-sans-stack);
+  font-size: 13.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.canton-option:hover {
+  background: var(--bg-sunken);
+}
+.canton-option.is-on {
+  background: var(--fg);
+  color: var(--bg);
+}
+.canton-option.is-national {
+  border-bottom: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  margin-bottom: 4px;
+  padding-bottom: 9px;
+  font-weight: 600;
+}
+.canton-option-code {
+  font-size: 11px;
+  color: var(--fg-subtle);
+}
+.canton-option.is-on .canton-option-code {
+  color: var(--bg);
+  opacity: 0.7;
+}

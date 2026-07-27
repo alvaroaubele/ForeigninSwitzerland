@@ -113,7 +113,6 @@ export function Explorer() {
         metric: filter.metric,
         populationType: filter.populationType,
         dim: {
-          canton: "ZG",
           year: filter.year,
           ...(filter.source === "SEM" ? { month: filter.month, nationality: "CL" } : { nationality: "CL" }),
           ...filter.dim,

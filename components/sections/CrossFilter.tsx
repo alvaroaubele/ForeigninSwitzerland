@@ -389,7 +389,6 @@ function toSelection(filter: FilterState): Selection {
     metric: filter.metric,
     populationType: filter.populationType,
     dim: {
-      canton: "ZG",
       year: filter.year,
       ...(filter.source === "SEM" ? { month: filter.month } : {}),
       ...(filter.source === "SEM"
@@ -429,7 +428,7 @@ function optionValues(ds: Dataset, filter: FilterState, k: BreakdownKey): string
   const vals = distinctValues(
     ds,
     k,
-    (o) => o.source === filter.source && o.metric === filter.metric && o.dim.canton === "ZG",
+    (o) => o.source === filter.source && o.metric === filter.metric,
   );
   // sensible ordering
   const order = ["total", "female", "male", "B", "C", "L", "FZA", "AIG"];

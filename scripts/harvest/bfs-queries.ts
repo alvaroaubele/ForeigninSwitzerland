@@ -127,7 +127,7 @@ export const CUBE_101_QUERIES: CubeQuerySpec[] = [
     id: "101-permit-ts",
     cube: CUBE_101,
     concept: "Chilean nationals in Zug by permit category and year",
-    query: q101Base([ZG], [CHILE], ALL_YEARS_101, [TOTAL, "2", "3", "4", "5", "7", "8", "9"], [TOTAL], [TOTAL]),
+    query: q101Base(ALL_CANTONS, [CHILE], ALL_YEARS_101, [TOTAL, "2", "3", "4", "5", "7", "8", "9"], [TOTAL], [TOTAL]),
     map: (c) => ({ ...map101(c), populationType: pop101(c) }),
     metric: "stock",
     referenceDateFor: refDec,
@@ -137,7 +137,7 @@ export const CUBE_101_QUERIES: CubeQuerySpec[] = [
     id: "101-sex-ts",
     cube: CUBE_101,
     concept: "Chilean nationals in Zug by sex and year",
-    query: q101Base([ZG], [CHILE], ALL_YEARS_101, [TOTAL], [TOTAL, "1", "2"], [TOTAL]),
+    query: q101Base(ALL_CANTONS, [CHILE], ALL_YEARS_101, [TOTAL], [TOTAL, "1", "2"], [TOTAL]),
     map: (c) => ({ ...map101(c), populationType: pop101(c) }),
     metric: "stock",
     referenceDateFor: refDec,
@@ -147,7 +147,7 @@ export const CUBE_101_QUERIES: CubeQuerySpec[] = [
     id: "101-age-ts",
     cube: CUBE_101,
     concept: "Chilean nationals in Zug by 5-year age class and year",
-    query: q101Base([ZG], [CHILE], ALL_YEARS_101, [TOTAL], [TOTAL], ALL_AGE),
+    query: q101Base(ALL_CANTONS, [CHILE], ALL_YEARS_101, [TOTAL], [TOTAL], ALL_AGE),
     map: (c) => ({ ...map101(c), populationType: pop101(c) }),
     metric: "stock",
     referenceDateFor: refDec,
@@ -198,7 +198,7 @@ export const CUBE_101_QUERIES: CubeQuerySpec[] = [
     id: "101-full-cross-latest",
     cube: CUBE_101,
     concept: "Chilean nationals in Zug by permit, sex and age (latest year)",
-    query: q101Base([ZG], [CHILE], [LATEST_YEAR_101], [TOTAL, "2", "3", "4", "5", "7", "8", "9"], [TOTAL, "1", "2"], ALL_AGE),
+    query: q101Base(ALL_CANTONS, [CHILE], [LATEST_YEAR_101], [TOTAL, "2", "3", "4", "5", "7", "8", "9"], [TOTAL, "1", "2"], ALL_AGE),
     map: (c) => ({ ...map101(c), populationType: pop101(c) }),
     metric: "stock",
     referenceDateFor: refDec,
@@ -208,7 +208,7 @@ export const CUBE_101_QUERIES: CubeQuerySpec[] = [
     id: "101-zug-foreign-ts",
     cube: CUBE_101,
     concept: "Zug total and Swiss population by year (foreign-total baseline)",
-    query: q101Base([ZG], [TOTAL, CH], ALL_YEARS_101, [TOTAL], [TOTAL], [TOTAL]),
+    query: q101Base(ALL_CANTONS, [TOTAL, CH], ALL_YEARS_101, [TOTAL], [TOTAL], [TOTAL]),
     map: (c) => ({ ...map101(c), populationType: pop101(c) }),
     metric: "stock",
     referenceDateFor: refDec,
@@ -219,7 +219,7 @@ export const CUBE_101_QUERIES: CubeQuerySpec[] = [
 // ---- Cube 399: Chilean-born residents ---------------------------------------
 const q399Base = (natgroup: string[], sex: string[], age: string[]) => [
   item("Jahr", ALL_YEARS_399),
-  item("Kanton", [ZG]),
+  item("Kanton", ALL_CANTONS),
   item("Bevölkerungstyp", ["1", "2"]),
   item("Staatsangehörigkeit (Auswahl)", natgroup),
   item("Geburtsstaat", [CHILE]),
@@ -228,7 +228,7 @@ const q399Base = (natgroup: string[], sex: string[], age: string[]) => [
 ];
 const map399 = (coord: Record<string, string>): Partial<Observation["dim"]> => {
   const d: Partial<Observation["dim"]> = {
-    canton: ZG,
+    canton: coord["Kanton"] === CH ? "CH" : coord["Kanton"],
     year: Number(coord["Jahr"]),
     birthCountry: "CL",
     sex: SEX_101[coord["Geschlecht"]] ?? "total",
@@ -286,7 +286,7 @@ export const CUBE_399_QUERIES: CubeQuerySpec[] = [
     concept: "Chilean-born residents of Zug by passport group, sex and age (latest year)",
     query: [
       item("Jahr", [LATEST_YEAR_399]),
-      item("Kanton", [ZG]),
+      item("Kanton", ALL_CANTONS),
       item("Bevölkerungstyp", ["1", "2"]),
       item("Staatsangehörigkeit (Auswahl)", ["-99999", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-1", "-9"]),
       item("Geburtsstaat", [CHILE]),
@@ -323,7 +323,7 @@ export const CUBE_399_QUERIES: CubeQuerySpec[] = [
 // ---- Cube 423: marital status (2023) ----------------------------------------
 const q423 = (nat: string[], birth: string[], sex: string[], marital: string[]) => [
   item("Jahr", ["2023"]),
-  item("Kanton", [ZG]),
+  item("Kanton", ALL_CANTONS),
   item("Bevölkerungstyp", ["1", "2"]),
   item("Staatsangehörigkeit", nat),
   item("Geburtsstaat", birth),
@@ -332,7 +332,7 @@ const q423 = (nat: string[], birth: string[], sex: string[], marital: string[]) 
 ];
 const map423 = (coord: Record<string, string>, kind: "nationality" | "birthCountry"): Partial<Observation["dim"]> => {
   const d: Partial<Observation["dim"]> = {
-    canton: ZG,
+    canton: coord["Kanton"] === CH ? "CH" : coord["Kanton"],
     year: 2023,
     sex: SEX_101[coord["Geschlecht"]] ?? "total",
   };

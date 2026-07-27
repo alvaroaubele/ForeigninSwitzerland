@@ -98,7 +98,7 @@ export function AvailabilityMatrix() {
                   </div>
                   <div className="matrix-readout-no">Never published</div>
                   <div className="matrix-readout-note">
-                    No harvested source crosses these two dimensions for Chile × Zug.
+                    No harvested source crosses these two dimensions for this population.
                   </div>
                 </>
               )

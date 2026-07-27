@@ -9,10 +9,10 @@ export function Footer() {
       <div className="wrap">
         <div className="footer-grid">
           <div>
-            <div className="footer-title">Chileans in Canton Zug</div>
+            <div className="footer-title">Chileans in Switzerland</div>
             <p className="footer-note">
               An honest exploration of official statistics on a population of roughly 35 Chilean passport holders and 99
-              Chilean-born residents in Canton Zug, Switzerland. Built only from harvested open data; nothing is
+              Chilean-born residents in Switzerland, nationally and by canton. Built only from harvested open data; nothing is
               estimated.
             </p>
           </div>

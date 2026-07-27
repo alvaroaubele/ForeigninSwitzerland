@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { resolveCell, type Dataset } from "@/lib/model";
-import { distinctValues, latestSemMonth, CUBE_399, CUBE_423 } from "@/lib/selectors";
+import { distinctValues, latestSemMonth, cantonName, CUBE_399, CUBE_423 } from "@/lib/selectors";
 import { fmtInt, label, DIM_LABELS, STATE_CLASS, fmtDate } from "@/lib/format";
 import type { CellState, Dimensions } from "@/lib/types";
 
@@ -56,7 +56,7 @@ interface Row {
  * visible, and marital status shows the wall where even that is not published.
  */
 export function Portrait() {
-  const { dataset, loading } = useDataset();
+  const { dataset, canton, loading } = useDataset();
   const [bySex, setBySex] = useState(false);
   const [pop, setPop] = useState<Pop>("nationals");
 
@@ -81,7 +81,7 @@ export function Portrait() {
       metric: "stock",
       populationType: "permanent",
       dim: {
-        canton: "ZG", nationality: "CL", year: sem.year, month: sem.month,
+        nationality: "CL", year: sem.year, month: sem.month,
         sex: "total", marital: "married", marriedToSwiss: true,
       },
     });
@@ -115,17 +115,23 @@ export function Portrait() {
       <div className="wrap">
         <div className="section-head">
           <span className="eyebrow">Portrait</span>
-          <h2>Who are the {fmtInt(headTotal)}?</h2>
+          <h2>
+            {headTotal === 0
+              ? pop === "nationals"
+                ? `Nobody in ${cantonName(canton)} holds a Chilean passport`
+                : `Nobody in ${cantonName(canton)} was born in Chile`
+              : `Who are the ${fmtInt(headTotal)}?`}
+          </h2>
           <p>
             {pop === "nationals" ? (
               <>
-                Everyone in Zug holding a Chilean passport, by every attribute the register carries. Split by sex to go
+                Everyone in {cantonName(canton)} holding a Chilean passport, by every attribute the register carries. Split by sex to go
                 one level deeper — as far as SEM goes, since it crosses these with sex and with nothing else. BFS goes
                 further: the cross-filter below answers permit, sex and age together.
               </>
             ) : (
               <>
-                Everyone in Zug born in Chile — a larger and mostly different group.{" "}
+                Everyone in {cantonName(canton)} born in Chile — a larger and mostly different group.{" "}
                 {latAmBorn !== null && (
                   <>
                     Only <strong>{fmtInt(latAmBorn)}</strong> still hold a Latin-American passport; the other{" "}
@@ -295,7 +301,7 @@ function buildRows(
     const values = distinctValues(
       ds,
       key,
-      (o) => o.source === "SEM" && o.metric === "stock" && o.dim.canton === "ZG",
+      (o) => o.source === "SEM" && o.metric === "stock",
     ).sort(byBand);
 
     const cellFor = (dim: Partial<Dimensions>) =>
@@ -303,7 +309,7 @@ function buildRows(
         source: "SEM",
         metric: "stock",
         populationType: "permanent",
-        dim: { canton: "ZG", nationality: "CL", year: sem.year, month: sem.month, sex, ...dim },
+        dim: { nationality: "CL", year: sem.year, month: sem.month, sex, ...dim },
       });
 
     const segments: Seg[] = values.map((v) => {
@@ -333,7 +339,7 @@ function buildBornRows(ds: Dataset, sex: "total" | "female" | "male"): Row[] {
       source: "BFS",
       dataset: cube,
       populationType: "permanent",
-      dim: { canton: "ZG", year, birthCountry: "CL", sex, ...dim },
+      dim: { year, birthCountry: "CL", sex, ...dim },
     });
 
   return BORN_KEYS.map((key): Row => {

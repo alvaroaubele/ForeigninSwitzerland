@@ -26,9 +26,9 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chileans in Canton Zug — a data explorer for a very small population",
+  title: "Chileans in Switzerland — a data explorer for a very small population",
   description:
-    "An honest exploration of official statistics on Chilean nationals and Chilean-born residents in Canton Zug, Switzerland. Every cell resolves to observed, structural zero, suppressed, or not published.",
+    "An honest exploration of official statistics on Chilean nationals and Chilean-born residents in Switzerland, nationally and by canton. Every cell resolves to observed, structural zero, suppressed, or not published.",
 };
 
 /**

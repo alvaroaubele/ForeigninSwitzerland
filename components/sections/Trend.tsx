@@ -1,11 +1,10 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
-import { bfsStockSeries, semDecemberSeries, semMonthlySeries } from "@/lib/selectors";
+import { bfsStockSeries, semDecemberSeries, semMonthlySeries, cantonName } from "@/lib/selectors";
 import { resolveCell } from "@/lib/model";
 import { TimeSeries, SeriesLegend, type Series } from "../charts/TimeSeries";
 import { StateLegend } from "../StateBits";
-import { fmtInt } from "@/lib/format";
 import type { CellState } from "@/lib/types";
 
 type Breakdown = "none" | "sex" | "permit";
@@ -20,7 +19,7 @@ const SEXES = [
 ];
 
 export function Trend() {
-  const { dataset, loading } = useDataset();
+  const { dataset, canton, loading } = useDataset();
   const [breakdown, setBreakdown] = useState<Breakdown>("none");
   const [monthly, setMonthly] = useState(false);
 
@@ -56,7 +55,6 @@ export function Trend() {
           dataset: "px-x-0103010000_101",
           populationType: "permanent",
           dim: {
-            canton: "ZG",
             year,
             nationality: "CL",
             ...(breakdown === "sex" ? { sex: cat.code as "male" | "female" } : { permit: cat.code, sex: "total" }),
@@ -70,9 +68,6 @@ export function Trend() {
 
   if (loading || !dataset) return <SectionSkeleton title="A 16-year view" />;
 
-  const bfs = bfsStockSeries(dataset);
-  const observedBfs = bfs.filter((d) => d.state === "observed");
-  const peak = observedBfs.reduce((m, d) => ((d.value ?? 0) > (m.value ?? 0) ? d : m), observedBfs[0] ?? { year: 0, value: 0 });
   const hasData = series.some((s) => s.data.some((d) => d.state === "observed"));
 
   return (
@@ -82,8 +77,8 @@ export function Trend() {
           <span className="eyebrow">Time · 2010–2026</span>
           <h2>A population that never left the low tens</h2>
           <p>
-            Chilean nationals in Zug peaked at {peak?.value ? fmtInt(peak.value) : "34"} in 2017, fell to 20 in 2020,
-            and have since climbed back to the low thirties. At this size one family arriving moves the line.
+            Chilean nationals in {cantonName(canton)}, as counted by two registers that do not agree and are not
+            reconciled here. At these sizes a single family arriving moves the line.
           </p>
         </div>
 
@@ -119,14 +114,7 @@ export function Trend() {
             <>
               <TimeSeries
                 series={series}
-                annotations={
-                  breakdown === "none"
-                    ? [
-                        { year: 2017, text: "peak 34" },
-                        { year: 2020, text: "trough 20" },
-                      ]
-                    : []
-                }
+                annotations={breakdown === "none" ? peakAndTrough(series) : []}
               />
               <SeriesLegend series={series} />
             </>
@@ -139,6 +127,27 @@ export function Trend() {
       </div>
     </section>
   );
+}
+
+/**
+ * High and low points of the BFS series, found rather than asserted.
+ *
+ * These were hardcoded to Zug's peak of 34 in 2017 and trough of 20 in 2020,
+ * which is wrong for every other canton and for Switzerland. Only marked when
+ * the series is long enough for a peak to mean anything, and only from the
+ * register series, which is annual and complete.
+ */
+function peakAndTrough(series: Series[]): { year: number; text: string }[] {
+  const bfs = series.find((s) => s.id === "bfs");
+  const pts = (bfs?.data ?? []).filter((d) => d.state === "observed" && d.value !== null);
+  if (pts.length < 5) return [];
+  const hi = pts.reduce((m, d) => ((d.value ?? 0) > (m.value ?? 0) ? d : m), pts[0]);
+  const lo = pts.reduce((m, d) => ((d.value ?? 0) < (m.value ?? 0) ? d : m), pts[0]);
+  if (hi.year === lo.year) return [];
+  return [
+    { year: hi.year, text: `peak ${hi.value}` },
+    { year: lo.year, text: `low ${lo.value}` },
+  ];
 }
 
 function SectionSkeleton({ title }: { title: string }) {

@@ -16,10 +16,12 @@
 import { createHash } from "node:crypto";
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { encodeCanton, PAYLOAD_VERSION } from "../lib/payload";
 import {
   fetchArchiveIndex,
   resolveTableUrl,
-  findChileRow,
+  findChileRowsForSheets,
+  SHEET_SCOPES,
   readCantonSheet,
   CANTON_SHEETS,
   STOCK_TABLES,
@@ -119,36 +121,47 @@ async function runSem(run: SemRun, urlsAccum: Set<string>): Promise<void> {
       const res = (await fetchRaw(url, { ext: "xlsx" })) as { buffer: Buffer; notFound?: boolean; retrievedAt: string };
       if (res.notFound || res.buffer.length === 0) continue;
       const isFlow = def.metric !== "stock";
-      const found = findChileRow(res.buffer);
-      // Flow tables list only nations with movement. When Chile is absent it means
-      // zero movement — a genuine structural zero. We run the SAME extractor over a
-      // zero-filled row so the absent case produces cells with IDENTICAL coordinates
-      // (nationality "CL", the table's own populationType and concept) to the present
-      // case; every value is 0 and classifies to structural_zero. This keeps a
-      // zero-flow reachable by exactly the coordinates used when Chile is present.
-      if (!found && !isFlow) continue; // stock tables always list Chile
-      const row = found ? found.row : ["Chile", ...(Array(48).fill(0) as number[])];
-      const cells = def.extract(row);
-      for (const cell of cells) {
-        const { value, state } = classify(cell.value, false);
-        pushObs({
-          source: "SEM",
-          dataset: def.table,
-          metric: cell.metric,
-          populationType: cell.pop,
-          dim: { canton: "ZG", year, month, nationality: "CL", ...cell.dim },
-          value,
-          state,
-          concept: cell.concept,
-          provenance: {
-            url,
-            referenceDate,
-            retrievedAt: res.retrievedAt,
-            sheet: "ZG",
-            rowLabel: found ? "Chile" : "Chile (absent from flow table = 0)",
-            rowIndex: found ? found.index : undefined,
-          },
-        });
+      // One parse of the workbook, every canton sheet read from it.
+      const perSheet = findChileRowsForSheets(res.buffer, SHEET_SCOPES.map(([s]) => s));
+      for (const [sheetName, canton] of SHEET_SCOPES) {
+        const found = perSheet.get(sheetName) ?? null;
+        // Flow tables list only nations with movement. When Chile is absent it means
+        // zero movement — a genuine structural zero. We run the SAME extractor over a
+        // zero-filled row so the absent case produces cells with IDENTICAL coordinates
+        // (nationality "CL", the table's own populationType and concept) to the present
+        // case; every value is 0 and classifies to structural_zero. This keeps a
+        // zero-flow reachable by exactly the coordinates used when Chile is present.
+        //
+        // In a stock table a missing Chile row means the canton has no Chilean
+        // residents at all — which is equally a real zero, and far more common now
+        // that all 26 cantons are read rather than Zug alone.
+        const row = found ? found.row : ["Chile", ...(Array(48).fill(0) as number[])];
+        const cells = def.extract(row);
+        for (const cell of cells) {
+          const { value, state } = classify(cell.value, false);
+          pushObs({
+            source: "SEM",
+            dataset: def.table,
+            metric: cell.metric,
+            populationType: cell.pop,
+            dim: { canton, year, month, nationality: "CL", ...cell.dim },
+            value,
+            state,
+            concept: cell.concept,
+            provenance: {
+              url,
+              referenceDate,
+              retrievedAt: res.retrievedAt,
+              sheet: sheetName,
+              rowLabel: found
+                ? "Chile"
+                : isFlow
+                  ? "Chile (absent from flow table = 0)"
+                  : "Chile (absent from canton sheet = 0)",
+              rowIndex: found ? found.index : undefined,
+            },
+          });
+        }
       }
     }
   }
@@ -171,9 +184,14 @@ async function runSemCantonal(year: number, month: number, urlsAccum: Set<string
   for (const [sheet, canton] of sheets) {
     const read = readCantonSheet(res.buffer, sheet);
     if (!read) continue;
-    if (read.chile) {
+    {
+      // A canton sheet that does not list Chile has no Chilean residents — a
+      // real zero, not a missing figure. Skipping it here left the smallest
+      // cantons reading "never published" in the comparison while the main
+      // extraction path, which does emit the zero, disagreed with it.
+      const chile = read.chile ?? ([0, 0, 0] as [number, number, number]);
       SEX.forEach((sex, i) => {
-        const { value, state } = classify(read.chile![i], false);
+        const { value, state } = classify(chile[i], false);
         pushObs({
           source: "SEM",
           dataset: "2-10",
@@ -183,7 +201,13 @@ async function runSemCantonal(year: number, month: number, urlsAccum: Set<string
           value,
           state,
           concept: "Chilean nationals (cantonal comparison)",
-          provenance: { url, referenceDate, retrievedAt: res.retrievedAt, sheet, rowLabel: "Chile" },
+          provenance: {
+            url,
+            referenceDate,
+            retrievedAt: res.retrievedAt,
+            sheet,
+            rowLabel: read.chile ? "Chile" : "Chile (absent from canton sheet = 0)",
+          },
         });
       });
     }
@@ -392,38 +416,53 @@ function anchorChecks(): AnchorCheck[] {
     const o = observations.find(pred);
     return o ? o.value : null;
   };
-  const semLatest = (m: (o: Observation) => boolean) =>
-    find((o) => o.source === "SEM" && o.dim.year === 2026 && o.dim.month === 5 && m(o));
+  // Every anchor below names its canton. Before the harvest covered all 26 of
+  // them these predicates matched only Zug by construction; now an unconstrained
+  // predicate silently matches whichever canton sorts first, which is how a Zug
+  // anchor of 3 came back as the Swiss total of 163.
+  const semLatestIn = (canton: string, m: (o: Observation) => boolean) =>
+    find((o) => o.source === "SEM" && o.dim.canton === canton && o.dim.year === 2026 && o.dim.month === 5 && m(o));
+  const semLatest = (m: (o: Observation) => boolean) => semLatestIn("ZG", m);
+  const findIn = (canton: string, pred: (o: Observation) => boolean) =>
+    find((o) => o.dim.canton === canton && pred(o));
   const checks: [string, number, number | null, string][] = [
-    ["SEM 2026-05 permanent total", 35, semLatest((o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"), "SEM 2-10"],
-    ["SEM 2026-05 permanent female", 20, semLatest((o) => o.dataset === "2-10" && o.concept === "Permanent residents" && o.dim.sex === "female"), "SEM 2-10"],
-    ["SEM 2026-05 permit B", 22, semLatest((o) => o.dataset === "2-10" && o.dim.permit === "B" && o.dim.sex === "total"), "SEM 2-10"],
-    ["SEM 2026-05 permit C", 11, semLatest((o) => o.dataset === "2-10" && o.dim.permit === "C" && o.dim.sex === "total"), "SEM 2-10"],
-    ["SEM 2026-05 permit L", 2, semLatest((o) => o.dataset === "2-10" && o.dim.permit === "L" && o.dim.sex === "total"), "SEM 2-10"],
-    ["SEM 2026-05 FZA", 17, semLatest((o) => o.dataset === "2-20" && o.dim.legalBasis === "FZA" && o.dim.sex === "total"), "SEM 2-20"],
-    ["SEM 2026-05 AIG", 18, semLatest((o) => o.dataset === "2-20" && o.dim.legalBasis === "AIG" && o.dim.sex === "total"), "SEM 2-20"],
-    ["SEM 2026-05 married", 23, semLatest((o) => o.dataset === "2-22" && o.dim.marital === "married" && !o.dim.marriedToSwiss), "SEM 2-22"],
-    ["SEM 2026-05 married to Swiss", 6, semLatest((o) => o.dataset === "2-22" && o.dim.marital === "married" && o.dim.marriedToSwiss === true), "SEM 2-22"],
-    ["SEM 2026-05 single", 10, semLatest((o) => o.dataset === "2-22" && o.dim.marital === "single"), "SEM 2-22"],
-    ["SEM 2026-05 age 18-64", 27, semLatest((o) => o.dataset === "2-21" && o.dim.ageClass === "18-64" && o.dim.sex === "total"), "SEM 2-21"],
-    ["SEM 2026-05 age 65+", 0, semLatest((o) => o.dataset === "2-21" && o.dim.ageClass === "65+" && o.dim.sex === "total"), "SEM 2-21"],
-    ["SEM 2026-05 stay 0-4y", 17, semLatest((o) => o.dataset === "2-23" && o.dim.lengthOfStay === "0-4" && o.dim.sex === "total"), "SEM 2-23"],
-    ["SEM 2026-05 stay 20+y", 0, semLatest((o) => o.dataset === "2-23" && o.dim.lengthOfStay === "20+" && o.dim.sex === "total"), "SEM 2-23"],
-    ["SEM 12mo permanent immigration total", 3, find((o) => o.dataset === "3-30" && o.metric === "immigration" && o.populationType === "permanent" && o.concept === "Total immigration" && o.dim.year === 2026 && o.dim.month === 5), "SEM 3-30 12Mt"],
-    ["SEM 12mo non-permanent immigration total", 2, find((o) => o.dataset === "3-31" && o.metric === "immigration" && o.populationType === "non_permanent" && o.concept === "Total immigration" && o.dim.year === 2026 && o.dim.month === 5), "SEM 3-31 12Mt"],
-    ["SEM 12mo permanent emigration", 1, find((o) => o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "permanent" && o.concept === "Permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026), "SEM 3-55 12Mt"],
-    ["SEM 12mo non-permanent emigration", 3, find((o) => o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "non_permanent" && o.concept === "Non-permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026), "SEM 3-55 12Mt"],
-    ["SEM 12mo naturalisations", 0, find((o) => o.dataset === "3-60" && o.metric === "naturalisation" && o.dim.year === 2026), "SEM 3-60 12Mt"],
-    ["BFS 2024 Chilean nationals (perm)", 33, find((o) => o.dataset === "px-x-0103010000_101" && o.dim.canton === "ZG" && o.dim.nationality === "CL" && o.dim.year === 2024 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
-    ["BFS 2017 Chilean nationals (perm)", 34, find((o) => o.dataset === "px-x-0103010000_101" && o.dim.canton === "ZG" && o.dim.nationality === "CL" && o.dim.year === 2017 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
-    ["BFS 2020 Chilean nationals (perm)", 20, find((o) => o.dataset === "px-x-0103010000_101" && o.dim.canton === "ZG" && o.dim.nationality === "CL" && o.dim.year === 2020 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
-    ["BFS 2024 Chilean-born (perm)", 99, find((o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "total" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
-    ["BFS 2024 Chilean-born Swiss passport", 33, find((o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "Swiss" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
-    ["BFS 2024 Chilean-born LatAm passport", 34, find((o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "Latin America & Caribbean" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
-    ["BFS 2024 Chilean-born EU passport", 29, find((o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "EU" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
-    ["BFS 2023 Chilean nationals born in Chile", 27, find((o) => o.dataset === "px-x-0103010000_423" && o.dim.nationality === "CL" && o.dim.birthCountry === "CL" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.marital), "BFS 423"],
+    ["Zug 2026-05 permanent total", 35, semLatest((o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"), "SEM 2-10"],
+    ["Zug 2026-05 permanent female", 20, semLatest((o) => o.dataset === "2-10" && o.concept === "Permanent residents" && o.dim.sex === "female"), "SEM 2-10"],
+    ["Zug 2026-05 permit B", 22, semLatest((o) => o.dataset === "2-10" && o.dim.permit === "B" && o.dim.sex === "total"), "SEM 2-10"],
+    ["Zug 2026-05 permit C", 11, semLatest((o) => o.dataset === "2-10" && o.dim.permit === "C" && o.dim.sex === "total"), "SEM 2-10"],
+    ["Zug 2026-05 permit L", 2, semLatest((o) => o.dataset === "2-10" && o.dim.permit === "L" && o.dim.sex === "total"), "SEM 2-10"],
+    ["Zug 2026-05 FZA", 17, semLatest((o) => o.dataset === "2-20" && o.dim.legalBasis === "FZA" && o.dim.sex === "total"), "SEM 2-20"],
+    ["Zug 2026-05 AIG", 18, semLatest((o) => o.dataset === "2-20" && o.dim.legalBasis === "AIG" && o.dim.sex === "total"), "SEM 2-20"],
+    ["Zug 2026-05 married", 23, semLatest((o) => o.dataset === "2-22" && o.dim.marital === "married" && !o.dim.marriedToSwiss), "SEM 2-22"],
+    ["Zug 2026-05 married to Swiss", 6, semLatest((o) => o.dataset === "2-22" && o.dim.marital === "married" && o.dim.marriedToSwiss === true), "SEM 2-22"],
+    ["Zug 2026-05 single", 10, semLatest((o) => o.dataset === "2-22" && o.dim.marital === "single"), "SEM 2-22"],
+    ["Zug 2026-05 age 18-64", 27, semLatest((o) => o.dataset === "2-21" && o.dim.ageClass === "18-64" && o.dim.sex === "total"), "SEM 2-21"],
+    ["Zug 2026-05 age 65+", 0, semLatest((o) => o.dataset === "2-21" && o.dim.ageClass === "65+" && o.dim.sex === "total"), "SEM 2-21"],
+    ["Zug 2026-05 stay 0-4y", 17, semLatest((o) => o.dataset === "2-23" && o.dim.lengthOfStay === "0-4" && o.dim.sex === "total"), "SEM 2-23"],
+    ["Zug 2026-05 stay 20+y", 0, semLatest((o) => o.dataset === "2-23" && o.dim.lengthOfStay === "20+" && o.dim.sex === "total"), "SEM 2-23"],
+    ["Zug 12mo permanent immigration total", 3, findIn("ZG", (o) => o.dataset === "3-30" && o.metric === "immigration" && o.populationType === "permanent" && o.concept === "Total immigration" && o.dim.year === 2026 && o.dim.month === 5), "SEM 3-30 12Mt"],
+    ["Zug 12mo non-permanent immigration total", 2, findIn("ZG", (o) => o.dataset === "3-31" && o.metric === "immigration" && o.populationType === "non_permanent" && o.concept === "Total immigration" && o.dim.year === 2026 && o.dim.month === 5), "SEM 3-31 12Mt"],
+    ["Zug 12mo permanent emigration", 1, findIn("ZG", (o) => o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "permanent" && o.concept === "Permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026), "SEM 3-55 12Mt"],
+    ["Zug 12mo non-permanent emigration", 3, findIn("ZG", (o) => o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "non_permanent" && o.concept === "Non-permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026), "SEM 3-55 12Mt"],
+    ["Zug 12mo naturalisations", 0, findIn("ZG", (o) => o.dataset === "3-60" && o.metric === "naturalisation" && o.dim.year === 2026), "SEM 3-60 12Mt"],
+    ["Zug BFS 2024 Chilean nationals (perm)", 33, find((o) => o.dataset === "px-x-0103010000_101" && o.dim.canton === "ZG" && o.dim.nationality === "CL" && o.dim.year === 2024 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
+    ["Zug BFS 2017 Chilean nationals (perm)", 34, find((o) => o.dataset === "px-x-0103010000_101" && o.dim.canton === "ZG" && o.dim.nationality === "CL" && o.dim.year === 2017 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
+    ["Zug BFS 2020 Chilean nationals (perm)", 20, find((o) => o.dataset === "px-x-0103010000_101" && o.dim.canton === "ZG" && o.dim.nationality === "CL" && o.dim.year === 2020 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
+    ["Zug BFS 2024 Chilean-born (perm)", 99, findIn("ZG", (o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "total" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
+    ["Zug BFS 2024 Chilean-born Swiss passport", 33, findIn("ZG", (o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "Swiss" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
+    ["Zug BFS 2024 Chilean-born LatAm passport", 34, findIn("ZG", (o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "Latin America & Caribbean" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
+    ["Zug BFS 2024 Chilean-born EU passport", 29, findIn("ZG", (o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "EU" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
+    ["Zug BFS 2023 Chilean nationals born in Chile", 27, findIn("ZG", (o) => o.dataset === "px-x-0103010000_423" && o.dim.nationality === "CL" && o.dim.birthCountry === "CL" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.marital), "BFS 423"],
     ["SEM cantonal Chile VD", 989, find((o) => o.dataset === "2-10" && o.dim.canton === "VD" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Chilean nationals (cantonal comparison)"), "SEM 2-10 VD"],
     ["SEM cantonal Chile ZH", 554, find((o) => o.dataset === "2-10" && o.dim.canton === "ZH" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Chilean nationals (cantonal comparison)"), "SEM 2-10 ZH"],
+    // Switzerland, the new default view. The first of these is the load-bearing
+    // one: it reads the CH-Nati sheet through the new multi-sheet path and must
+    // agree with the cantonal-baseline reader below, which reaches the same sheet
+    // by an entirely different route. If the two disagree the sheet mapping is
+    // wrong somewhere.
+    ["Switzerland 2026-05 permanent total", 3303, semLatestIn("CH", (o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"), "SEM 2-10 CH-Nati"],
+    ["Switzerland BFS 2024 Chilean nationals (perm)", 3394, findIn("CH", (o) => o.dataset === "px-x-0103010000_101" && o.dim.nationality === "CL" && o.dim.year === 2024 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101 CH"],
+    ["Vaud 2026-05 permanent total", 989, semLatestIn("VD", (o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"), "SEM 2-10 VD"],
     ["SEM Chile Switzerland total", 3303, find((o) => o.dataset === "2-10" && o.dim.canton === "CH" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Chilean nationals (cantonal comparison)"), "SEM 2-10 CH-Nati"],
   ];
   return checks.map(([label, expected, observed, source]) => ({
@@ -551,15 +590,65 @@ async function main(): Promise<void> {
         ? -1
         : 1,
   );
-  writeFileSync(join(OUT_DIR, "harvest.json"), JSON.stringify({ observations }, null, 1));
-  writeFileSync(join(OUT_DIR, "manifest.json"), JSON.stringify(manifest, null, 2));
-
-  // Mirror to the app's static-asset directory so the client can load it
-  // without any runtime database or server-side fetching.
+  // ---- Partitioned output --------------------------------------------------
+  // One file per canton, plus Switzerland. The reader looks at one canton at a
+  // time, so shipping all twenty-seven in a single document would mean
+  // downloading thirty times what any view needs. Still static JSON: no runtime
+  // database and no server-side fetching, just more than one file.
   const publicDir = join(process.cwd(), "public", "data");
-  mkdirSync(publicDir, { recursive: true });
-  writeFileSync(join(publicDir, "harvest.json"), JSON.stringify({ observations }));
-  writeFileSync(join(publicDir, "manifest.json"), JSON.stringify(manifest));
+  const cantonDir = join(publicDir, "canton");
+  mkdirSync(cantonDir, { recursive: true });
+
+  const byCanton = new Map<string, Observation[]>();
+  for (const o of observations) {
+    const c = (o.dim.canton as string) ?? "CH";
+    const list = byCanton.get(c);
+    if (list) list.push(o);
+    else byCanton.set(c, [o]);
+  }
+
+  const cantonIndex: { code: string; observations: number; bytes: number }[] = [];
+  for (const [code, list] of [...byCanton.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+    // The app drops the canton constraint from its queries entirely and relies on
+    // the file being the scope. That is only safe if it is true, so assert it here
+    // rather than discovering a stray row as a wrong number on the page.
+    const stray = list.find((o) => o.dim.canton !== code);
+    if (stray) {
+      throw new Error(
+        `canton file ${code} would contain a ${String(stray.dim.canton)} observation ` +
+          `(${stray.dataset} / ${stray.concept}) — the per-canton files must be pure`,
+      );
+    }
+    const json = JSON.stringify(encodeCanton(code, list));
+    writeFileSync(join(cantonDir, `${code}.json`), json);
+    cantonIndex.push({ code, observations: list.length, bytes: json.length });
+  }
+
+  // Cross-canton comparison figures live in every canton's own file, which is
+  // useless to a view that ranks all of them at once. They are small, so they
+  // also go out as one summary the comparison section can read on its own.
+  const COMPARISON_CONCEPTS = new Set([
+    "Chilean nationals (cantonal comparison)",
+    "Foreign residents (per-capita denominator)",
+    "Chilean nationals by canton, 2024 (baseline)",
+    "Total resident population by canton, 2024 (denominator)",
+  ]);
+  const summaryObs = observations.filter((o) => COMPARISON_CONCEPTS.has(o.concept));
+  writeFileSync(join(publicDir, "summary.json"), JSON.stringify(encodeCanton("ALL", summaryObs)));
+  console.log(`  wrote summary.json (${summaryObs.length} cross-canton cells)`);
+
+  const manifestWithIndex = {
+    ...manifest,
+    cantons: cantonIndex,
+    payloadVersion: PAYLOAD_VERSION,
+  };
+  writeFileSync(join(OUT_DIR, "manifest.json"), JSON.stringify(manifestWithIndex, null, 2));
+  writeFileSync(join(publicDir, "manifest.json"), JSON.stringify(manifestWithIndex));
+
+  console.log(
+    `  wrote ${cantonIndex.length} canton files, ` +
+      `${(cantonIndex.reduce((n, c) => n + c.bytes, 0) / 1048576).toFixed(1)} MB total`,
+  );
 
   const passed = anchors.filter((a) => a.pass).length;
   console.log(`\nHarvest complete in ${((Date.now() - started) / 1000).toFixed(1)}s`);

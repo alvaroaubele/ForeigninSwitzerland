@@ -196,7 +196,7 @@ function lead(view: View, rows: Row[], totalA: number, totalB: number, nYears: n
   }
   return (
     <>
-      {fmtInt(grand)} Chilean nationals in Zug became Swiss citizens over {nYears} years. Every one of them leaves the
+      {fmtInt(grand)} Chilean nationals became Swiss citizens over {nYears} years. Every one of them leaves the
       Chilean-passport count and joins the Chilean-born count — which is a large part of why the two differ so much.
     </>
   );
@@ -280,7 +280,7 @@ function build(ds: Dataset, view: View, bySex: boolean) {
         source: "SEM",
         dataset,
         populationType,
-        dim: { canton: "ZG", nationality: "CL", year, month: 12, sex, ...dim },
+        dim: { nationality: "CL", year, month: 12, sex, ...dim },
       });
       if (c.state === "not_published" || c.state === "suppressed") continue;
       total += c.value ?? 0;

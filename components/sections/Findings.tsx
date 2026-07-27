@@ -1,7 +1,7 @@
 "use client";
 import { useDataset } from "@/lib/data-context";
 import { resolveCell } from "@/lib/model";
-import { bornHeadline, passportHeadline, passportSplit, latestSemMonth } from "@/lib/selectors";
+import { bornHeadline, passportHeadline, passportSplit, latestSemMonth, cantonName } from "@/lib/selectors";
 import { fmtInt } from "@/lib/format";
 
 interface Finding {
@@ -21,7 +21,7 @@ interface Finding {
  * to give a first-time reader a reason to scroll, not to replace the sections.
  */
 export function Findings() {
-  const { dataset, loading } = useDataset();
+  const { dataset, canton, loading } = useDataset();
   if (loading || !dataset) return null;
 
   const passport = passportHeadline(dataset);
@@ -31,17 +31,36 @@ export function Findings() {
   const latAm = split.find((r) => r.group === "Latin America & Caribbean")?.cell.value ?? null;
   const swiss = split.find((r) => r.group === "Swiss")?.cell.value ?? null;
 
+  // Reasons are a nine-year sum, so they have to be added up rather than looked
+  // up. Computed here rather than asserted, because the balance that held for
+  // Zug does not necessarily hold for Geneva or for Switzerland.
+  const reasonYears = [...new Set(dataset.observations.filter((o) => o.dataset === "3-30" && o.dim.reason).map((o) => o.dim.year as number))];
+  const reasonTotal = (reason?: string) =>
+    dataset.observations
+      .filter(
+        (o) =>
+          (o.dataset === "3-30" || o.dataset === "3-31") &&
+          o.dim.sex === "total" &&
+          o.provenance.referenceDate.endsWith("-12-31") &&
+          reasonYears.includes(o.dim.year as number) &&
+          (reason ? o.dim.reason === reason : o.dim.reason !== undefined),
+      )
+      .reduce((n, o) => n + (o.value ?? 0), 0);
+  const family = reasonTotal("family_reunification");
+  const allReasons = reasonTotal();
+  const familyShare = allReasons > 0 ? Math.round((family / allReasons) * 100) : null;
+
   const stay0to4 = resolveCell(dataset, {
     source: "SEM",
     metric: "stock",
     populationType: "permanent",
-    dim: { canton: "ZG", nationality: "CL", year: sem.year, month: sem.month, sex: "total", lengthOfStay: "0-4" },
+    dim: { nationality: "CL", year: sem.year, month: sem.month, sex: "total", lengthOfStay: "0-4" },
   });
   const over65 = resolveCell(dataset, {
     source: "SEM",
     metric: "stock",
     populationType: "permanent",
-    dim: { canton: "ZG", nationality: "CL", year: sem.year, month: sem.month, sex: "total", ageClass: "65+" },
+    dim: { nationality: "CL", year: sem.year, month: sem.month, sex: "total", ageClass: "65+" },
   });
 
   const findings: Finding[] = [
@@ -60,19 +79,19 @@ export function Findings() {
       cta: "Meet the 99",
     },
     {
-      figure: "2 in 3",
+      figure: familyShare !== null ? `${familyShare}%` : "—",
       headline: "Came to join family",
-      detail: "Family reunification is the single largest reason for arrival over nine years — ahead of work and study combined.",
+      detail: `Of ${fmtInt(allReasons)} arrivals over ${reasonYears.length} years, ${fmtInt(family)} came through family reunification — more than work and study together.`,
       href: "#reasons",
       cta: "Why they came",
     },
     {
       figure: over65.value === 0 ? "Nobody" : fmtInt(over65.value),
-      headline: "Is over 65",
+      headline: over65.value === 0 ? "Is over 65" : "Are over 65",
       detail:
-        stay0to4.value !== null
-          ? `And ${fmtInt(stay0to4.value)} of the ${fmtInt(passport.value)} arrived within the last five years. This is a young, recently-arrived group.`
-          : "This is a young population with almost no retirement-age cohort.",
+        over65.value === 0
+          ? `Not one of the ${fmtInt(passport.value)} is of retirement age${stay0to4.value !== null ? `, and ${fmtInt(stay0to4.value)} arrived within the last five years` : ""}. A young, recently-arrived group.`
+          : `Out of ${fmtInt(passport.value)} passport holders${stay0to4.value !== null ? `, with ${fmtInt(stay0to4.value)} who arrived within the last five years` : ""}.`,
       href: "#portrait",
       cta: "See the portrait",
     },
@@ -84,8 +103,9 @@ export function Findings() {
         <div className="findings-intro">
           <h2 className="findings-h">What the official numbers say</h2>
           <p>
-            Four things worth knowing about Chileans in Canton Zug — then the data itself, which you can pull apart
-            however you like. Where a figure was never published, this page says so rather than showing a blank.
+            Four things worth knowing about Chileans in {cantonName(canton)} — then the data itself, which you can
+            pull apart however you like. Where a figure was never published, this page says so rather than showing a
+            blank.
           </p>
         </div>
         <div className="findings">
