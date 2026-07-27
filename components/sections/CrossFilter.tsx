@@ -113,8 +113,8 @@ export function CrossFilter({
           <span className="eyebrow">Cross-filter</span>
           <h2>Ask your own question</h2>
           <p>
-            Every option shows its answer before you pick it. Dashed options were never published — the offices did not
-            cross those two things for a population this small.
+            Every option shows its answer before you pick it. Dashed options were never published — no source crosses
+            that combination. BFS answers up to three attributes at once; SEM answers one, plus sex.
           </p>
         </div>
 
