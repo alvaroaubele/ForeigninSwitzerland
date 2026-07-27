@@ -1,9 +1,11 @@
-# Chileans in Canton Zug — a data explorer for a very small population
+# Chileans in Switzerland — a data explorer for a very small population
 
 An honest exploration of official statistics on **Chilean nationals** and
-**Chilean-born residents** in Canton Zug, Switzerland: about 35 passport holders
-and 99 people born in Chile. The dataset is deliberately tiny, and that is the
-whole design problem — Swiss statistical offices suppress or never produce most
+**Chilean-born residents** in Switzerland: **3 303 passport holders** and
+**8 308 people born in Chile** nationally, shown for the country by default and
+for any of the 26 cantons on demand. In Zug that is 35 and 99; in Appenzell
+Innerrhoden it is nobody at all. The populations are small — in most cantons
+very small — and that is the whole design problem — Swiss statistical offices suppress or never produce most
 multi-dimensional cross-tabs over a population this small, so a conventional
 dashboard would render mostly blank panels and imply *absence of people* where
 the truth is *absence of a published figure*.
@@ -62,8 +64,12 @@ or estimates. A requested cross-tab that no source carries returns
 `not_published`, and the UI names the table that would have carried it and
 offers the single filter to drop to reach a populated view.
 
-- `data/harvest.json` — every observation with full provenance (also mirrored to
-  `public/data/harvest.json`, which the client loads statically).
+- `public/data/canton/<CODE>.json` — every observation with full provenance, one
+  file per canton plus `CH.json` for Switzerland. Strings are interned; the
+  decoder in `lib/payload.ts` returns ordinary `Observation` objects, so nothing
+  downstream knows the wire format exists. ~2.1 MB each, ~70 kB gzipped.
+- `public/data/summary.json` — the cross-canton comparison figures, which no
+  single canton file can hold.
 - `data/manifest.json` — source inventory, cell-state counts, the
   dimension-availability matrix, and the anchor-check results.
 - `data/COVERAGE.md` — a written account of which cross-tabs exist, which are
@@ -143,9 +149,13 @@ states, verifies against a fixed anchor list, and writes `harvest.json` +
 `manifest.json`. Re-runs are incremental — cached responses are not re-fetched —
 so refreshing when SEM publishes a new month only downloads the new files.
 
-It covers **69 SEM reference periods** (the December snapshot for 2017–2020,
-then every month from 2021-01 to 2026-05) and three BFS cubes, producing
-**12 561 observations** — 7 228 SEM, 5 333 BFS. A full cold run takes about 35
+It covers **27 scopes** (Switzerland and the 26 cantons) × **69 SEM reference
+periods** (the December snapshot for 2017–2020, then every month from 2021-01 to
+2026-05) plus three BFS cubes, producing **336 084 observations**.
+
+Widening from one canton to all of them cost no extra SEM downloads: every
+workbook already contained all 28 sheets and the harvest was reading one. BFS
+widened by selection, since `Kanton` is a cube dimension. A full cold run takes about 35
 minutes and fetches ~1 200 files; the resulting `harvest.json` is 12 MB raw and
 **261 kB gzipped**, which is what actually ships.
 

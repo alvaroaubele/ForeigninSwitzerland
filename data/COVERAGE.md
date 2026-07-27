@@ -1,12 +1,13 @@
-# Coverage — what is knowable about Chileans in Canton Zug
+# Coverage — what is knowable about Chileans in Switzerland
 
-This file records, per source, which cross-tabulations of the Chile × Zug
-population actually exist in official open data, which are withheld, and which
+This file records, per source, which cross-tabulations of the Chilean population
+in Switzerland — nationally and per canton — actually exist in official open data, which are withheld, and which
 were never published. It is the written companion to `manifest.json` (machine
 form) and the in-app dimension-availability map.
 
-The subject population is tiny — about **35 Chilean passport holders** and
-**99 Chilean-born residents** in Canton Zug. Most multi-dimensional cross-tabs
+The subject population is small: **3 303 Chilean passport holders** and **8 308
+Chilean-born residents** across Switzerland, and far smaller per canton — 35 and
+99 in Zug, and none at all in Appenzell Innerrhoden. Most multi-dimensional cross-tabs
 over a population this size are simply not produced by the statistical offices.
 That absence is the central finding, not a gap in this harvest.
 
