@@ -491,9 +491,13 @@ button {
 }
 .barrow {
   display: grid;
-  grid-template-columns: 130px 1fr 92px;
+  /* label · view-hint · track · value. The hint column exists in every row
+     (same text, so same width) and only its opacity changes on hover — a
+     three-column grid with a fourth child wraps every row into rubble. */
+  grid-template-columns: 130px auto 1fr 92px;
   align-items: center;
   gap: 12px;
+  padding: 2px 4px;
 }
 .barrow-label {
   font-size: 13px;
