@@ -284,13 +284,6 @@ button {
   display: flex;
   flex-direction: column;
 }
-.header-sub {
-  font-family: var(--font-sans-stack);
-  font-weight: 400;
-  font-size: 12px;
-  color: var(--fg-muted);
-  margin-top: 2px;
-}
 .header-nav {
   display: flex;
   gap: 18px;
@@ -1815,9 +1808,6 @@ main {
   white-space: nowrap;
 }
 @media (max-width: 1120px) {
-  .header-sub {
-    display: none;
-  }
   .header-nav {
     gap: 12px;
   }

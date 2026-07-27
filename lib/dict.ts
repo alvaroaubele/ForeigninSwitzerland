@@ -21,7 +21,7 @@ export const NUMBER_LOCALE: Record<Locale, string> = {
 
 export interface Dict {
   nav: { contrast: string; portrait: string; trend: string; movement: string; crossfilter: string; comparison: string; method: string };
-  header: { title: string; sub: string; cells: (n: string) => string; loading: string };
+  header: { title: string; cells: (n: string) => string; loading: string };
   canton: { showing: string; back: string; backTitle: string; pickerLabel: string; rowTitle: (name: string) => string; view: string };
   theme: { toDark: string; toLight: string };
   main: { loadingCanton: string; error: (msg: string) => string };
@@ -235,7 +235,7 @@ export interface Dict {
 // ---------------------------------------------------------------------------
 const en: Dict = {
   nav: { contrast: "Contrast", portrait: "Portrait", trend: "Trend", movement: "Movement", crossfilter: "Cross-filter", comparison: "Comparison", method: "Method" },
-  header: { title: "Chileans in Switzerland", sub: "A data explorer for a very small population", cells: (n) => `${n} harvested cells`, loading: "loading…" },
+  header: { title: "Chileans in Switzerland", cells: (n) => `${n} harvested cells`, loading: "loading…" },
   canton: { showing: "Showing", back: "← Switzerland", backTitle: "Back to the national view", pickerLabel: "Canton", rowTitle: (name) => `Show ${name} across the whole page`, view: "view →" },
   theme: { toDark: "Switch to dark theme", toLight: "Switch to light theme" },
   main: { loadingCanton: "Loading canton data…", error: (msg) => `Something failed to load: ${msg}. The figures shown may be for the previously selected canton — reloading the page usually fixes it.` },
@@ -466,7 +466,7 @@ const en: Dict = {
 // ---------------------------------------------------------------------------
 const es: Dict = {
   nav: { contrast: "Contraste", portrait: "Retrato", trend: "Evolución", movement: "Movimientos", crossfilter: "Explorador", comparison: "Comparación", method: "Método" },
-  header: { title: "Chilenos en Suiza", sub: "Un explorador de datos para una población muy pequeña", cells: (n) => `${n} celdas cosechadas`, loading: "cargando…" },
+  header: { title: "Chilenos en Suiza", cells: (n) => `${n} celdas cosechadas`, loading: "cargando…" },
   canton: { showing: "Mostrando", back: "← Suiza", backTitle: "Volver a la vista nacional", pickerLabel: "Cantón", rowTitle: (name) => `Ver ${name} en toda la página`, view: "ver →" },
   theme: { toDark: "Cambiar a tema oscuro", toLight: "Cambiar a tema claro" },
   main: { loadingCanton: "Cargando datos del cantón…", error: (msg) => `Algo no se pudo cargar: ${msg}. Las cifras mostradas pueden ser del cantón anterior — recargar la página suele resolverlo.` },
@@ -697,7 +697,7 @@ const es: Dict = {
 // ---------------------------------------------------------------------------
 const de: Dict = {
   nav: { contrast: "Kontrast", portrait: "Porträt", trend: "Verlauf", movement: "Bewegungen", crossfilter: "Explorer", comparison: "Vergleich", method: "Methode" },
-  header: { title: "Chileninnen und Chilenen in der Schweiz", sub: "Ein Datenexplorer für eine sehr kleine Bevölkerung", cells: (n) => `${n} erhobene Zellen`, loading: "lädt…" },
+  header: { title: "Chileninnen und Chilenen in der Schweiz", cells: (n) => `${n} erhobene Zellen`, loading: "lädt…" },
   canton: { showing: "Ansicht", back: "← Schweiz", backTitle: "Zurück zur nationalen Ansicht", pickerLabel: "Kanton", rowTitle: (name) => `${name} auf der ganzen Seite anzeigen`, view: "ansehen →" },
   theme: { toDark: "Zum dunklen Thema wechseln", toLight: "Zum hellen Thema wechseln" },
   main: { loadingCanton: "Kantonsdaten werden geladen…", error: (msg) => `Etwas konnte nicht geladen werden: ${msg}. Die angezeigten Zahlen stammen möglicherweise vom zuvor gewählten Kanton — ein Neuladen der Seite behebt das meist.` },
@@ -928,7 +928,7 @@ const de: Dict = {
 // ---------------------------------------------------------------------------
 const fr: Dict = {
   nav: { contrast: "Contraste", portrait: "Portrait", trend: "Évolution", movement: "Mouvements", crossfilter: "Explorateur", comparison: "Comparaison", method: "Méthode" },
-  header: { title: "Chiliens en Suisse", sub: "Un explorateur de données pour une très petite population", cells: (n) => `${n} cellules collectées`, loading: "chargement…" },
+  header: { title: "Chiliens en Suisse", cells: (n) => `${n} cellules collectées`, loading: "chargement…" },
   canton: { showing: "Affichage", back: "← Suisse", backTitle: "Retour à la vue nationale", pickerLabel: "Canton", rowTitle: (name) => `Afficher ${name} sur toute la page`, view: "voir →" },
   theme: { toDark: "Passer au thème sombre", toLight: "Passer au thème clair" },
   main: { loadingCanton: "Chargement des données cantonales…", error: (msg) => `Un chargement a échoué : ${msg}. Les chiffres affichés peuvent être ceux du canton précédent — recharger la page règle généralement le problème.` },

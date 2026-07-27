@@ -38,10 +38,7 @@ export function Header() {
         <div className="header-top">
           <div className="header-mark">
             <span className="header-flag" aria-hidden />
-            <span className="header-title">
-              {t.header.title}
-              <span className="header-sub">{t.header.sub}</span>
-            </span>
+            <span className="header-title">{t.header.title}</span>
           </div>
           <nav className="header-nav" aria-label="Sections">
             {NAV_IDS_DEF.map((id) => (
