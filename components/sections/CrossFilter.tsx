@@ -45,6 +45,50 @@ const BREAKDOWNS_BY_METRIC: Record<Observation["metric"], BreakdownKey[]> = {
 const isBirthplaceSide = (dim: Partial<Dimensions>): boolean =>
   dim.birthCountry !== undefined || dim.nationalityGroup !== undefined;
 
+/**
+ * Starting questions.
+ *
+ * An empty filter panel is a form, and a form asks the reader to already know
+ * what is interesting. These are four questions the data actually answers well,
+ * including one that lands on a genuine wall — because finding out that a
+ * combination was never published is a real outcome here, not a failure state,
+ * and it is better met on purpose than by accident.
+ */
+interface Preset {
+  label: string;
+  apply: (f: FilterState, latest: { year: number; month: number }, bfsYear: number) => FilterState;
+}
+const PRESETS: Preset[] = [
+  {
+    label: "Women on a C permit",
+    apply: (f, latest) => ({
+      ...f, source: "SEM", metric: "stock", populationType: "permanent",
+      year: latest.year, month: latest.month, dim: { sex: "female", permit: "C" },
+    }),
+  },
+  {
+    label: "Here under 5 years",
+    apply: (f, latest) => ({
+      ...f, source: "SEM", metric: "stock", populationType: "permanent",
+      year: latest.year, month: latest.month, dim: { lengthOfStay: "0-4" },
+    }),
+  },
+  {
+    label: "Chilean-born with Swiss passports",
+    apply: (f, _l, bfsYear) => ({
+      ...f, source: "BFS", metric: "stock", populationType: "permanent",
+      year: bfsYear, month: undefined, dim: { nationalityGroup: "Swiss" },
+    }),
+  },
+  {
+    label: "A combination nobody published",
+    apply: (f, latest) => ({
+      ...f, source: "SEM", metric: "stock", populationType: "permanent",
+      year: latest.year, month: latest.month, dim: { marital: "married", lengthOfStay: "0-4" },
+    }),
+  },
+];
+
 export function CrossFilter({
   filter,
   setFilter,
@@ -116,6 +160,20 @@ export function CrossFilter({
             Every option shows its answer before you pick it. Dashed options were never published — no source crosses
             that combination. BFS answers up to three attributes at once; SEM answers one, plus sex.
           </p>
+        </div>
+
+        <div className="xf-presets">
+          <span className="xf-presets-label">Try:</span>
+          {PRESETS.map((p) => (
+            <button
+              key={p.label}
+              type="button"
+              className="xf-preset"
+              onClick={() => setFilter(p.apply(filter, latestSemMonth(dataset), bfsYears[bfsYears.length - 1] ?? 2024))}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
 
         <div className="xf-grid">

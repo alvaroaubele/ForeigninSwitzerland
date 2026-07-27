@@ -2,17 +2,17 @@
 import { useEffect, useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { StateLegend } from "./StateBits";
+import { ThemeToggle } from "./ThemeToggle";
 import { fmtInt } from "@/lib/format";
 
 const NAV = [
   { id: "passport-birthplace", label: "Contrast" },
   { id: "portrait", label: "Portrait" },
   { id: "trend", label: "Trend" },
-  { id: "reasons", label: "Why" },
+  { id: "reasons", label: "Movement" },
   { id: "cross-filter", label: "Cross-filter" },
   { id: "baselines", label: "Comparison" },
-  { id: "availability", label: "Availability" },
-  { id: "method", label: "Method" },
+  { id: "appendix", label: "Method" },
 ];
 
 // Module-level so the observer effect below has a stable dependency; rebuilding
@@ -49,6 +49,7 @@ export function Header() {
               </a>
             ))}
           </nav>
+          <ThemeToggle />
         </div>
         <div className="header-legend">
           <StateLegend />

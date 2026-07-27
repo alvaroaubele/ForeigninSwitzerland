@@ -51,6 +51,50 @@
   --maxw: 1200px;
 }
 
+/* -------------------------------------------------------------------------
+   Dark theme.
+   Only this block changes; every rule below reads through the tokens. The four
+   cell states keep their meaning — observed is the highest-contrast ink,
+   structural zero is a muted hollow, suppressed stays ochre, never-published
+   stays the faintest thing on the surface — because the states have to remain
+   distinguishable in greyscale in both themes.
+   ------------------------------------------------------------------------- */
+:root[data-theme="dark"] {
+  --bg: #0e1116;
+  --bg-sunken: #171c23;
+  --bg-elevated: #151a21;
+  --panel: #12171e;
+
+  --fg: #e9ecf1;
+  --fg-muted: #a2abb8;
+  --fg-subtle: #6d7683;
+
+  --border: #262d37;
+  --border-strong: #3b444f;
+  --grid: #1e242c;
+
+  /* Swiss red at #c8102e disappears on a dark surface; lifted to keep it a
+     signal rather than a smudge, and kept the only saturated hue on the page. */
+  --accent: #ff4d63;
+  --accent-ink: #ff8496;
+  --accent-wash: #2b1119;
+  --accent-fg: #12171e;
+
+  --series-2: #5da5ea;
+  --series-2-wash: #12222f;
+
+  --state-observed: #e9ecf1;
+  --state-observed-wash: #232a33;
+  --state-zero: #8c95a2;
+  --state-suppressed: #d6a441;
+  --state-suppressed-wash: #2d2515;
+  --state-missing: #4e5665;
+  --state-missing-wash: #171c23;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 1px 1px rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -1376,4 +1420,209 @@ svg[tabindex="0"]:focus-visible {
   color: var(--fg-subtle);
   font-weight: 400;
   margin-left: 1px;
+}
+
+/* --- theme switch --- */
+.theme-toggle,
+.theme-toggle-placeholder {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  margin-left: 14px;
+}
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+.theme-toggle:hover {
+  color: var(--fg);
+  background: var(--bg-sunken);
+  border-color: var(--fg-subtle);
+}
+
+/* =========================================================================
+   Appendix — method and coverage, folded away
+   ========================================================================= */
+.appendix-section {
+  background: var(--bg-sunken);
+}
+.appendix {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+}
+.appendix-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 24px;
+  cursor: pointer;
+  list-style: none;
+}
+.appendix-summary::-webkit-details-marker {
+  display: none;
+}
+.appendix-summary:hover .appendix-title {
+  color: var(--accent-ink);
+}
+.appendix-summary-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.appendix-title {
+  font-family: var(--font-display-stack);
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--fg);
+  transition: color 0.15s ease;
+}
+.appendix-sub {
+  font-size: 13px;
+  color: var(--fg-muted);
+  max-width: 66ch;
+  line-height: 1.5;
+}
+.appendix-chevron {
+  color: var(--fg-subtle);
+  flex: none;
+  transition: transform 0.2s ease;
+}
+.appendix[open] .appendix-chevron {
+  transform: rotate(180deg);
+}
+.appendix-body > .section {
+  border-top: 1px solid var(--border);
+  padding-top: 28px;
+}
+.appendix-body .wrap {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.reasons-wall {
+  margin: 18px 0 0;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--fg-muted);
+  background: var(--state-missing-wash);
+  border-left: 2px solid var(--state-missing);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+/* =========================================================================
+   Findings — what the page has to say, up front
+   ========================================================================= */
+.findings-section {
+  border-top: none;
+  padding-top: 26px;
+}
+.findings-intro {
+  max-width: 62ch;
+  margin-bottom: 20px;
+}
+.findings-h {
+  font-family: var(--font-display-stack);
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+.findings-intro p {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+.findings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+}
+.finding {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 16px 18px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+.finding:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+.finding-figure {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+.finding-headline {
+  font-weight: 600;
+  font-size: 14px;
+}
+.finding-detail {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--fg-muted);
+  flex: 1;
+}
+.finding-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--accent-ink);
+}
+.finding:hover .finding-cta svg {
+  transform: translateX(2px);
+}
+.finding-cta svg {
+  transition: transform 0.15s ease;
+}
+
+/* --- starting questions in the explorer --- */
+.xf-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.xf-presets-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-subtle);
+  margin-right: 2px;
+}
+.xf-preset {
+  padding: 5px 11px;
+  font-family: var(--font-sans-stack);
+  font-size: 12.5px;
+  color: var(--fg-muted);
+  background: var(--bg-sunken);
+  border: 1px solid transparent;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: color 0.14s ease, background 0.14s ease, border-color 0.14s ease;
+}
+.xf-preset:hover {
+  color: var(--fg);
+  background: var(--bg);
+  border-color: var(--border-strong);
 }

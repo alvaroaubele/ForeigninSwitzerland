@@ -31,10 +31,11 @@ concept they disagree slightly (SEM: 35 permanent Chilean nationals; BFS: 33).
 
 ## The central finding
 
-Citizenship is not birthplace. **35** people hold a Chilean passport; **99** were
-born in Chile — and of those 99, only ~34 hold a Latin-American passport, while
-33 hold Swiss and 29 hold EU passports. This contrast is the app's hero view,
-not something buried behind a filter.
+The community is bigger than the passport count. **35** people hold a Chilean
+passport; **99** were born in Chile — and of those 99, only ~34 hold a
+Latin-American passport, while 33 hold Swiss and 29 hold EU passports. Most of
+the Chilean-born have naturalised, so counting passports misses two thirds of
+them. This contrast is the app's hero view, not something buried behind a filter.
 
 ## Data model
 
@@ -77,15 +78,29 @@ offers the single filter to drop to reach a populated view.
   combination was never published.
 - **Dimension-availability map** — a matrix of which dimension pairs are
   actually cross-tabulated, so you can see the shape of the knowable before
-  building a query that cannot be answered.
+  building a query that cannot be answered. Together with the four-state
+  explanation, the reference-date offset and the source inventory it lives in a
+  **collapsed appendix** at the foot of the page: it is what makes the rest
+  trustworthy, but it is not what a reader came for.
+- **Light and dark themes**, chosen from the OS by default, overridable, and
+  applied before first paint so a dark-theme reader never sees a white flash.
 - **Comparison baselines** — Zug against all Chileans in Switzerland, against
   Zug’s foreign population, and against the top cantons (VD 989, ZH 554, GE 503,
   BE 284, FR 222), with per-1,000 normalisation and an index-vs-national view.
 - **Population portrait** — every attribute the register carries drawn at once,
-  with a sex split. That split is the ceiling and the section says so: SEM
-  crosses each attribute with sex and with nothing else, so no combination of
-  two non-sex attributes exists to drill into. Marital status is not crossed
-  even with sex, and shows that wall explicitly rather than rendering a blank.
+  for either population (Chilean passport holders, or the larger Chilean-born
+  group), with a sex split. Where a split does not exist the section says so
+  instead of rendering a blank: SEM's table 2-22 has no sex columns for marital
+  status at all.
+- **Movement** — arrivals by reason, departures by permit, and naturalisations,
+  summed over the full nine-year run because any single year is three or four
+  people. Departures and naturalisations split by sex; arrivals cannot, because
+  SEM table 3-30 is eleven columns wide with no sex or age block anywhere in it.
+- **Depth as far as each source goes.** SEM crosses each attribute with sex and
+  nothing else — a fixed workbook layout, so that limit is real. BFS is a
+  queryable cube and returns any combination, so the explorer answers three
+  attributes at once there: 33 Chilean nationals, 18 on a B permit, 13 of those
+  women, 5 of those aged 45–49.
 - **Time series 2010–2026**, yearly or monthly, with the 2017 peak (34) and 2020
   trough (20) visible and the SEM and BFS series distinguishable (solid vs
   dashed). At monthly resolution the two stop reading as one wobbling line:
@@ -130,9 +145,16 @@ so refreshing when SEM publishes a new month only downloads the new files.
 
 It covers **69 SEM reference periods** (the December snapshot for 2017–2020,
 then every month from 2021-01 to 2026-05) and three BFS cubes, producing
-**8 877 observations** — 7 228 SEM, 1 649 BFS. A full cold run takes about 32
-minutes and fetches ~1 200 files; the resulting `harvest.json` is 9.5 MB raw and
-**192 kB gzipped**, which is what actually ships.
+**12 561 observations** — 7 228 SEM, 5 333 BFS. A full cold run takes about 35
+minutes and fetches ~1 200 files; the resulting `harvest.json` is 12 MB raw and
+**261 kB gzipped**, which is what actually ships.
+
+The BFS queries deliberately include two *full-cross* requests at the latest
+complete year — permit × sex × age, and passport group × sex × age. Every other
+cube query holds the dimensions it is not about at their total, which is
+efficient but means the harvest alone cannot answer a multi-attribute question;
+and because the app derives "not published" from what the harvest contains, that
+shape would be reported as a property of BFS rather than of the query plan.
 
 > **Note on the BFS PxWeb endpoint.** `pxweb.bfs.admin.ch` sits behind a WAF
 > that rejects requests before they reach the query engine, in two ways that

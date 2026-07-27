@@ -41,6 +41,12 @@ export const DIM_LABELS: Record<keyof Dimensions, string> = {
 };
 
 export const VALUE_LABELS: Record<string, string> = {
+  // Naturalisation routes, as SEM names them in table 3-60.
+  ordinary: "Ordinary naturalisation",
+  facilitated: "Facilitated (usually via a Swiss spouse)",
+  reinstated: "Reinstated citizenship",
+  all: "All naturalisations",
+
   total: "Total",
   female: "Female",
   male: "Male",

@@ -31,9 +31,21 @@ export const metadata: Metadata = {
     "An honest exploration of official statistics on Chilean nationals and Chilean-born residents in Canton Zug, Switzerland. Every cell resolves to observed, structural zero, suppressed, or not published.",
 };
 
+/**
+ * Applied before first paint, so a dark-theme reader never sees a white flash.
+ * It has to be inline and synchronous in <head> for that: anything deferred to
+ * React runs after the browser has already painted the light default.
+ */
+const THEME_BOOTSTRAP = `(function(){try{var t=localStorage.getItem('theme');
+if(!t)t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP }} />
+      </head>
       <body>{children}</body>
     </html>
   );

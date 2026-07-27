@@ -231,7 +231,9 @@ function Bar({ row, caption }: { row: Row; caption?: string }) {
               // segment's position in the full category list, not in the drawn
               // subset — otherwise the same category takes a different shade in
               // the women's and men's bars and they cannot be compared.
-              background: `color-mix(in srgb, var(--fg) ${88 - shadeIndex(row, s) * 9}%, white)`,
+              // Mixed toward the surface rather than toward white, so the ramp
+              // stays a ramp when the surface is dark.
+              background: `color-mix(in srgb, var(--fg) ${88 - shadeIndex(row, s) * 9}%, var(--bg))`,
             }}
             title={`${s.label}: ${fmtInt(s.count)} of ${fmtInt(total)}`}
           >

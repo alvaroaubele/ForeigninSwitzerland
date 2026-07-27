@@ -35,11 +35,11 @@ export function PassportBirthplace() {
     <section className="section" id="passport-birthplace" style={{ borderTop: "none", paddingTop: 20 }}>
       <div className="wrap">
         <div className="section-head">
-          <span className="eyebrow">The central contrast</span>
-          <h2 style={{ fontSize: 26, marginTop: 8 }}>Citizenship is not birthplace</h2>
+          <span className="eyebrow">Two ways to count</span>
+          <h2 style={{ fontSize: 26, marginTop: 8 }}>The community is bigger than the passport count</h2>
           <p>
-            Zug has about three dozen Chilean passport holders and about a hundred residents born in Chile. They are
-            largely different people: most of the Chilean-born now hold a Swiss or EU passport.
+            Zug has about three dozen Chilean passport holders — and about a hundred residents born in Chile. Most of
+            the Chilean-born have since taken Swiss or EU citizenship, so counting passports misses two thirds of them.
           </p>
         </div>
 
