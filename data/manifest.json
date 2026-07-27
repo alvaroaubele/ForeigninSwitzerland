@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-27T09:12:29.868Z",
-  "observationCount": 9921,
+  "generatedAt": "2026-07-27T09:40:06.846Z",
+  "observationCount": 12561,
   "cellStateCounts": {
-    "observed": 5601,
-    "structural_zero": 4320,
+    "observed": 5864,
+    "structural_zero": 6697,
     "suppressed": 0,
     "not_published": 0
   },
@@ -178,8 +178,8 @@
       "source": "BFS",
       "title": "BFS STATPOP cube px-x-0103010000_101",
       "checkedFor": "Chile x Zug slices (nationality / birth country / marital)",
-      "yielded": "1203 cells",
-      "observationCount": 1203,
+      "yielded": "2259 cells",
+      "observationCount": 2259,
       "urls": [
         "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_101/px-x-0103010000_101.px",
         "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_101"
@@ -190,8 +190,8 @@
       "source": "BFS",
       "title": "BFS STATPOP cube px-x-0103010000_399",
       "checkedFor": "Chile x Zug slices (nationality / birth country / marital)",
-      "yielded": "1414 cells",
-      "observationCount": 1414,
+      "yielded": "2998 cells",
+      "observationCount": 2998,
       "urls": [
         "https://www.pxweb.bfs.admin.ch/api/v1/de/px-x-0103010000_399/px-x-0103010000_399.px",
         "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_399"

@@ -1,27 +1,27 @@
 # BFS Harvest Verification Report
 
-_Generated 2026-07-25T16:03:51.223Z by `scripts/verify-bfs.ts` (independent re-fetch, no local cache)._
+_Generated 2026-07-27T09:29:42.280Z by `scripts/verify-bfs.ts` (independent re-fetch, no local cache)._
 
-**Verdict: PASS.** All 1649 non-null BFS cells (100% — not a sample) and all 8 BFS anchors were re-fetched directly from `www.pxweb.bfs.admin.ch` and reproduced exactly. Queries were reconstructed by inverting the harvested dimensions back to PxWeb codes with a map written in this script; json-stat2 was decoded by a decoder written in this script; the harvest's fetcher, walker, and query definitions were not imported. Each cube's metadata was also re-fetched and the source's own labels confirm the code meanings the harvest relied on.
+**Verdict: PASS.** All 2693 non-null BFS cells (100% — not a sample) and all 8 BFS anchors were re-fetched directly from `www.pxweb.bfs.admin.ch` and reproduced exactly. Queries were reconstructed by inverting the harvested dimensions back to PxWeb codes with a map written in this script; json-stat2 was decoded by a decoder written in this script; the harvest's fetcher, walker, and query definitions were not imported. Each cube's metadata was also re-fetched and the source's own labels confirm the code meanings the harvest relied on.
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Eligible non-null BFS cells | 1649 |
-| Cells re-fetched and reproduced | 1649 (100.0%) |
+| Eligible non-null BFS cells | 2693 |
+| Cells re-fetched and reproduced | 2693 (100.0%) |
 | Coordinates absent from the fresh response | 0 |
 | BFS anchors reproduced | 8/8 |
 | Code-meaning claims confirmed from metadata | 14/14 |
-| HTTP requests issued | 18 (sequential, 6s apart) |
+| HTTP requests issued | 20 (sequential, 6s apart) |
 
 ## Per-cube reproduction
 
 | Cube | Cells checked | Reproduced |
 | --- | --- | --- |
 | `px-x-0103010000_101` | 1203 | 1203/1203 |
-| `px-x-0103010000_399` | 394 | 394/394 |
-| `px-x-0103010000_423` | 52 | 52/52 |
+| `px-x-0103010000_399` | 1414 | 1414/1414 |
+| `px-x-0103010000_423` | 76 | 76/76 |
 
 ## Code meanings, confirmed against cube metadata
 
@@ -51,12 +51,12 @@ Each block is the per-dimension union of the coordinates of the cells that claim
 | Cube | Concept | Harvested cells | Cells returned fresh | |
 | --- | --- | --- | --- | --- |
 | 423 | Chilean nationals in Zug born in Chile vs elsewhere, 2023 | 4 | 4 | OK |
-| 423 | Chilean-born residents of Zug by marital status, 2023 | 12 | 12 | OK |
 | 101 | Chilean nationals in Zug by year (permanent) | 15 | 15 | OK |
 | 399 | Chilean-born residents of Zug by passport group | 24 | 24 | OK |
 | 101 | All Chilean nationals in Switzerland by year (baseline) | 30 | 30 | OK |
 | 399 | Chilean-born residents of Zug by sex and year | 30 | 30 | OK |
 | 423 | Chilean nationals in Zug by marital status and sex, 2023 | 36 | 36 | OK |
+| 423 | Chilean-born residents of Zug by marital status and sex, 2023 | 36 | 36 | OK |
 | 101 | Chilean nationals by canton, 2024 (baseline) | 54 | 54 | OK |
 | 101 | Total resident population by canton, 2024 (per-capita denominator) | 54 | 54 | OK |
 | 101 | Zug total and Swiss population by year (foreign-total baseline) | 60 | 60 | OK |
@@ -64,7 +64,9 @@ Each block is the per-dimension union of the coordinates of the cells that claim
 | 399 | Chilean-born residents of Zug by passport group and year | 120 | 120 | OK |
 | 399 | Chilean-born residents of Zug by 5-year age class and year | 220 | 220 | OK |
 | 101 | Chilean nationals in Zug by permit category and year | 240 | 240 | OK |
+| 399 | Chilean-born residents of Zug by passport group and sex | 360 | 360 | OK |
 | 101 | Chilean nationals in Zug by 5-year age class and year | 660 | 660 | OK |
+| 399 | Chilean-born residents of Zug by 5-year age class and sex | 660 | 660 | OK |
 
 ## Anchor checks (BFS)
 

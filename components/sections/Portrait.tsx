@@ -120,8 +120,8 @@ export function Portrait() {
             {pop === "nationals" ? (
               <>
                 Everyone in Zug holding a Chilean passport, by every attribute the register carries. Split by sex to go
-                one level deeper — that is as far as the data goes, because the offices never cross two of these with
-                each other.
+                one level deeper — as far as SEM goes, since it crosses these with sex and with nothing else. BFS goes
+                further: the cross-filter below answers permit, sex and age together.
               </>
             ) : (
               <>

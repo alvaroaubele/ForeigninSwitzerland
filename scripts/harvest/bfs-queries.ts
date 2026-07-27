@@ -64,6 +64,9 @@ const ALL_AGE = [
 ];
 const ALL_YEARS_101 = Array.from({ length: 15 }, (_, i) => String(2010 + i));
 const ALL_YEARS_399 = ["2020", "2021", "2022", "2023", "2024"];
+/** Latest complete year in each cube — the year the full-cross queries target. */
+const LATEST_YEAR_101 = ALL_YEARS_101[ALL_YEARS_101.length - 1];
+const LATEST_YEAR_399 = ALL_YEARS_399[ALL_YEARS_399.length - 1];
 const ALL_CANTONS = [
   "8100", "ZH", "BE", "LU", "UR", "SZ", "OW", "NW", "GL", "ZG", "FR", "SO",
   "BS", "BL", "SH", "AR", "AI", "SG", "GR", "AG", "TG", "TI", "VD", "VS",
@@ -181,6 +184,27 @@ export const CUBE_101_QUERIES: CubeQuerySpec[] = [
     crossTab: ["canton", "populationType"],
   },
   {
+    // Full cross for the latest year: every permit x sex x age combination for
+    // Chile in Zug in one request.
+    //
+    // Every other 101 query holds the dimensions it is not about at their total,
+    // which is efficient but means the harvest can only ever answer one
+    // breakdown at a time — and the app then reports the two-way crosses as
+    // "never published", which is a statement about this query plan and not
+    // about BFS. Cube 101 carries Anwesenheitsbewilligung, Geschlecht and
+    // Altersklasse as full dimensions and returns any combination of them.
+    // Restricted to the latest year because the profile question is about who
+    // is here now; the time series above stay one-breakdown-at-a-time.
+    id: "101-full-cross-latest",
+    cube: CUBE_101,
+    concept: "Chilean nationals in Zug by permit, sex and age (latest year)",
+    query: q101Base([ZG], [CHILE], [LATEST_YEAR_101], [TOTAL, "2", "3", "4", "5", "7", "8", "9"], [TOTAL, "1", "2"], ALL_AGE),
+    map: (c) => ({ ...map101(c), populationType: pop101(c) }),
+    metric: "stock",
+    referenceDateFor: refDec,
+    crossTab: ["permit", "sex", "ageClass"],
+  },
+  {
     id: "101-zug-foreign-ts",
     cube: CUBE_101,
     concept: "Zug total and Swiss population by year (foreign-total baseline)",
@@ -253,6 +277,27 @@ export const CUBE_399_QUERIES: CubeQuerySpec[] = [
   // about BFS that is false: Geschlecht is a full dimension of this cube and it
   // will return either cross on request. Asking for them is one extra query
   // each; inferring their absence from our own query plan was the bug.
+  {
+    // Same reasoning as 101-full-cross-latest: passport group x sex x age in one
+    // request, so a Chilean-born profile can be narrowed on more than one
+    // attribute at a time.
+    id: "399-full-cross-latest",
+    cube: CUBE_399,
+    concept: "Chilean-born residents of Zug by passport group, sex and age (latest year)",
+    query: [
+      item("Jahr", [LATEST_YEAR_399]),
+      item("Kanton", [ZG]),
+      item("Bevölkerungstyp", ["1", "2"]),
+      item("Staatsangehörigkeit (Auswahl)", ["-99999", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-1", "-9"]),
+      item("Geburtsstaat", [CHILE]),
+      item("Geschlecht", [TOTAL, "1", "2"]),
+      item("Altersklasse", ALL_AGE),
+    ],
+    map: (c) => ({ ...map399(c), populationType: POP_101[c["Bevölkerungstyp"]] }),
+    metric: "stock",
+    referenceDateFor: refDec,
+    crossTab: ["nationalityGroup", "sex", "ageClass"],
+  },
   {
     id: "399-natgroup-sex",
     cube: CUBE_399,

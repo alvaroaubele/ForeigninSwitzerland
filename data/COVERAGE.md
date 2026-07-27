@@ -102,19 +102,45 @@ dimension total.
 
 ## What is cross-tabulated vs. never published
 
-**Available pairs** (at least one source crosses them):
-permit × sex, legal-basis × sex, age × sex, marital × sex, length-of-stay × sex,
-reason × population-type, permit × population-type (flows), passport-group ×
-birth-country, nationality × birth-country (2023), year × permit, year × age,
+The two sources differ in kind here, and an earlier version of this file did not
+distinguish them — it listed pairs as "never published" that BFS publishes
+perfectly well and that this harvest had simply never asked for. That was a
+statement about the query plan wearing the clothes of a statement about the
+source, and it is the one error this project cannot afford, because every honest
+signal in the app rests on `not published` meaning *the office did not publish
+it*. The lists below are now split by which claim is being made.
+
+**SEM — fixed table layouts.** Each published workbook is a specific
+cross-tabulation and nothing else can be extracted from it. SEM crosses each
+attribute with **sex** and with nothing else, and not even that for marital
+status (table 2-22 has no sex columns at all). So permit × age, permit × marital,
+legal-basis × age, marital × length-of-stay, length-of-stay × marital, reason ×
+age and reason × sex genuinely do not exist in SEM, for Chile or anyone else.
+These are real absences.
+
+**BFS — a queryable cube.** `Anwesenheitsbewilligung`, `Geschlecht`,
+`Altersklasse`, `Staatsangehörigkeit (Auswahl)` and `Zivilstand` are full
+dimensions, and the API returns any combination of them on request. The harvest
+therefore asks for the full permit × sex × age cross for Chilean nationals and
+the full passport-group × sex × age cross for the Chilean-born, both at the
+latest complete year, in addition to the one-breakdown-at-a-time time series.
+**Three-way profiles are answerable**: B permit, female, aged 45–49 resolves to
+5 people. Cells reach n = 1; those are BFS's own published figures, not anything
+this project derived.
+
+**Available pairs and triples:**
+permit × sex, legal-basis × sex, age × sex, marital × sex (BFS only),
+length-of-stay × sex, permit × sex × age (BFS, latest year), passport-group ×
+sex × age (BFS, latest year), passport-group × birth-country, nationality ×
+birth-country (2023), marital × sex × birth-country (2023), reason ×
+population-type, permit × population-type (flows), year × permit, year × age,
 year × sex, canton × nationality.
 
-**Never published for this population** (no source crosses them) — these resolve
-to `not published` in the app, with a pointer to the table that *would* have
-carried them had it been produced:
-permit × age (for Chile specifically), permit × marital, legal-basis × age,
-marital × length-of-stay, reason × age, reason × sex, length-of-stay × marital,
-and essentially every three-way cross. The dimension-availability map shows the
-full shape: **most of the grid is empty.**
+**Still genuinely absent:** every SEM pair listed above, any BFS cross for a year
+other than the latest one, and anything crossing a SEM-only dimension (legal
+basis, length of stay, reason) with a BFS-only one (birth country, passport
+group) — the two registers are not linked at the record level, so no office
+publishes such a table.
 
 ## The SEM ↔ BFS reference-date offset
 
