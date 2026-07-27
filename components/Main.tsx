@@ -1,5 +1,6 @@
 "use client";
 import { useDataset } from "@/lib/data-context";
+import { useI18n } from "@/lib/i18n";
 
 /**
  * The page body, aware of canton switches.
@@ -11,16 +12,16 @@ import { useDataset } from "@/lib/data-context";
  */
 export function Main({ children }: { children: React.ReactNode }) {
   const { switching, error } = useDataset();
+  const { t } = useI18n();
   return (
     <main className={switching ? "is-switching" : ""}>
       <span className="visually-hidden" aria-live="polite">
-        {switching ? "Loading canton data…" : ""}
+        {switching ? t.main.loadingCanton : ""}
       </span>
       {error && (
         <div className="wrap">
           <p className="data-error" role="alert">
-            Something failed to load: {error}. The figures shown may be for the previously selected canton — reloading
-            the page usually fixes it.
+            {t.main.error(error)}
           </p>
         </div>
       )}

@@ -3,6 +3,7 @@ import { useRef, type KeyboardEvent } from "react";
 import type { CellState } from "@/lib/types";
 import { STATE_CLASS } from "@/lib/format";
 import { CELL_STATE_LABEL } from "@/lib/model";
+import { useI18n } from "@/lib/i18n";
 import { fmtInt } from "@/lib/format";
 
 export interface ChipOption {
@@ -47,6 +48,7 @@ export function OptionChips({
   onPreview?: (o: ChipOption | null) => void;
 }) {
   const groupRef = useRef<HTMLDivElement>(null);
+  const { t } = useI18n();
 
   const move = (from: number, delta: number) => {
     const next = (from + delta + options.length) % options.length;
@@ -106,7 +108,9 @@ export function OptionChips({
             onKeyDown={(e) => onKeyDown(e, i)}
             onMouseEnter={() => onPreview?.(o)}
             onFocus={() => onPreview?.(o)}
-            title={outcomeText(o)}
+            title={
+              o.state === "not_published" ? t.xf.chipNever(o.label) : t.xf.chipOutcome(o.label, fmtInt(o.result), CELL_STATE_LABEL[o.state].toLowerCase())
+            }
           >
             <span className={`chip-dot ${STATE_CLASS[o.state]}`} aria-hidden />
             <span className="chip-label">{o.label}</span>
@@ -120,7 +124,3 @@ export function OptionChips({
   );
 }
 
-function outcomeText(o: ChipOption): string {
-  if (o.state === "not_published") return `${o.label} — never published for this population`;
-  return `${o.label} → ${fmtInt(o.result)} (${CELL_STATE_LABEL[o.state].toLowerCase()})`;
-}

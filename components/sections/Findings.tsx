@@ -1,7 +1,8 @@
 "use client";
 import { useDataset } from "@/lib/data-context";
 import { resolveCell } from "@/lib/model";
-import { bornHeadline, passportHeadline, passportSplit, latestSemMonth, cantonName } from "@/lib/selectors";
+import { bornHeadline, passportHeadline, passportSplit, latestSemMonth } from "@/lib/selectors";
+import { useI18n } from "@/lib/i18n";
 import { fmtInt } from "@/lib/format";
 
 interface Finding {
@@ -22,6 +23,7 @@ interface Finding {
  */
 export function Findings() {
   const { dataset, canton, loading } = useDataset();
+  const { t, cName } = useI18n();
   if (loading || !dataset) return null;
 
   const passport = passportHeadline(dataset);
@@ -79,38 +81,38 @@ export function Findings() {
   const findings: Finding[] = [
     {
       figure: `${fmtInt(passport.value)} vs ${fmtInt(born.value)}`,
-      headline: "Two counts, one community",
-      detail: `${fmtInt(passport.value)} people hold a Chilean passport; ${fmtInt(born.value)} were born in Chile. Counting one misses most of the other.`,
+      headline: t.findings.twoCountsH,
+      detail: t.findings.twoCountsD(fmtInt(passport.value), fmtInt(born.value)),
       href: "#passport-birthplace",
-      cta: "See the split",
+      cta: t.findings.twoCountsCta,
     },
     {
       figure: swiss !== null ? fmtInt(swiss) : "—",
-      headline: "Have become Swiss",
-      detail: `Of the ${fmtInt(born.value)} born in Chile, ${fmtInt(swiss)} now hold a Swiss passport and ${fmtInt(latAm)} a Latin-American one.`,
+      headline: t.findings.becameSwissH,
+      detail: t.findings.becameSwissD(fmtInt(born.value), fmtInt(swiss), fmtInt(latAm)),
       href: "#portrait",
-      cta: `Meet the ${fmtInt(born.value)}`,
+      cta: t.findings.becameSwissCta(fmtInt(born.value)),
     },
     ...(allReasons > 0
       ? [
           {
             figure: familyShare !== null ? `${familyShare}%` : "—",
-            headline: "Came to join family",
-            detail: `Of ${fmtInt(allReasons)} arrivals over ${reasonYears.length} years, ${fmtInt(family)} came through family reunification${familyLeads ? " — more than work and study together" : ""}.`,
+            headline: t.findings.familyH,
+            detail: t.findings.familyD(fmtInt(allReasons), reasonYears.length, fmtInt(family), familyLeads),
             href: "#reasons",
-            cta: "Why they came",
+            cta: t.findings.familyCta,
           },
         ]
       : []),
     {
-      figure: over65.value === 0 ? "Nobody" : fmtInt(over65.value),
-      headline: over65.value === 0 ? "Is over 65" : "Are over 65",
+      figure: over65.value === 0 ? t.findings.nobody : fmtInt(over65.value),
+      headline: over65.value === 0 ? t.findings.over65H0 : t.findings.over65H,
       detail:
         over65.value === 0
-          ? `Not one of the ${fmtInt(passport.value)} is of retirement age${stay0to4.value !== null ? `, and ${fmtInt(stay0to4.value)} arrived within the last five years` : ""}. A young, recently-arrived group.`
-          : `Out of ${fmtInt(passport.value)} passport holders${stay0to4.value !== null ? `, with ${fmtInt(stay0to4.value)} who arrived within the last five years` : ""}.`,
+          ? t.findings.over65D0(fmtInt(passport.value), stay0to4.value !== null ? fmtInt(stay0to4.value) : null)
+          : t.findings.over65D(fmtInt(passport.value), stay0to4.value !== null ? fmtInt(stay0to4.value) : null),
       href: "#portrait",
-      cta: "See the portrait",
+      cta: t.findings.over65Cta,
     },
   ];
 
@@ -118,12 +120,8 @@ export function Findings() {
     <section className="section findings-section" id="findings">
       <div className="wrap">
         <div className="findings-intro">
-          <h2 className="findings-h">What the official numbers say</h2>
-          <p>
-            Four things worth knowing about Chileans in {cantonName(canton)} — then the data itself, which you can
-            pull apart however you like. Where a figure was never published, this page says so rather than showing a
-            blank.
-          </p>
+          <h2 className="findings-h">{t.findings.h}</h2>
+          <p>{t.findings.intro(cName(canton))}</p>
         </div>
         <div className="findings">
           {findings.map((f) => (

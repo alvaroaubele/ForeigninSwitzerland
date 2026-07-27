@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { AvailabilityMatrix } from "./AvailabilityMatrix";
+import { useI18n } from "@/lib/i18n";
 import { Method } from "./Method";
 
 /**
@@ -13,6 +14,7 @@ import { Method } from "./Method";
  * elsewhere on the page still lands somewhere visible.
  */
 export function Appendix() {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDetailsElement>(null);
 
@@ -37,12 +39,9 @@ export function Appendix() {
         <details ref={ref} className="appendix" open={open} onToggle={(e) => setOpen(e.currentTarget.open)}>
           <summary className="appendix-summary">
             <span className="appendix-summary-text">
-              <span className="eyebrow">Method &amp; coverage</span>
-              <span className="appendix-title">How these figures were made, and what they cannot say</span>
-              <span className="appendix-sub">
-                The four states, the reference-date offset between the two registers, which cross-tabulations exist,
-                and the full source inventory.
-              </span>
+              <span className="eyebrow">{t.appendix.eyebrow}</span>
+              <span className="appendix-title">{t.appendix.title}</span>
+              <span className="appendix-sub">{t.appendix.sub}</span>
             </span>
             <span className="appendix-chevron" aria-hidden>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

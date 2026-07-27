@@ -1,8 +1,34 @@
 import type { CellState, Dimensions, Observation } from "./types";
 
+// The active number/date locale. English default matches the prerendered HTML;
+// lib/i18n.tsx swaps it (and the label maps below, in place) before the
+// re-render that follows a language change, so every call site keeps reading
+// plain objects and functions with zero API change.
+let NUM_LOCALE = "en-US";
+
+export function setFormatLocale(
+  numberLocale: string,
+  dims: Record<keyof Dimensions, string>,
+  values: Record<string, string>,
+  metrics: Record<Observation["metric"], string>,
+): void {
+  NUM_LOCALE = numberLocale;
+  Object.assign(DIM_LABELS, dims);
+  for (const k of Object.keys(VALUE_LABELS)) delete VALUE_LABELS[k];
+  Object.assign(VALUE_LABELS, values);
+  Object.assign(METRIC_LABELS, metrics);
+}
+
 export function fmtInt(v: number | null | undefined): string {
   if (v === null || v === undefined) return "—";
-  return new Intl.NumberFormat("en-CH").format(v);
+  return new Intl.NumberFormat(NUM_LOCALE).format(v);
+}
+
+/** "May 2026" / "mayo 2026" / "Mai 2026" / "mai 2026". */
+export function fmtMonthYear(year: number, month: number): string {
+  return new Intl.DateTimeFormat(NUM_LOCALE, { month: "short", year: "numeric" }).format(
+    new Date(Date.UTC(year, month - 1, 15)),
+  );
 }
 
 export function fmtSigned(v: number | null | undefined): string {
@@ -16,9 +42,12 @@ export function fmtPer1000(v: number | null | undefined): string {
 }
 
 export function fmtDate(iso: string): string {
-  const [y, m, d] = iso.split("-");
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  if (m && d) return `${Number(d)} ${months[Number(m) - 1]} ${y}`;
+  const [y, m, d] = iso.split("-").map(Number);
+  if (m && d) {
+    return new Intl.DateTimeFormat(NUM_LOCALE, { day: "numeric", month: "short", year: "numeric" }).format(
+      new Date(Date.UTC(y, m - 1, d)),
+    );
+  }
   return iso;
 }
 

@@ -90,6 +90,12 @@ offers the single filter to drop to reach a populated view.
   trustworthy, but it is not what a reader came for.
 - **Light and dark themes**, chosen from the OS by default, overridable, and
   applied before first paint so a dark-theme reader never sees a white flash.
+- **Four languages** — English, Spanish, German, French — switchable in the
+  header, remembered, and carried in the URL (`?lang=es`). Every sentence lives
+  in a typed dictionary (`lib/dict.ts`), so a missing translation is a compile
+  error. Number and date formats follow the language: 3,303 / 3.303 / 3'303 /
+  3 303. Register citations (table ids, cube names) deliberately stay as-is —
+  they are citations, not prose.
 - **Comparison baselines** — the selected canton against all Chileans in
   Switzerland, its own foreign population, and every other canton, with
   per-1,000 normalisation and an index-vs-national view. Clicking a canton row

@@ -1,4 +1,5 @@
 import { DataProvider } from "@/lib/data-context";
+import { I18nProvider } from "@/lib/i18n";
 import { Header } from "@/components/Header";
 import { Main } from "@/components/Main";
 import { Findings } from "@/components/sections/Findings";
@@ -13,6 +14,7 @@ import { Footer } from "@/components/Footer";
 
 export default function Page() {
   return (
+    <I18nProvider>
     <DataProvider>
       <Header />
       <Main>
@@ -27,5 +29,6 @@ export default function Page() {
       </Main>
       <Footer />
     </DataProvider>
+    </I18nProvider>
   );
 }

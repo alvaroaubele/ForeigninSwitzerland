@@ -1,7 +1,8 @@
 "use client";
 import { useDataset } from "@/lib/data-context";
-import { bornHeadline, passportHeadline, passportSplit, latestSemMonth, cantonName } from "@/lib/selectors";
-import { fmtInt, fmtDate, label } from "@/lib/format";
+import { bornHeadline, passportHeadline, passportSplit, latestSemMonth } from "@/lib/selectors";
+import { useI18n } from "@/lib/i18n";
+import { fmtInt, fmtMonthYear, label } from "@/lib/format";
 import { ProvenanceTip } from "../Provenance";
 import { StateSwatch } from "../StateBits";
 import type { CellState } from "@/lib/types";
@@ -20,6 +21,7 @@ const GROUP_COLORS: Record<string, string> = {
 
 export function PassportBirthplace() {
   const { dataset, canton, loading } = useDataset();
+  const { t, cName } = useI18n();
   if (loading || !dataset) return <HeroSkeleton />;
 
   const passport = passportHeadline(dataset);
@@ -35,41 +37,35 @@ export function PassportBirthplace() {
     <section className="section" id="passport-birthplace" style={{ borderTop: "none", paddingTop: 20 }}>
       <div className="wrap">
         <div className="section-head">
-          <span className="eyebrow">Two ways to count</span>
-          <h2 style={{ fontSize: 26, marginTop: 8 }}>The community is bigger than the passport count</h2>
-          <p>
-            {cantonName(canton)} counts {fmtInt(passport.value)} Chilean passport holders — and {fmtInt(born.value)}{" "}
-            residents born in Chile. Many of the Chilean-born have since taken Swiss or EU citizenship, so counting
-            passports alone misses a large part of the community.
-          </p>
+          <span className="eyebrow">{t.hero.eyebrow}</span>
+          <h2 style={{ fontSize: 26, marginTop: 8 }}>{t.hero.h}</h2>
+          <p>{t.hero.lead(cName(canton), fmtInt(passport.value), fmtInt(born.value))}</p>
         </div>
 
         <div className="hero-grid">
           <HeroStat
-            kicker="Hold a Chilean passport"
+            kicker={t.hero.kickerPassport}
             value={passport.value}
             state={passport.state}
             observation={passport.observation}
-            foot={`SEM · ${fmtDate(`${sem.year}-${String(sem.month).padStart(2, "0")}-28`).replace(/^\d+ /, "")} · permanent residents`}
+            foot={t.hero.footSem(fmtMonthYear(sem.year, sem.month))}
             accent
           />
           <div className="hero-vs" aria-hidden>
             ≠
           </div>
           <HeroStat
-            kicker="Were born in Chile"
+            kicker={t.hero.kickerBorn}
             value={born.value}
             state={born.state}
             observation={born.observation}
-            foot="BFS STATPOP · 31 Dec 2024 · permanent residents"
+            foot={t.hero.footBfs}
           />
         </div>
 
         <div className="panel hero-split">
           <div className="hero-split-head">
-            <h3 style={{ fontSize: 15 }}>
-              The {fmtInt(born.value)} Chilean-born residents, by the passport they actually hold
-            </h3>
+            <h3 style={{ fontSize: 15 }}>{t.hero.splitHead(fmtInt(born.value))}</h3>
             <span className="mono" style={{ fontSize: 11, color: "var(--fg-subtle)" }}>
               BFS STATPOP · cube 399 · 2024
             </span>
@@ -77,7 +73,7 @@ export function PassportBirthplace() {
 
           {split.length > 0 && splitTotal > 0 ? (
             <>
-              <div className="stackbar" role="img" aria-label="Passport composition of Chilean-born residents">
+              <div className="stackbar" role="img" aria-label={t.hero.splitAria}>
                 {split
                   .filter((r) => (r.cell.value ?? 0) > 0)
                   .map((r) => (
@@ -112,18 +108,14 @@ export function PassportBirthplace() {
               </div>
               {nonLatAm !== null && born.value !== null && (
                 <p className="hero-insight">
-                  <strong>{fmtInt(nonLatAm)} of {fmtInt(born.value)}</strong> Chilean-born residents — {Math.round((nonLatAm / (born.value || 1)) * 100)}% —
-                  hold a passport other than Latin-American. Naturalisation and mixed-nationality families make birthplace
-                  and citizenship diverge sharply at this scale.
+                  {t.hero.insight(fmtInt(nonLatAm), fmtInt(born.value), Math.round((nonLatAm / (born.value || 1)) * 100))}
                 </p>
               )}
             </>
           ) : (
             <div className="await-bfs">
               <StateSwatch state={born.state as CellState} />
-              <span>
-                The passport split comes from BFS STATPOP cube 399. {born.state === "not_published" ? "It is not yet present in this build of the harvest." : "Awaiting the birth-country cube."}
-              </span>
+              <span>{t.hero.awaiting}</span>
             </div>
           )}
         </div>
@@ -131,8 +123,7 @@ export function PassportBirthplace() {
         <p className="offset-note">
           <span className="offset-badge mono">SEM 31 May 2026</span>
           <span className="offset-badge mono">BFS 31 Dec 2024</span>
-          These two reference dates are ~17 months apart. The offset is real and is preserved throughout this explorer —
-          the two series are never reconciled to a single figure.
+          {t.hero.offsetNote}
         </p>
       </div>
     </section>

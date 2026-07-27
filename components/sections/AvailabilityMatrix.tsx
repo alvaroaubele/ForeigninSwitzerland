@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { pairAvailable } from "@/lib/model";
 import { DIM_LABELS } from "@/lib/format";
+import { useI18n } from "@/lib/i18n";
 import type { Dimensions } from "@/lib/types";
 
 // The breakdown dimensions the explorer exposes, in a legible order.
@@ -21,6 +22,7 @@ const AXES: (keyof Dimensions)[] = [
 
 export function AvailabilityMatrix() {
   const { dataset, loading } = useDataset();
+  const { t } = useI18n();
   const [hover, setHover] = useState<{ a: string; b: string; datasets: string; note?: string } | null>(null);
   if (loading || !dataset) return <Skeleton />;
 
@@ -30,10 +32,10 @@ export function AvailabilityMatrix() {
     <section className="section" id="availability">
       <div className="wrap">
         <div className="section-head">
-          <span className="eyebrow">What is knowable</span>
-          <h2>What can be known at all</h2>
+          <span className="eyebrow">{t.availability.eyebrow}</span>
+          <h2>{t.availability.h}</h2>
           <p>
-            A filled square means some source publishes those two things together. Most of this grid is empty.
+            {t.availability.lead}
           </p>
         </div>
 
@@ -87,7 +89,7 @@ export function AvailabilityMatrix() {
                   <div className="matrix-readout-pair">
                     {hover.a} × {hover.b}
                   </div>
-                  <div className="matrix-readout-yes">Cross-tabulated</div>
+                  <div className="matrix-readout-yes">{t.availability.crossTab}</div>
                   <div className="matrix-readout-src mono">{hover.datasets}</div>
                   {hover.note && <div className="matrix-readout-note">{hover.note}</div>}
                 </>
@@ -96,14 +98,14 @@ export function AvailabilityMatrix() {
                   <div className="matrix-readout-pair">
                     {hover.a} × {hover.b}
                   </div>
-                  <div className="matrix-readout-no">Never published</div>
+                  <div className="matrix-readout-no">{t.availability.never}</div>
                   <div className="matrix-readout-note">
-                    No harvested source crosses these two dimensions for this population.
+                    {t.availability.neverNote}
                   </div>
                 </>
               )
             ) : (
-              <div className="matrix-readout-hint">Hover a square to see which source carries that cross-tab.</div>
+              <div className="matrix-readout-hint">{t.availability.hint}</div>
             )}
           </div>
         </div>

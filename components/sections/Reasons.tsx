@@ -3,16 +3,14 @@ import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { resolveCell, type Dataset } from "@/lib/model";
 import { distinctValues } from "@/lib/selectors";
+import { useI18n } from "@/lib/i18n";
 import { fmtInt, label, STATE_CLASS } from "@/lib/format";
+import type { Dict } from "@/lib/dict";
 import type { CellState, Dimensions, Observation } from "@/lib/types";
 
 type View = "arrivals" | "departures" | "naturalisations";
 
-const VIEWS: { id: View; tab: string; heading: string }[] = [
-  { id: "arrivals", tab: "Why they came", heading: "Why they came" },
-  { id: "departures", tab: "Who left", heading: "Who left" },
-  { id: "naturalisations", tab: "Who became Swiss", heading: "Who became Swiss" },
-];
+const VIEW_IDS: View[] = ["arrivals", "departures", "naturalisations"];
 
 interface Row {
   key: string;
@@ -40,6 +38,7 @@ interface Row {
  */
 export function Reasons() {
   const { dataset, loading } = useDataset();
+  const { t, locale } = useI18n();
   const [view, setView] = useState<View>("arrivals");
   const [bySex, setBySex] = useState(false);
   /**
@@ -65,7 +64,9 @@ export function Reasons() {
 
   const model = useMemo(
     () => (dataset ? build(dataset, view, view !== "arrivals" && bySex, period) : null),
-    [dataset, view, bySex, period],
+    // locale: the rows bake in label() output, which follows the language.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- label() reads the locale through a module global
+    [dataset, view, bySex, period, locale],
   );
 
   if (loading || !dataset || !model) {
@@ -81,62 +82,60 @@ export function Reasons() {
   const { rows, years, totalA, totalB } = model;
   const splitOn = view !== "arrivals" && bySex;
   const max = Math.max(1, ...rows.map((r) => (splitOn ? Math.max(r.a ?? 0, r.b ?? 0) : (r.a ?? 0) + (r.b ?? 0))));
-  const meta = VIEWS.find((v) => v.id === view)!;
+  const viewTab: Record<View, string> = {
+    arrivals: t.movement.whyCame,
+    departures: t.movement.whoLeft,
+    naturalisations: t.movement.becameSwiss,
+  };
 
   return (
     <section className="section" id="reasons">
       <div className="wrap">
         <div className="section-head">
           <span className="eyebrow">
-            Movement · {period === "12mo" ? "last 12 months" : years.length === 1 ? years[0] : `${years[0]}–${years[years.length - 1]}`}
+            {t.movement.eyebrow} · {period === "12mo" ? t.movement.last12Eyebrow : years.length === 1 ? years[0] : `${years[0]}–${years[years.length - 1]}`}
           </span>
-          <h2>{meta.heading}</h2>
-          <p>{lead(view, rows, totalA, totalB, years, period === "12mo")}</p>
+          <h2>{viewTab[view]}</h2>
+          <p>{lead(t, view, rows, totalA, totalB, years, period === "12mo")}</p>
         </div>
 
         <div className="controls-row">
           <div className="seg">
-            {VIEWS.map((v) => (
-              <button
-                key={v.id}
-                className={`seg-btn ${view === v.id ? "is-on" : ""}`}
-                onClick={() => setView(v.id)}
-              >
-                {v.tab}
+            {VIEW_IDS.map((v) => (
+              <button key={v} className={`seg-btn ${view === v ? "is-on" : ""}`} onClick={() => setView(v)}>
+                {viewTab[v]}
               </button>
             ))}
           </div>
           {view === "arrivals" ? (
             <div className="seg" role="group" aria-label="Split (unavailable for arrivals)">
               <button className={`seg-btn ${!bySex ? "is-on" : ""}`} onClick={() => setBySex(false)}>
-                All
+                {t.movement.segAll}
               </button>
               <button className={`seg-btn ${bySex ? "is-on" : ""}`} onClick={() => setBySex(true)}>
-                Permanent vs non-permanent
+                {t.movement.segPermVsNon}
               </button>
             </div>
           ) : (
             <div className="seg">
               <button className={`seg-btn ${!bySex ? "is-on" : ""}`} onClick={() => setBySex(false)}>
-                Everyone
+                {t.movement.everyone}
               </button>
               <button className={`seg-btn ${bySex ? "is-on" : ""}`} onClick={() => setBySex(true)}>
-                Split by sex
+                {t.movement.splitBySex}
               </button>
             </div>
           )}
           <label className="reasons-period">
             <select
-              aria-label="Period"
+              aria-label={t.movement.periodAria}
               value={period ?? "all"}
               onChange={(e) =>
                 setPeriod(e.target.value === "all" ? null : e.target.value === "12mo" ? "12mo" : Number(e.target.value))
               }
             >
-              <option value="all">
-                Full period {allYears[0]}–{allYears[allYears.length - 1]}
-              </option>
-              <option value="12mo">Last 12 months</option>
+              <option value="all">{t.movement.periodAll(allYears[0], allYears[allYears.length - 1])}</option>
+              <option value="12mo">{t.movement.period12}</option>
               {[...allYears].reverse().map((y) => (
                 <option key={y} value={y}>
                   {y}
@@ -144,7 +143,7 @@ export function Reasons() {
               ))}
             </select>
           </label>
-          <span className="portrait-ref mono">{sourceNote(view, period === "12mo")}</span>
+          <span className="portrait-ref mono">{sourceNote(t, view, period === "12mo")}</span>
         </div>
 
         <div className="reasons">
@@ -161,19 +160,19 @@ export function Reasons() {
                 <div className="reason-track">
                   {view === "arrivals" && bySex ? (
                     <div className="reason-split">
-                      <ReasonBar value={r.a} max={max} tone="perm" caption="Permanent" />
-                      <ReasonBar value={r.b} max={max} tone="nonperm" caption="Non-permanent" />
+                      <ReasonBar value={r.a} max={max} tone="perm" caption={t.movement.capPermanent} />
+                      <ReasonBar value={r.b} max={max} tone="nonperm" caption={t.movement.capNonPermanent} />
                     </div>
                   ) : splitOn ? (
                     <div className="reason-split">
-                      <ReasonBar value={r.a} max={max} tone="perm" caption="Women" />
-                      <ReasonBar value={r.b} max={max} tone="nonperm" caption="Men" />
+                      <ReasonBar value={r.a} max={max} tone="perm" caption={t.movement.capWomen} />
+                      <ReasonBar value={r.b} max={max} tone="nonperm" caption={t.movement.capMen} />
                     </div>
                   ) : (
                     <ReasonBar value={total} max={max} tone="perm" />
                   )}
                 </div>
-                <div className={`reason-total mono ${total === 0 ? "is-zero" : ""}`} title={totalTitle(total, partial)}>
+                <div className={`reason-total mono ${total === 0 ? "is-zero" : ""}`} title={totalTitle(t, total, partial)}>
                   {total === 0 ? (
                     <span className={`reason-ring ${STATE_CLASS[r.state]}`}>0</span>
                   ) : (
@@ -189,28 +188,24 @@ export function Reasons() {
         </div>
 
         {view === "arrivals" && (
-          <p className="reasons-wall">
-            <strong>Arrivals cannot be split by sex or age.</strong> SEM table 3-30 is eleven columns wide — nation,
-            total, and the nine reasons above — with no sex or age block anywhere in the sheet. Departures and
-            naturalisations do carry sex; the other two tabs split.
-          </p>
+          <p className="reasons-wall">{t.movement.wallArrivals}</p>
         )}
 
-        <p className="reasons-foot">{foot(view, totalA, totalB, splitOn)}</p>
+        <p className="reasons-foot">{foot(t, view, totalA, totalB, splitOn)}</p>
       </div>
     </section>
   );
 }
 
-function totalTitle(total: number, partial: boolean): string {
-  if (partial) return `${fmtInt(total)} counted; one of the two tables does not carry this category, so this is a floor.`;
-  if (total === 0) return "A counted zero — the category exists and nobody used it in this period.";
-  return `${fmtInt(total)} people in this period.`;
+function totalTitle(t: Dict, total: number, partial: boolean): string {
+  if (partial) return t.movement.titlePartial(fmtInt(total));
+  if (total === 0) return t.movement.titleZero;
+  return t.movement.titleTotal(fmtInt(total));
 }
 
-function lead(view: View, rows: Row[], totalA: number, totalB: number, years: number[], rolling: boolean) {
+function lead(t: Dict, view: View, rows: Row[], totalA: number, totalB: number, years: number[], rolling: boolean) {
   const grand = totalA + totalB;
-  const span = rolling ? "in the last twelve months" : years.length === 1 ? `in ${years[0]}` : `over ${years.length} years`;
+  const span = rolling ? t.movement.span12 : years.length === 1 ? t.movement.spanYear(years[0]) : t.movement.spanYears(years.length);
   if (view === "arrivals") {
     // The largest reason is read off the sorted rows, not asserted: family
     // reunification leads nationally, but education leads in Basel-Land and
@@ -221,54 +216,32 @@ function lead(view: View, rows: Row[], totalA: number, totalB: number, years: nu
       .every((r) => (r.a ?? 0) + (r.b ?? 0) === 0);
     return (
       <>
-        {fmtInt(grand)} people arrived {span}.{" "}
+        {t.movement.leadArrivals(fmtInt(grand), span)}
         {top && (top.a ?? 0) + (top.b ?? 0) > 0 && (
           <>
-            The largest single reason is {top.label.toLowerCase()} at{" "}
-            <strong>{fmtInt((top.a ?? 0) + (top.b ?? 0))}</strong>.
-            {refugeeZero && " Nobody arrived as a refugee, on hardship grounds, or through an asylum ruling."}
+            {t.movement.leadTop(top.label.toLowerCase(), fmtInt((top.a ?? 0) + (top.b ?? 0)))}
+            {refugeeZero && t.movement.leadNoRefugees}
           </>
         )}
       </>
     );
   }
   if (view === "departures") {
-    return (
-      <>
-        {fmtInt(grand)} people left {span} — close to the number who arrived, which is why the population changes so
-        slowly.
-      </>
-    );
+    return <>{t.movement.leadDepartures(fmtInt(grand), span)}</>;
   }
-  return (
-    <>
-      {fmtInt(grand)} Chilean nationals became Swiss citizens {span}. Every one of them leaves the Chilean-passport
-      count and joins the Chilean-born count — a large part of why the two differ so much.
-    </>
-  );
+  return <>{t.movement.leadSwiss(fmtInt(grand), span)}</>;
 }
 
-function foot(view: View, totalA: number, totalB: number, splitOn: boolean) {
+function foot(t: Dict, view: View, totalA: number, totalB: number, splitOn: boolean) {
   if (view === "arrivals") {
-    return (
-      <>
-        Permanent arrivals {fmtInt(totalA)} · non-permanent {fmtInt(totalB)}. Non-permanent covers short-stay permits,
-        which is why study dominates it. A dash means that table does not carry the category at all, as opposed to a
-        ring, which is a counted zero: the category exists and nobody used it.
-      </>
-    );
+    return <>{t.movement.footArrivals(fmtInt(totalA), fmtInt(totalB))}</>;
   }
-  const who = splitOn ? `Women ${fmtInt(totalA)} · men ${fmtInt(totalB)}.` : "";
-  return (
-    <>
-      {who} Rings are counted zeros — the category exists in the table and nobody appears in it across the whole
-      period.
-    </>
-  );
+  const who = splitOn ? t.movement.footWomenMen(fmtInt(totalA), fmtInt(totalB)) : "";
+  return <>{t.movement.footOther(who)}</>;
 }
 
-function sourceNote(view: View, rolling: boolean): string {
-  const kind = rolling ? "rolling 12-month release" : "calendar-year totals";
+function sourceNote(t: Dict, view: View, rolling: boolean): string {
+  const kind = rolling ? t.movement.srcRolling : t.movement.srcYear;
   if (view === "arrivals") return `SEM 3-30 + 3-31 · ${kind}`;
   if (view === "departures") return `SEM 3-55 · ${kind}`;
   return `SEM 3-60 · ${kind}`;

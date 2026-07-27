@@ -1,8 +1,9 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
-import { cantonBaselines, cantonsWithChile, cantonName, passportHeadline, totalHeadline, latestSemMonth } from "@/lib/selectors";
-import { fmtInt, fmtPer1000, fmtDate } from "@/lib/format";
+import { cantonBaselines, cantonsWithChile, passportHeadline, totalHeadline, latestSemMonth } from "@/lib/selectors";
+import { useI18n } from "@/lib/i18n";
+import { fmtInt, fmtPer1000, fmtMonthYear } from "@/lib/format";
 import { resolveCell } from "@/lib/model";
 import { ProvenanceTip } from "../Provenance";
 import type { CellResult } from "@/lib/model";
@@ -11,6 +12,7 @@ type View = "count" | "per1000" | "index";
 
 export function Baselines() {
   const { dataset, summary, manifest, canton, setCanton, loading } = useDataset();
+  const { t, cName } = useI18n();
   const [view, setView] = useState<View>("count");
 
   // Ranking every canton needs every canton, which no single canton file holds.
@@ -63,50 +65,44 @@ export function Baselines() {
     <section className="section" id="baselines">
       <div className="wrap">
         <div className="section-head">
-          <span className="eyebrow">Comparison</span>
-          <h2>Where Chileans actually live</h2>
+          <span className="eyebrow">{t.baselines.eyebrow}</span>
+          <h2>{t.baselines.h}</h2>
           <p>
-            {baselines.length >= 3 && (
-              <>
-                {cantonName(baselines[0].canton)}, {cantonName(baselines[1].canton)} and{" "}
-                {cantonName(baselines[2].canton)} hold the largest communities.{" "}
-              </>
-            )}
-            Measured per 1,000 foreign residents the ranking changes, because a big canton has more of everyone. Click
-            any canton to view it across the whole page. SEM permanent residents,{" "}
-            {fmtDate(`${sem.year}-${String(sem.month).padStart(2, "0")}-28`).replace(/^\d+ /, "")}.
+            {baselines.length >= 3 &&
+              t.baselines.leadTop3(cName(baselines[0].canton), cName(baselines[1].canton), cName(baselines[2].canton))}
+            {t.baselines.leadRest(fmtMonthYear(sem.year, sem.month))}
           </p>
         </div>
 
         <div className="baseline-cards">
-          <MiniStat label={`Chileans in ${cantonName(canton)}`} value={chileZg} sub="of whom permanent" cell={here?.chile} />
-          <MiniStat label={`Share of ${cantonName(canton)}\u2019s foreign residents`} value={null} display={foreignZg !== null && foreignZg > 0 && chileZg !== null ? `${((chileZg / foreignZg) * 100).toFixed(2)}%` : "—"} sub={`${fmtInt(foreignZg)} foreign residents`} cell={here?.foreign} />
+          <MiniStat label={t.baselines.cardIn(cName(canton))} value={chileZg} sub={t.baselines.ofWhomPermanent} cell={here?.chile} />
+          <MiniStat label={t.baselines.shareForeign(cName(canton))} value={null} display={foreignZg !== null && foreignZg > 0 && chileZg !== null ? `${((chileZg / foreignZg) * 100).toFixed(2)}%` : "—"} sub={t.baselines.foreignSub(fmtInt(foreignZg))} cell={here?.foreign} />
           {canton === "CH" ? (
             // "Switzerland's share of Switzerland: 100%" says nothing; on the
             // national view this card names the biggest cantonal community.
             <MiniStat
-              label={`Largest community: ${baselines[0] ? cantonName(baselines[0].canton) : "—"}`}
+              label={t.baselines.largest(baselines[0] ? cName(baselines[0].canton) : "—")}
               value={baselines[0]?.chile.value ?? null}
               sub={
                 national.value && baselines[0]?.chile.value
-                  ? `${((baselines[0].chile.value / national.value) * 100).toFixed(1)}% of the national total`
+                  ? t.baselines.largestSub(((baselines[0].chile.value / national.value) * 100).toFixed(1))
                   : ""
               }
               cell={baselines[0]?.chile}
             />
           ) : (
-            <MiniStat label="Share of all Chileans in Switzerland" value={null} display={national.value !== null && national.value > 0 && chileZg !== null ? `${((chileZg / national.value) * 100).toFixed(1)}%` : "—"} sub={`${fmtInt(national.value)} in Switzerland`} cell={national} />
+            <MiniStat label={t.baselines.shareNational} value={null} display={national.value !== null && national.value > 0 && chileZg !== null ? `${((chileZg / national.value) * 100).toFixed(1)}%` : "—"} sub={t.baselines.nationalSub(fmtInt(national.value))} cell={national} />
           )}
-          <MiniStat label="Total incl. non-permanent" value={total.value} sub={`${fmtInt(passport.value)} permanent`} cell={total} />
+          <MiniStat label={t.baselines.totalInclNP} value={total.value} sub={t.baselines.permSub(fmtInt(passport.value))} cell={total} />
         </div>
 
         <div className="controls-row">
           <div className="seg">
             {(
               [
-                ["count", "Absolute count"],
-                ["per1000", "Per 1,000 foreign residents"],
-                ["index", "Index vs national rate"],
+                ["count", t.baselines.segCount],
+                ["per1000", t.baselines.segPer1000],
+                ["index", t.baselines.segIndex],
               ] as [View, string][]
             ).map(([v, l]) => (
               <button key={v} className={`seg-btn ${view === v ? "is-on" : ""}`} onClick={() => setView(v)}>
@@ -131,7 +127,7 @@ export function Baselines() {
                   key={b.canton}
                   role="button"
                   tabIndex={0}
-                  title={`Show ${cantonName(b.canton)} across the whole page`}
+                  title={t.canton.rowTitle(cName(b.canton))}
                   onClick={() => setCanton(b.canton)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
@@ -140,8 +136,8 @@ export function Baselines() {
                     }
                   }}
                 >
-                  <div className="barrow-label">{cantonName(b.canton)}</div>
-                  <span className="barrow-view" aria-hidden>view →</span>
+                  <div className="barrow-label">{cName(b.canton)}</div>
+                  <span className="barrow-view" aria-hidden>{t.canton.view}</span>
                   <div className="barrow-track">
                     <div
                       className="barrow-fill"
@@ -151,7 +147,7 @@ export function Baselines() {
                       }}
                     />
                     {view === "index" && (
-                      <div className="barrow-ref" style={{ left: `${(100 / (max || 1)) * 100}%` }} title="National average = 100" />
+                      <div className="barrow-ref" style={{ left: `${(100 / (max || 1)) * 100}%` }} title={t.baselines.refTitle} />
                     )}
                   </div>
                   <div className="barrow-value mono">

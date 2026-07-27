@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useDataset, SWITZERLAND } from "@/lib/data-context";
 import { cantonName } from "@/lib/selectors";
+import { useI18n } from "@/lib/i18n";
 
 /**
  * Which geography the whole page is describing.
@@ -14,6 +15,7 @@ import { cantonName } from "@/lib/selectors";
  */
 export function CantonPicker() {
   const { canton, cantons, setCanton, switching } = useDataset();
+  const { t, cName } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -44,9 +46,9 @@ export function CantonPicker() {
           type="button"
           className="canton-reset"
           onClick={() => setCanton(SWITZERLAND)}
-          title="Back to the national view"
+          title={t.canton.backTitle}
         >
-          ← Switzerland
+          {t.canton.back}
         </button>
       )}
       <button
@@ -56,15 +58,15 @@ export function CantonPicker() {
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
       >
-        <span className="canton-trigger-label">Showing</span>
-        <span className="canton-trigger-name">{cantonName(canton)}</span>
+        <span className="canton-trigger-label">{t.canton.showing}</span>
+        <span className="canton-trigger-name">{cName(canton)}</span>
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden>
           <path d="M4 6.5 8 10.5 12 6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
 
       {open && (
-        <div className="canton-menu" role="listbox" aria-label="Canton">
+        <div className="canton-menu" role="listbox" aria-label={t.canton.pickerLabel}>
           {ordered.map((code) => (
             <button
               key={code}
@@ -76,7 +78,7 @@ export function CantonPicker() {
                 setOpen(false);
               }}
             >
-              <span>{cantonName(code)}</span>
+              <span>{cName(code)}</span>
               <span className="canton-option-code mono">{code}</span>
             </button>
           ))}

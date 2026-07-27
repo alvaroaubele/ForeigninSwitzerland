@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useI18n } from "@/lib/i18n";
 
 type Theme = "light" | "dark";
 
@@ -12,6 +13,7 @@ type Theme = "light" | "dark";
  * fallback (the OS preference) was what actually decided.
  */
 export function ThemeToggle() {
+  const { t } = useI18n();
   const [theme, setTheme] = useState<Theme | null>(null);
 
   useEffect(() => {
@@ -38,8 +40,8 @@ export function ThemeToggle() {
       type="button"
       className="theme-toggle"
       onClick={() => set(next)}
-      aria-label={`Switch to ${next} theme`}
-      title={`Switch to ${next} theme`}
+      aria-label={next === "dark" ? t.theme.toDark : t.theme.toLight}
+      title={next === "dark" ? t.theme.toDark : t.theme.toLight}
     >
       {theme === "dark" ? <SunIcon /> : <MoonIcon />}
     </button>

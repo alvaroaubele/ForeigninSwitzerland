@@ -4,21 +4,17 @@ import { useDataset } from "@/lib/data-context";
 import { StateLegend } from "./StateBits";
 import { ThemeToggle } from "./ThemeToggle";
 import { CantonPicker } from "./CantonPicker";
+import { LanguagePicker } from "./LanguagePicker";
+import { useI18n } from "@/lib/i18n";
 import { fmtInt } from "@/lib/format";
 
-const NAV = [
-  { id: "passport-birthplace", label: "Contrast" },
-  { id: "portrait", label: "Portrait" },
-  { id: "trend", label: "Trend" },
-  { id: "reasons", label: "Movement" },
-  { id: "cross-filter", label: "Cross-filter" },
-  { id: "baselines", label: "Comparison" },
-  { id: "appendix", label: "Method" },
-];
+const NAV_IDS_DEF = [
+  "passport-birthplace", "portrait", "trend", "reasons", "cross-filter", "baselines", "appendix",
+] as const;
 
 // Module-level so the observer effect below has a stable dependency; rebuilding
 // this array each render would tear down and re-create the observer every time.
-const NAV_IDS = NAV.map((s) => s.id);
+const NAV_IDS = [...NAV_IDS_DEF];
 
 export function Header() {
   // The count is the whole harvest, not the canton in view: the page loads one
@@ -26,6 +22,11 @@ export function Header() {
   // reads as the size of the project, and understating it by a factor of 27 is
   // worse than saying nothing.
   const { dataset, cantons } = useDataset();
+  const { t } = useI18n();
+  const navLabel: Record<string, string> = {
+    "passport-birthplace": t.nav.contrast, portrait: t.nav.portrait, trend: t.nav.trend,
+    reasons: t.nav.movement, "cross-filter": t.nav.crossfilter, baselines: t.nav.comparison, appendix: t.nav.method,
+  };
   const n = cantons.length ? cantons.reduce((sum, c) => sum + c.observations, 0) : (dataset?.observations.length ?? null);
   // The observed sections only exist once the dataset has rendered them, so the
   // observer has to be (re)built at that point — the header mounts well before.
@@ -38,29 +39,30 @@ export function Header() {
           <div className="header-mark">
             <span className="header-flag" aria-hidden />
             <span className="header-title">
-              Chileans in Switzerland
-              <span className="header-sub">A data explorer for a very small population</span>
+              {t.header.title}
+              <span className="header-sub">{t.header.sub}</span>
             </span>
           </div>
           <nav className="header-nav" aria-label="Sections">
-            {NAV.map((s) => (
+            {NAV_IDS_DEF.map((id) => (
               <a
-                key={s.id}
-                href={`#${s.id}`}
-                className={active === s.id ? "is-active" : ""}
-                aria-current={active === s.id ? "true" : undefined}
+                key={id}
+                href={`#${id}`}
+                className={active === id ? "is-active" : ""}
+                aria-current={active === id ? "true" : undefined}
               >
-                {s.label}
+                {navLabel[id]}
               </a>
             ))}
           </nav>
           <CantonPicker />
+          <LanguagePicker />
           <ThemeToggle />
         </div>
         <div className="header-legend">
           <StateLegend />
           <span className="header-count mono">
-            {n !== null ? `${fmtInt(n)} harvested cells` : "loading…"}
+            {n !== null ? t.header.cells(fmtInt(n)) : t.header.loading}
           </span>
         </div>
       </div>

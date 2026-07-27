@@ -133,6 +133,14 @@ export function yearSeries(ds: Dataset, sel: Selection, years: number[]): Series
   }));
 }
 
+export function setModelLocale(
+  labels: Record<CellState, string>,
+  descs: Record<CellState, string>,
+): void {
+  Object.assign(CELL_STATE_LABEL, labels);
+  Object.assign(CELL_STATE_DESCRIPTION, descs);
+}
+
 export const CELL_STATE_LABEL: Record<CellState, string> = {
   observed: "Observed",
   structural_zero: "Structural zero",

@@ -3,8 +3,9 @@ import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { resolveCell, type Dataset, type Selection } from "@/lib/model";
 import { distinctValues, latestSemMonth } from "@/lib/selectors";
-import { fmtInt, label, DIM_LABELS, METRIC_LABELS, fmtDate } from "@/lib/format";
-import { CELL_STATE_LABEL, CELL_STATE_DESCRIPTION } from "@/lib/model";
+import { useI18n } from "@/lib/i18n";
+import { fmtDate, fmtInt, fmtMonthYear, label, DIM_LABELS, METRIC_LABELS } from "@/lib/format";
+import { CELL_STATE_LABEL } from "@/lib/model";
 import { StateSwatch } from "../StateBits";
 import { ProvenanceTip } from "../Provenance";
 import { OptionChips, type ChipOption } from "../OptionChips";
@@ -55,33 +56,33 @@ const isBirthplaceSide = (dim: Partial<Dimensions>): boolean =>
  * and it is better met on purpose than by accident.
  */
 interface Preset {
-  label: string;
+  label: keyof Pick<import("@/lib/dict").Dict["xf"], "presetWomenC" | "presetUnder5" | "presetBornSwiss" | "presetRetirement" | "presetWall">;
   apply: (f: FilterState, latest: { year: number; month: number }, bfsYear: number) => FilterState;
 }
 const PRESETS: Preset[] = [
   {
-    label: "Women on a C permit",
+    label: "presetWomenC",
     apply: (f, latest) => ({
       ...f, source: "SEM", metric: "stock", populationType: "permanent",
       year: latest.year, month: latest.month, dim: { sex: "female", permit: "C" },
     }),
   },
   {
-    label: "Here under 5 years",
+    label: "presetUnder5",
     apply: (f, latest) => ({
       ...f, source: "SEM", metric: "stock", populationType: "permanent",
       year: latest.year, month: latest.month, dim: { lengthOfStay: "0-4" },
     }),
   },
   {
-    label: "Chilean-born with Swiss passports",
+    label: "presetBornSwiss",
     apply: (f, _l, bfsYear) => ({
       ...f, source: "BFS", metric: "stock", populationType: "permanent",
       year: bfsYear, month: undefined, dim: { nationalityGroup: "Swiss" },
     }),
   },
   {
-    label: "Of retirement age",
+    label: "presetRetirement",
     apply: (f, latest) => ({
       ...f, source: "SEM", metric: "stock", populationType: "permanent",
       year: latest.year, month: latest.month, dim: { ageClass: "65+" },
@@ -91,7 +92,7 @@ const PRESETS: Preset[] = [
     // Lands on "not published" ON PURPOSE, and the label says so — meeting the
     // wall is this page's signature outcome, but it has to be a kept promise
     // rather than a surprise that reads as a bug.
-    label: "Married newcomers — never counted",
+    label: "presetWall",
     apply: (f, latest) => ({
       ...f, source: "SEM", metric: "stock", populationType: "permanent",
       year: latest.year, month: latest.month, dim: { marital: "married", lengthOfStay: "0-4" },
@@ -107,6 +108,7 @@ export function CrossFilter({
   setFilter: (f: FilterState) => void;
 }) {
   const { dataset, loading } = useDataset();
+  const { t } = useI18n();
   /** The option currently hovered or focused, previewed but not committed. */
   const [preview, setPreview] = useState<{ key: BreakdownKey; option: ChipOption } | null>(null);
 
@@ -134,12 +136,12 @@ export function CrossFilter({
       const withoutK = { ...filter.dim };
       delete withoutK[k];
       out[k] = [
-        chip("", "Any", withoutK),
+        chip("", t.xf.any, withoutK),
         ...values.map((v) => chip(v, label(v), { ...filter.dim, [k]: v })),
       ];
     }
     return out;
-  }, [dataset, filter]);
+  }, [dataset, filter, t]);
 
   /**
    * The same question with every breakdown dropped — the denominator the
@@ -179,16 +181,13 @@ export function CrossFilter({
     <section className="section" id="cross-filter">
       <div className="wrap">
         <div className="section-head">
-          <span className="eyebrow">Cross-filter</span>
-          <h2>Ask your own question</h2>
-          <p>
-            Every option shows its answer before you pick it. Dashed options were never published — no source crosses
-            that combination. BFS answers up to three attributes at once; SEM answers one, plus sex.
-          </p>
+          <span className="eyebrow">{t.xf.eyebrow}</span>
+          <h2>{t.xf.h}</h2>
+          <p>{t.xf.lead}</p>
         </div>
 
         <div className="xf-presets">
-          <span className="xf-presets-label">Try:</span>
+          <span className="xf-presets-label">{t.xf.try}</span>
           {PRESETS.map((p) => (
             <button
               key={p.label}
@@ -196,14 +195,14 @@ export function CrossFilter({
               className="xf-preset"
               onClick={() => setFilter(p.apply(filter, latestSemMonth(dataset), bfsYears[bfsYears.length - 1] ?? 2024))}
             >
-              {p.label}
+              {t.xf[p.label]}
             </button>
           ))}
         </div>
 
         <div className="xf-grid">
           <div className="xf-controls panel">
-            <Field label="Source & metric">
+            <Field label={t.xf.fieldSourceMetric}>
               <div className="seg">
                 {(["SEM", "BFS"] as const).map((s) => (
                   <button
@@ -228,7 +227,7 @@ export function CrossFilter({
             </Field>
 
             {filter.source === "SEM" && (
-              <Field label="Metric">
+              <Field label={t.xf.fieldMetric}>
                 <select
                   value={filter.metric}
                   onChange={(e) => {
@@ -248,7 +247,7 @@ export function CrossFilter({
               </Field>
             )}
 
-            <Field label={filter.source === "SEM" ? "Reference month" : "Reference year"}>
+            <Field label={filter.source === "SEM" ? t.xf.fieldRefMonth : t.xf.fieldRefYear}>
               {filter.source === "SEM" ? (
                 <select
                   value={`${filter.year}-${filter.month}`}
@@ -259,7 +258,7 @@ export function CrossFilter({
                 >
                   {semMonths.map((m) => (
                     <option key={`${m.year}-${m.month}`} value={`${m.year}-${m.month}`}>
-                      {fmtDate(`${m.year}-${String(m.month).padStart(2, "0")}-28`).replace(/^\d+ /, "")}
+                      {fmtMonthYear(m.year, m.month)}
                     </option>
                   ))}
                 </select>
@@ -274,31 +273,25 @@ export function CrossFilter({
               )}
             </Field>
 
-            <Field label="Population type">
+            <Field label={t.xf.fieldPopType}>
               <select
                 value={filter.populationType}
                 onChange={(e) => setFilter({ ...filter, populationType: e.target.value as Observation["populationType"] })}
                 disabled={filter.metric === "naturalisation"}
               >
-                {filter.metric !== "naturalisation" && <option value="permanent">Permanent</option>}
-                {filter.metric !== "naturalisation" && <option value="non_permanent">Non-permanent</option>}
+                {filter.metric !== "naturalisation" && <option value="permanent">{t.xf.popPermanent}</option>}
+                {filter.metric !== "naturalisation" && <option value="non_permanent">{t.xf.popNonPermanent}</option>}
                 {(filter.metric === "stock" || filter.metric === "naturalisation") && (
-                  <option value="total">{filter.metric === "naturalisation" ? "Total" : "Total (perm + non-perm)"}</option>
+                  <option value="total">{filter.metric === "naturalisation" ? t.xf.popTotal : t.xf.popTotalStock}</option>
                 )}
               </select>
             </Field>
 
             <div className="xf-divider" />
             {result && result.cell.state === "not_published" && (
-              <p className="xf-wall-banner">
-                Every option below is dashed because the current combination was never published — drop one of the
-                selected dimensions to continue.
-              </p>
+              <p className="xf-wall-banner">{t.xf.wallBanner}</p>
             )}
-            <p className="xf-hint">
-              Each option shows what it resolves to. A dotted mark means the sources never crossed those dimensions —
-              still selectable, because that absence is itself the finding.
-            </p>
+            <p className="xf-hint">{t.xf.hint}</p>
 
             {breakdowns.map((k) => {
               const chips = chipsByKey[k];
@@ -309,7 +302,7 @@ export function CrossFilter({
                       question from "Chilean passport holders" to "people born in
                       Chile" — two populations of very different size. */}
                   <span className="xf-field-label">
-                    {k === "nationalityGroup" ? "Passport group · of the Chilean-born" : DIM_LABELS[k]}
+                    {k === "nationalityGroup" ? t.xf.passportOfBorn : DIM_LABELS[k]}
                   </span>
                   <OptionChips
                     name={DIM_LABELS[k]}
@@ -324,7 +317,7 @@ export function CrossFilter({
 
             {activeCount > 0 && (
               <button className="xf-reset" onClick={() => setFilter({ ...filter, dim: {} })}>
-                Clear {activeCount} breakdown{activeCount > 1 ? "s" : ""}
+                {t.xf.clear(activeCount)}
               </button>
             )}
           </div>
@@ -348,18 +341,13 @@ export function CrossFilter({
                         <span>Never published</span>
                       </div>
                       <p>
-                        {result.cell.wouldBeCarriedBy ? (
-                          <>
-                            The sources never cross-tabulated these dimensions for this population — the nearest table,{" "}
-                            <strong>{result.cell.wouldBeCarriedBy}</strong>, does not combine them.
-                          </>
-                        ) : (
-                          CELL_STATE_DESCRIPTION.not_published
-                        )}
+                        {result.cell.wouldBeCarriedBy
+                          ? t.xf.notPubWithCarrier(result.cell.wouldBeCarriedBy)
+                          : t.xf.notPubBare}
                       </p>
                       {drop && (
                         <button className="xf-drop is-primary" onClick={() => setFilter({ ...filter, dim: drop.dim })}>
-                          Nearest published answer: drop “{DIM_LABELS[drop.dropped]}” →{" "}
+                          {t.xf.dropBtn(DIM_LABELS[drop.dropped])}
                           <strong>{fmtInt(drop.cell.value)}</strong>
                         </button>
                       )}
@@ -377,22 +365,21 @@ export function CrossFilter({
                       </div>
                     </ProvenanceTip>
                   )}
-                  <div className="xf-unit">persons{result.cell.state === "structural_zero" ? " · a genuine zero, not missing data" : ""}</div>
+                  <div className="xf-unit">{t.xf.persons}{result.cell.state === "structural_zero" ? t.xf.zeroSuffix : ""}</div>
                   {parent && result.cell.value !== null && result.cell.state === "observed" && (
                     <button
                       className="xf-share"
                       onClick={() => setFilter({ ...filter, dim: {} })}
                       title="Clear the breakdowns to see the whole group"
                     >
-                      = {((result.cell.value / (parent.value ?? 1)) * 100).toFixed(1)}% of{" "}
-                      <span className="mono">{fmtInt(parent.value)}</span> in the whole group
+                      {t.xf.share(((result.cell.value / (parent.value ?? 1)) * 100).toFixed(1), fmtInt(parent.value))}
                     </button>
                   )}
                 </div>
 
                 {siblings && siblings.length > 2 && result.cell.state !== "not_published" && (
                   <div className="xf-siblings">
-                    <div className="xf-siblings-h">{lastDim ? DIM_LABELS[lastDim] : ""} — the full split</div>
+                    <div className="xf-siblings-h">{t.xf.siblingsH(lastDim ? DIM_LABELS[lastDim] : "")}</div>
                     {siblings
                       // "Any" and the published total row both restate the whole
                       // group, which the share line above already gives.
@@ -425,14 +412,14 @@ export function CrossFilter({
                       <span>
                         {DIM_LABELS[showPreview.key]} <strong>{showPreview.option.label}</strong> →{" "}
                         {showPreview.option.state === "not_published" ? (
-                          <em>never published</em>
+                          <em>{t.xf.previewNever}</em>
                         ) : (
                           <span className="mono">{fmtInt(showPreview.option.result)}</span>
                         )}
                       </span>
                     </>
                   ) : (
-                    <span className="xf-preview-idle">Hover an option to preview its answer</span>
+                    <span className="xf-preview-idle">{t.xf.previewIdle}</span>
                   )}
                 </div>
 

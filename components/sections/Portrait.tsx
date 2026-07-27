@@ -2,8 +2,9 @@
 import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { resolveCell, type Dataset } from "@/lib/model";
-import { distinctValues, latestSemMonth, cantonName, CUBE_399, CUBE_423 } from "@/lib/selectors";
-import { fmtInt, label, DIM_LABELS, STATE_CLASS, fmtDate } from "@/lib/format";
+import { distinctValues, latestSemMonth, CUBE_399, CUBE_423 } from "@/lib/selectors";
+import { useI18n } from "@/lib/i18n";
+import { fmtInt, fmtMonthYear, label, DIM_LABELS, STATE_CLASS } from "@/lib/format";
 import type { CellState, Dimensions } from "@/lib/types";
 
 type Key = "permit" | "legalBasis" | "ageClass" | "marital" | "lengthOfStay" | "nationalityGroup";
@@ -57,6 +58,7 @@ interface Row {
  */
 export function Portrait() {
   const { dataset, canton, loading } = useDataset();
+  const { t, cName, locale } = useI18n();
   const [bySex, setBySex] = useState(false);
   const [pop, setPop] = useState<Pop>("nationals");
 
@@ -65,7 +67,10 @@ export function Portrait() {
     () =>
       (sex: "total" | "female" | "male"): Row[] =>
         !dataset || !sem ? [] : pop === "nationals" ? buildRows(dataset, sem, sex) : buildBornRows(dataset, sex),
-    [dataset, sem, pop],
+    // locale is a real dependency: the rows bake in label() output, which
+    // follows the active language.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- label() reads the locale through a module global
+    [dataset, sem, pop, locale],
   );
   const rows = useMemo(() => build("total"), [build]);
   const female = useMemo(() => (bySex ? build("female") : []), [build, bySex]);
@@ -114,57 +119,42 @@ export function Portrait() {
     <section className="section" id="portrait">
       <div className="wrap">
         <div className="section-head">
-          <span className="eyebrow">Portrait</span>
+          <span className="eyebrow">{t.portrait.eyebrow}</span>
           <h2>
             {headTotal === 0
               ? pop === "nationals"
-                ? `Nobody in ${cantonName(canton)} holds a Chilean passport`
-                : `Nobody in ${cantonName(canton)} was born in Chile`
-              : `Who are the ${fmtInt(headTotal)}?`}
+                ? t.portrait.nobodyPassport(cName(canton))
+                : t.portrait.nobodyBorn(cName(canton))
+              : t.portrait.whoAre(fmtInt(headTotal))}
           </h2>
           <p>
-            {pop === "nationals" ? (
-              <>
-                Everyone in {cantonName(canton)} holding a Chilean passport, by every attribute the register carries. Split by sex to go
-                one level deeper — as far as SEM goes, since it crosses these with sex and with nothing else. BFS goes
-                further: the cross-filter below answers permit, sex and age together.
-              </>
-            ) : (
-              <>
-                Everyone in {cantonName(canton)} born in Chile — a larger and mostly different group.{" "}
-                {latAmBorn !== null && (
-                  <>
-                    Only <strong>{fmtInt(latAmBorn)}</strong> still hold a Latin-American passport; the other{" "}
-                    <strong>{fmtInt(headTotal - latAmBorn)}</strong> carry Swiss, EU or other citizenship and appear
-                    nowhere in the Chilean-national figures.
-                  </>
-                )}
-              </>
-            )}
+            {pop === "nationals"
+              ? t.portrait.leadNationals(cName(canton))
+              : latAmBorn !== null
+                ? t.portrait.leadBorn(cName(canton), fmtInt(latAmBorn), fmtInt(headTotal - latAmBorn))
+                : t.portrait.leadBorn(cName(canton), "—", "—")}
           </p>
         </div>
 
         <div className="controls-row">
           <div className="seg">
             <button className={`seg-btn ${pop === "nationals" ? "is-on" : ""}`} onClick={() => setPop("nationals")}>
-              Chilean passport
+              {t.portrait.popPassport}
             </button>
             <button className={`seg-btn ${pop === "born" ? "is-on" : ""}`} onClick={() => setPop("born")}>
-              Born in Chile
+              {t.portrait.popBorn}
             </button>
           </div>
           <div className="seg">
             <button className={`seg-btn ${!bySex ? "is-on" : ""}`} onClick={() => setBySex(false)}>
-              Everyone
+              {t.portrait.everyone}
             </button>
             <button className={`seg-btn ${bySex ? "is-on" : ""}`} onClick={() => setBySex(true)}>
-              Split by sex
+              {t.portrait.splitBySex}
             </button>
           </div>
           <span className="portrait-ref mono">
-            {pop === "nationals"
-              ? `SEM · ${fmtDate(`${sem.year}-${String(sem.month).padStart(2, "0")}-28`).replace(/^\d+ /, "")} · permanent`
-              : `BFS STATPOP · 31 Dec ${BORN_YEAR} · permanent`}
+            {pop === "nationals" ? t.portrait.refSem(fmtMonthYear(sem.year, sem.month)) : t.portrait.refBfs(BORN_YEAR)}
           </span>
         </div>
 
@@ -176,35 +166,27 @@ export function Portrait() {
                 <Bar row={r} />
               ) : isSplittable(female[i]) ? (
                 <div className="portrait-split">
-                  <Bar row={female[i]} caption="Women" />
-                  <Bar row={male[i]} caption="Men" />
+                  <Bar row={female[i]} caption={t.portrait.women} />
+                  <Bar row={male[i]} caption={t.portrait.men} />
                 </div>
               ) : (
                 <div className="portrait-wall">
-                  <Bar row={r} caption="Everyone" />
+                  <Bar row={r} caption={t.portrait.everyone} />
                   <p className="portrait-wall-note">
-                    {pop === "nationals"
-                      ? "Not published by sex — SEM reports marital status for the group as a whole only."
-                      : "Not published by sex for this population."}
+                    {pop === "nationals" ? t.portrait.wallSem : t.portrait.wallBorn}
                   </p>
                 </div>
               )}
               {pop === "born" && r.key === "marital" && (
                 <p className="portrait-note">
-                  Marital status for the Chilean-born comes from a different cube and an earlier year (31 Dec{" "}
-                  {BORN_MARITAL_YEAR}), so it counts {fmtInt(r.total)} rather than {fmtInt(headTotal)}. The dates are
-                  not reconciled.
+                  {t.portrait.bornMaritalNote(BORN_MARITAL_YEAR, fmtInt(r.total), fmtInt(headTotal))}
                 </p>
               )}
               {pop === "born" && r.key === "ageClass" && (
-                <p className="portrait-note">
-                  Summed from the 21 five-year bands BFS publishes — exact arithmetic, not an estimate.
-                </p>
+                <p className="portrait-note">{t.portrait.ageSumNote}</p>
               )}
               {pop === "nationals" && r.key === "marital" && marriedToSwiss !== null && (
-                <p className="portrait-note">
-                  Of the married, <strong>{fmtInt(marriedToSwiss)}</strong> are married to a Swiss national.
-                </p>
+                <p className="portrait-note">{t.portrait.marriedToSwiss(fmtInt(marriedToSwiss))}</p>
               )}
             </div>
           ))}

@@ -1,25 +1,28 @@
 "use client";
 import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
-import { bfsStockSeries, semDecemberSeries, semMonthlySeries, cantonName } from "@/lib/selectors";
+import { bfsStockSeries, semDecemberSeries, semMonthlySeries } from "@/lib/selectors";
+import { useI18n } from "@/lib/i18n";
 import { resolveCell } from "@/lib/model";
 import { TimeSeries, SeriesLegend, type Series } from "../charts/TimeSeries";
 import { StateLegend } from "../StateBits";
+import { label } from "@/lib/format";
 import type { CellState } from "@/lib/types";
 
 type Breakdown = "none" | "sex" | "permit";
 const PERMITS = [
-  { code: "B", label: "Permit B", color: "var(--series-2)" },
-  { code: "C", label: "Permit C", color: "#1a7a5e" },
-  { code: "L", label: "Permit L", color: "#7a5c00" },
+  { code: "B", color: "var(--series-2)" },
+  { code: "C", color: "#1a7a5e" },
+  { code: "L", color: "#7a5c00" },
 ];
 const SEXES = [
-  { code: "female", label: "Female", color: "var(--accent)" },
-  { code: "male", label: "Male", color: "var(--series-2)" },
+  { code: "female", color: "var(--accent)" },
+  { code: "male", color: "var(--series-2)" },
 ];
 
 export function Trend() {
   const { dataset, canton, loading } = useDataset();
+  const { t, cName } = useI18n();
   const [breakdown, setBreakdown] = useState<Breakdown>("none");
   const [monthly, setMonthly] = useState(false);
 
@@ -33,12 +36,12 @@ export function Trend() {
       const sem = monthly ? semMonthlySeries(dataset) : semDecemberSeries(dataset);
       const out: Series[] = [];
       if (bfs.some((d) => d.state === "observed")) {
-        out.push({ id: "bfs", label: "BFS STATPOP (register, 31 Dec)", data: bfs, color: "var(--accent)" });
+        out.push({ id: "bfs", label: t.trend.seriesBfs, data: bfs, color: "var(--accent)" });
       }
       if (sem.length) {
         out.push({
           id: "sem",
-          label: monthly ? "SEM (administrative, monthly)" : "SEM (administrative, 31 Dec)",
+          label: monthly ? t.trend.seriesSemMonthly : t.trend.seriesSemDec,
           data: sem,
           color: "var(--series-2)",
           dashed: true,
@@ -62,9 +65,14 @@ export function Trend() {
         });
         return { year, value: c.value, state: c.state as CellState, refDate: c.observation?.provenance.referenceDate, source: "BFS" };
       });
-      return { id: cat.code, label: cat.label, data, color: cat.color };
+      return {
+        id: cat.code,
+        label: breakdown === "sex" ? label(cat.code) : t.trend.permit(cat.code),
+        data,
+        color: cat.color,
+      };
     });
-  }, [dataset, breakdown, monthly]);
+  }, [dataset, breakdown, monthly, t]);
 
   if (loading || !dataset) return <SectionSkeleton title="A 16-year view" />;
 
@@ -78,12 +86,9 @@ export function Trend() {
     <section className="section" id="trend">
       <div className="wrap">
         <div className="section-head">
-          <span className="eyebrow">Time · 2010–2026</span>
-          <h2>Sixteen years, two registers</h2>
-          <p>
-            Chilean nationals in {cantonName(canton)}, as counted by two registers that do not agree and are not
-            reconciled here.{smallScale ? " At this size a single family arriving moves the line." : ""}
-          </p>
+          <span className="eyebrow">{t.trend.eyebrow}</span>
+          <h2>{t.trend.h}</h2>
+          <p>{t.trend.lead(cName(canton), smallScale)}</p>
         </div>
 
         <div className="controls-row">
@@ -94,7 +99,7 @@ export function Trend() {
                 className={`seg-btn ${breakdown === b ? "is-on" : ""}`}
                 onClick={() => setBreakdown(b)}
               >
-                {b === "none" ? "Total" : b === "sex" ? "By sex" : "By permit"}
+                {b === "none" ? t.trend.total : b === "sex" ? t.trend.bySex : t.trend.byPermit}
               </button>
             ))}
           </div>
@@ -103,10 +108,10 @@ export function Trend() {
           {breakdown === "none" && (
             <div className="seg">
               <button className={`seg-btn ${!monthly ? "is-on" : ""}`} onClick={() => setMonthly(false)}>
-                Yearly
+                {t.trend.yearly}
               </button>
               <button className={`seg-btn ${monthly ? "is-on" : ""}`} onClick={() => setMonthly(true)}>
-                Monthly
+                {t.trend.monthly}
               </button>
             </div>
           )}
@@ -118,13 +123,13 @@ export function Trend() {
             <>
               <TimeSeries
                 series={series}
-                annotations={breakdown === "none" ? peakAndTrough(series) : []}
+                annotations={breakdown === "none" ? peakAndTrough(series, t.trend.peak, t.trend.low) : []}
               />
               <SeriesLegend series={series} />
             </>
           ) : (
             <div className="await-bfs" style={{ padding: "40px 8px" }}>
-              The annual series is carried by BFS STATPOP cube 101. It is not present in this build of the harvest yet.
+              {t.trend.awaitBfs}
             </div>
           )}
         </div>
@@ -141,7 +146,11 @@ export function Trend() {
  * the series is long enough for a peak to mean anything, and only from the
  * register series, which is annual and complete.
  */
-function peakAndTrough(series: Series[]): { year: number; text: string }[] {
+function peakAndTrough(
+  series: Series[],
+  peakLabel: (n: string) => string,
+  lowLabel: (n: string) => string,
+): { year: number; text: string }[] {
   const bfs = series.find((s) => s.id === "bfs");
   const pts = (bfs?.data ?? []).filter((d) => d.state === "observed" && d.value !== null);
   if (pts.length < 5) return [];
@@ -149,8 +158,8 @@ function peakAndTrough(series: Series[]): { year: number; text: string }[] {
   const lo = pts.reduce((m, d) => ((d.value ?? 0) < (m.value ?? 0) ? d : m), pts[0]);
   if (hi.year === lo.year) return [];
   return [
-    { year: hi.year, text: `peak ${hi.value}` },
-    { year: lo.year, text: `low ${lo.value}` },
+    { year: hi.year, text: peakLabel(String(hi.value)) },
+    { year: lo.year, text: lowLabel(String(lo.value)) },
   ];
 }
 

@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { latestSemMonth } from "@/lib/selectors";
+import { useI18n } from "@/lib/i18n";
 import { matches } from "@/lib/model";
 import { toCsv, toJson, download } from "@/lib/export";
 import { CrossFilter, type FilterState } from "./sections/CrossFilter";
@@ -11,12 +12,13 @@ const DIM_KEYS: (keyof Dimensions)[] = [
   "sex", "permit", "legalBasis", "ageClass", "marital", "lengthOfStay", "reason", "naturalisationType",
 ];
 
-function encodeState(f: FilterState, canton: string): string {
+function encodeState(f: FilterState, canton: string, locale: string): string {
   const p = new URLSearchParams();
-  // The canton is owned by the data context, but every URL this component
-  // pushes replaces the whole query string — omitting kt here would silently
-  // strip the canton from the address on the next filter change.
+  // Canton and language are owned elsewhere, but every URL this component
+  // pushes replaces the whole query string — omitting them here would silently
+  // strip them from the address on the next filter change.
   if (canton !== "CH") p.set("kt", canton);
+  if (locale !== "en") p.set("lang", locale);
   p.set("src", f.source);
   p.set("m", f.metric);
   p.set("y", String(f.year));
@@ -49,6 +51,7 @@ function decodeState(qs: string, fallback: FilterState): FilterState {
 
 export function Explorer() {
   const { dataset, canton } = useDataset();
+  const { t, locale } = useI18n();
   const [filter, setFilter] = useState<FilterState | null>(null);
   /**
    * Set while we are applying a filter that came *from* the history stack, so the
@@ -99,7 +102,7 @@ export function Explorer() {
   // Sync URL when filter changes (shareable views).
   useEffect(() => {
     if (!filter) return;
-    const qs = encodeState(filter, canton);
+    const qs = encodeState(filter, canton, locale);
     if (qs === lastQs.current) return;
     const url = `${window.location.pathname}?${qs}${window.location.hash || "#cross-filter"}`;
     // First paint and history-driven changes replace; a user's own change pushes.
@@ -107,7 +110,7 @@ export function Explorer() {
     else window.history.pushState(null, "", url);
     lastQs.current = qs;
     fromHistory.current = false;
-  }, [filter, canton]);
+  }, [filter, canton, locale]);
 
   const exportView = useCallback(
     (fmt: "csv" | "json") => {
@@ -141,10 +144,10 @@ export function Explorer() {
       <CrossFilter filter={filter} setFilter={setFilter} />
       <div className="wrap">
         <div className="export-bar">
-          <span className="export-label mono">Export current view with full provenance columns</span>
+          <span className="export-label mono">{t.explorer.exportLabel}</span>
           <div className="export-btns">
-            <button onClick={() => exportView("csv")}>Download CSV</button>
-            <button onClick={() => exportView("json")}>Download JSON</button>
+            <button onClick={() => exportView("csv")}>{t.explorer.csv}</button>
+            <button onClick={() => exportView("json")}>{t.explorer.json}</button>
           </div>
         </div>
       </div>
