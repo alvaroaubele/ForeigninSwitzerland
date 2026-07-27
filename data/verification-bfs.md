@@ -1,26 +1,26 @@
 # BFS Harvest Verification Report
 
-_Generated 2026-07-27T09:29:42.280Z by `scripts/verify-bfs.ts` (independent re-fetch, no local cache)._
+_Generated 2026-07-27T10:03:45.866Z by `scripts/verify-bfs.ts` (independent re-fetch, no local cache)._
 
-**Verdict: PASS.** All 2693 non-null BFS cells (100% — not a sample) and all 8 BFS anchors were re-fetched directly from `www.pxweb.bfs.admin.ch` and reproduced exactly. Queries were reconstructed by inverting the harvested dimensions back to PxWeb codes with a map written in this script; json-stat2 was decoded by a decoder written in this script; the harvest's fetcher, walker, and query definitions were not imported. Each cube's metadata was also re-fetched and the source's own labels confirm the code meanings the harvest relied on.
+**Verdict: PASS.** All 5333 non-null BFS cells (100% — not a sample) and all 8 BFS anchors were re-fetched directly from `www.pxweb.bfs.admin.ch` and reproduced exactly. Queries were reconstructed by inverting the harvested dimensions back to PxWeb codes with a map written in this script; json-stat2 was decoded by a decoder written in this script; the harvest's fetcher, walker, and query definitions were not imported. Each cube's metadata was also re-fetched and the source's own labels confirm the code meanings the harvest relied on.
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Eligible non-null BFS cells | 2693 |
-| Cells re-fetched and reproduced | 2693 (100.0%) |
+| Eligible non-null BFS cells | 5333 |
+| Cells re-fetched and reproduced | 5333 (100.0%) |
 | Coordinates absent from the fresh response | 0 |
 | BFS anchors reproduced | 8/8 |
 | Code-meaning claims confirmed from metadata | 14/14 |
-| HTTP requests issued | 20 (sequential, 6s apart) |
+| HTTP requests issued | 22 (sequential, 6s apart) |
 
 ## Per-cube reproduction
 
 | Cube | Cells checked | Reproduced |
 | --- | --- | --- |
-| `px-x-0103010000_101` | 1203 | 1203/1203 |
-| `px-x-0103010000_399` | 1414 | 1414/1414 |
+| `px-x-0103010000_101` | 2259 | 2259/2259 |
+| `px-x-0103010000_399` | 2998 | 2998/2998 |
 | `px-x-0103010000_423` | 76 | 76/76 |
 
 ## Code meanings, confirmed against cube metadata
@@ -67,6 +67,8 @@ Each block is the per-dimension union of the coordinates of the cells that claim
 | 399 | Chilean-born residents of Zug by passport group and sex | 360 | 360 | OK |
 | 101 | Chilean nationals in Zug by 5-year age class and year | 660 | 660 | OK |
 | 399 | Chilean-born residents of Zug by 5-year age class and sex | 660 | 660 | OK |
+| 101 | Chilean nationals in Zug by permit, sex and age (latest year) | 1056 | 1056 | OK |
+| 399 | Chilean-born residents of Zug by passport group, sex and age (latest year) | 1584 | 1584 | OK |
 
 ## Anchor checks (BFS)
 
