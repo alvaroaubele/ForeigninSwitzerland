@@ -30,9 +30,10 @@
  */
 import { execFile } from "node:child_process";
 import { randomBytes } from "node:crypto";
-import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { decodeCanton, type CantonPayload } from "../lib/payload";
 import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
@@ -453,8 +454,28 @@ function checkCodeEvidence(
   return { rows, problems };
 }
 
+/**
+ * Load every harvested observation from the per-canton payload files.
+ *
+ * The harvest used to write one data/harvest.json; it now writes one file per
+ * canton under public/data/canton/. This reads all of them and flattens, so the
+ * verifier still sees a single list. It decodes the payload with the shared
+ * decoder — the only harvest-side code either verifier touches, and only because
+ * it is the wire format itself rather than any extraction logic.
+ */
+function loadAllObservations(): Obs[] {
+  const dir = join(process.cwd(), "public", "data", "canton");
+  const files = readdirSync(dir).filter((f: string) => f.endsWith(".json")).sort();
+  const out: Obs[] = [];
+  for (const f of files) {
+    const payload = JSON.parse(readFileSync(join(dir, f), "utf8")) as CantonPayload;
+    out.push(...(decodeCanton(payload) as unknown as Obs[]));
+  }
+  return out;
+}
+
 async function main(): Promise<void> {
-  const harvest = JSON.parse(readFileSync(join(DATA, "harvest.json"), "utf8")) as { observations: Obs[] };
+  const harvest = { observations: loadAllObservations() };
   const manifest = JSON.parse(readFileSync(join(DATA, "manifest.json"), "utf8")) as { anchors: Anchor[] };
 
   const bfs = harvest.observations.filter(

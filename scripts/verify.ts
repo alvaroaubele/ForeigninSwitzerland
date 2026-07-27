@@ -23,8 +23,9 @@
  * Run:  npx tsx scripts/verify.ts
  * Writes: data/verification-report.md
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { decodeCanton, type CantonPayload } from "../lib/payload";
 import * as XLSX from "xlsx";
 
 // ---------------------------------------------------------------------------
@@ -122,14 +123,26 @@ async function fetchFresh(url: string): Promise<Buffer> {
   return p;
 }
 
-// Parsed-sheet cache keyed by url + sheet name.
+// Parsed-workbook cache keyed by url, and a parsed-sheet cache on top of it.
+//
+// The workbook is parsed once per file rather than once per sheet. Each workbook
+// holds 28 sheets and every one of them is now sampled, so re-parsing per sheet
+// would mean ~20 000 parses of ~750 files instead of 750.
 type Row = (number | string | null)[];
+const wbCache = new Map<string, Promise<XLSX.WorkBook>>();
 const sheetCache = new Map<string, Row[] | null>();
+async function getWorkbook(url: string): Promise<XLSX.WorkBook> {
+  let p = wbCache.get(url);
+  if (!p) {
+    p = fetchFresh(url).then((buf) => XLSX.read(buf, { type: "buffer" }));
+    wbCache.set(url, p);
+  }
+  return p;
+}
 async function getSheetRows(url: string, sheetName: string): Promise<Row[] | null> {
   const key = `${url}::${sheetName}`;
   if (sheetCache.has(key)) return sheetCache.get(key)!;
-  const buf = await fetchFresh(url);
-  const wb = XLSX.read(buf, { type: "buffer" });
+  const wb = await getWorkbook(url);
   const sheet = wb.Sheets[sheetName];
   const rows = sheet
     ? (XLSX.utils.sheet_to_json(sheet, { header: 1, raw: true, defval: null }) as Row[])
@@ -214,7 +227,10 @@ function resolveTarget(o: Obs): Target {
     return { kind: "absent", sheet: o.provenance.sheet || "ZG" };
   }
 
-  const cell = (col: number): Target => ({ kind: "cell", sheet: "ZG", rowLabel: "chile", col });
+  // The sheet comes from provenance now. It was "ZG" for every cell when the
+  // harvest covered one canton; hardcoding it would send all 26 others to the
+  // wrong sheet and report every one of them as a mismatch.
+  const cell = (col: number): Target => ({ kind: "cell", sheet: o.provenance.sheet || "ZG", rowLabel: "chile", col });
 
   switch (o.dataset) {
     case "2-10":
@@ -430,8 +446,28 @@ interface Discrepancy {
   note: string;
 }
 
+/**
+ * Load every harvested observation from the per-canton payload files.
+ *
+ * The harvest used to write one data/harvest.json; it now writes one file per
+ * canton under public/data/canton/. This reads all of them and flattens, so the
+ * verifier still sees a single list. It decodes the payload with the shared
+ * decoder — the only harvest-side code either verifier touches, and only because
+ * it is the wire format itself rather than any extraction logic.
+ */
+function loadAllObservations(): Obs[] {
+  const dir = join(process.cwd(), "public", "data", "canton");
+  const files = readdirSync(dir).filter((f: string) => f.endsWith(".json")).sort();
+  const out: Obs[] = [];
+  for (const f of files) {
+    const payload = JSON.parse(readFileSync(join(dir, f), "utf8")) as CantonPayload;
+    out.push(...(decodeCanton(payload) as unknown as Obs[]));
+  }
+  return out;
+}
+
 async function main(): Promise<void> {
-  const harvest = JSON.parse(readFileSync(join(DATA, "harvest.json"), "utf8")) as { observations: Obs[] };
+  const harvest = { observations: loadAllObservations() };
   const manifest = JSON.parse(readFileSync(join(DATA, "manifest.json"), "utf8")) as { anchors: Anchor[] };
 
   const eligible = harvest.observations.filter(
