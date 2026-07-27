@@ -377,6 +377,7 @@ const zugNationals = (year: number) => (o: Obs) =>
 
 const zugBorn = (group: string) => (o: Obs) =>
   o.dataset === "px-x-0103010000_399" &&
+  o.dim.canton === "ZG" &&
   o.dim.year === 2024 &&
   o.dim.birthCountry === "CL" &&
   o.dim.nationalityGroup === group &&
@@ -384,22 +385,36 @@ const zugBorn = (group: string) => (o: Obs) =>
   o.dim.sex === "total" &&
   o.dim.ageClass === undefined;
 
+// Labels follow the harvest's national renaming ("BFS 2024..." became
+// "Zug BFS 2024...", plus new national anchors). Predicates already name their
+// canton — zugNationals/zugBorn pin ZG — which the flattened 27-canton list now
+// makes load-bearing rather than redundant.
 const ANCHOR_PREDICATES: Record<string, (o: Obs) => boolean> = {
-  "BFS 2024 Chilean nationals (perm)": zugNationals(2024),
-  "BFS 2017 Chilean nationals (perm)": zugNationals(2017),
-  "BFS 2020 Chilean nationals (perm)": zugNationals(2020),
-  "BFS 2024 Chilean-born (perm)": zugBorn("total"),
-  "BFS 2024 Chilean-born Swiss passport": zugBorn("Swiss"),
-  "BFS 2024 Chilean-born LatAm passport": zugBorn("Latin America & Caribbean"),
-  "BFS 2024 Chilean-born EU passport": zugBorn("EU"),
-  "BFS 2023 Chilean nationals born in Chile": (o) =>
+  "Zug BFS 2024 Chilean nationals (perm)": zugNationals(2024),
+  "Zug BFS 2017 Chilean nationals (perm)": zugNationals(2017),
+  "Zug BFS 2020 Chilean nationals (perm)": zugNationals(2020),
+  "Zug BFS 2024 Chilean-born (perm)": zugBorn("total"),
+  "Zug BFS 2024 Chilean-born Swiss passport": zugBorn("Swiss"),
+  "Zug BFS 2024 Chilean-born LatAm passport": zugBorn("Latin America & Caribbean"),
+  "Zug BFS 2024 Chilean-born EU passport": zugBorn("EU"),
+  "Zug BFS 2023 Chilean nationals born in Chile": (o) =>
     o.dataset === "px-x-0103010000_423" &&
+    o.dim.canton === "ZG" &&
     o.dim.year === 2023 &&
     o.dim.nationality === "CL" &&
     o.dim.birthCountry === "CL" &&
     o.populationType === "permanent" &&
     o.dim.sex === "total" &&
     o.dim.marital === undefined,
+  "Switzerland BFS 2024 Chilean nationals (perm)": (o) =>
+    o.dataset === "px-x-0103010000_101" &&
+    o.dim.canton === "CH" &&
+    o.dim.year === 2024 &&
+    o.dim.nationality === "CL" &&
+    o.populationType === "permanent" &&
+    o.dim.sex === "total" &&
+    o.dim.permit === undefined &&
+    o.dim.ageClass === undefined,
 };
 
 // ---------------------------------------------------------------------------
