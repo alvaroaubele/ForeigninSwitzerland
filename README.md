@@ -28,16 +28,16 @@ four states** and they are visually and semantically distinct everywhere:
   year: **31 Dec 2024**. Answers *“who was born where, as of year-end.”*
 
 The two reference dates are ~17 months apart. Where they measure the same
-concept they disagree slightly (SEM: 35 permanent Chilean nationals; BFS: 33).
+concept they disagree slightly (in Zug, SEM counts 35 permanent Chilean nationals to BFS’s 33).
 **The offset is preserved throughout and never reconciled to one number.**
 
 ## The central finding
 
-The community is bigger than the passport count. **35** people hold a Chilean
-passport; **99** were born in Chile — and of those 99, only ~34 hold a
-Latin-American passport, while 33 hold Swiss and 29 hold EU passports. Most of
-the Chilean-born have naturalised, so counting passports misses two thirds of
-them. This contrast is the app's hero view, not something buried behind a filter.
+The community is bigger than the passport count. Nationally, **3 303** people
+hold a Chilean passport while **8 308** were born in Chile — and most of the
+Chilean-born hold Swiss or EU passports today. The same contrast holds at every
+scale (in Zug: 35 vs 99). It is the app's hero view, not something buried
+behind a filter.
 
 ## Data model
 
@@ -90,25 +90,27 @@ offers the single filter to drop to reach a populated view.
   trustworthy, but it is not what a reader came for.
 - **Light and dark themes**, chosen from the OS by default, overridable, and
   applied before first paint so a dark-theme reader never sees a white flash.
-- **Comparison baselines** — Zug against all Chileans in Switzerland, against
-  Zug’s foreign population, and against the top cantons (VD 989, ZH 554, GE 503,
-  BE 284, FR 222), with per-1,000 normalisation and an index-vs-national view.
+- **Comparison baselines** — the selected canton against all Chileans in
+  Switzerland, its own foreign population, and every other canton, with
+  per-1,000 normalisation and an index-vs-national view. Clicking a canton row
+  re-scopes the entire page.
 - **Population portrait** — every attribute the register carries drawn at once,
   for either population (Chilean passport holders, or the larger Chilean-born
   group), with a sex split. Where a split does not exist the section says so
   instead of rendering a blank: SEM's table 2-22 has no sex columns for marital
   status at all.
 - **Movement** — arrivals by reason, departures by permit, and naturalisations,
-  summed over the full nine-year run because any single year is three or four
-  people. Departures and naturalisations split by sex; arrivals cannot, because
-  SEM table 3-30 is eleven columns wide with no sex or age block anywhere in it.
+  for the full published run, any single calendar year, or the rolling last
+  twelve months. Departures and naturalisations split by sex; arrivals cannot,
+  because SEM table 3-30 is eleven columns wide with no sex or age block
+  anywhere in it.
 - **Depth as far as each source goes.** SEM crosses each attribute with sex and
   nothing else — a fixed workbook layout, so that limit is real. BFS is a
   queryable cube and returns any combination, so the explorer answers three
-  attributes at once there: 33 Chilean nationals, 18 on a B permit, 13 of those
-  women, 5 of those aged 45–49.
-- **Time series 2010–2026**, yearly or monthly, with the 2017 peak (34) and 2020
-  trough (20) visible and the SEM and BFS series distinguishable (solid vs
+  attributes at once there (in Zug: 33 Chilean nationals, 18 on a B permit, 13
+  of those women, 5 of those aged 45–49).
+- **Time series 2010–2026**, yearly or monthly, with each scope’s own peak and
+  trough annotated and the SEM and BFS series distinguishable (solid vs
   dashed). At monthly resolution the two stop reading as one wobbling line:
   SEM is a monthly administrative count running to May 2026, BFS an annual
   register snapshot ending December 2024.
@@ -128,7 +130,7 @@ high-level charting library was used, on purpose:
    distinct mark (filled / open ring / hatched / dotted). A custom mark layer
    makes that a first-class property.
 2. **No false precision.** Library defaults smooth lines and fill areas, implying
-   resolution the data lacks. With five- to fifteen-point series over ~35 people,
+   resolution the data lacks. With series this short over populations this small,
    we draw straight segments between observed points only, and break the line at
    unpublished gaps rather than interpolating across them.
 3. **Weight.** The whole chart layer is a few hundred lines and adds only
@@ -145,8 +147,8 @@ npm run harvest        # re-runs Phase 1 end to end
 dimension) tuple, fetches with a disk cache (`data/raw/`, keyed by URL+query
 hash), rate-limits to ≤4 concurrent with exponential backoff, parses SEM XLSX
 sheets and BFS json-stat2 responses, classifies each cell into one of the four
-states, verifies against a fixed anchor list, and writes `harvest.json` +
-`manifest.json`. Re-runs are incremental — cached responses are not re-fetched —
+states, verifies against a fixed anchor list, and writes the per-canton payload
+files plus `summary.json` and `manifest.json`. Re-runs are incremental — cached responses are not re-fetched —
 so refreshing when SEM publishes a new month only downloads the new files.
 
 It covers **27 scopes** (Switzerland and the 26 cantons) × **69 SEM reference
@@ -156,8 +158,8 @@ periods** (the December snapshot for 2017–2020, then every month from 2021-01 
 Widening from one canton to all of them cost no extra SEM downloads: every
 workbook already contained all 28 sheets and the harvest was reading one. BFS
 widened by selection, since `Kanton` is a cube dimension. A full cold run takes about 35
-minutes and fetches ~1 200 files; the resulting `harvest.json` is 12 MB raw and
-**261 kB gzipped**, which is what actually ships.
+minutes and fetches ~1 200 files; the output is one payload per canton,
+~2.1 MB raw and ~70 kB gzipped each — only the canton in view is downloaded.
 
 The BFS queries deliberately include two *full-cross* requests at the latest
 complete year — permit × sex × age, and passport group × sex × age. Every other
@@ -239,7 +241,8 @@ npm run build          # production build (static)
 
 Stack: **Next.js 15 App Router, React 19, TypeScript strict.** The harvested
 data ships as static JSON; there is **no runtime database and no server-side
-data fetching** — the client loads `/data/harvest.json` from static assets.
+data fetching** — the client loads `/data/manifest.json`, `/data/summary.json` and one
+`/data/canton/<code>.json` at a time from static assets.
 
 ## Deployment (Vercel)
 
@@ -274,7 +277,7 @@ lib/selectors.ts            # app-specific queries (headlines, splits, baselines
 lib/export.ts               # CSV / JSON export with provenance columns
 components/                 # Header, Explorer, sections/, charts/, Provenance, StateBits
 app/                        # App Router page, layout, globals.css (design tokens)
-data/harvest.json           # harvested observations (provenance-complete)
+public/data/canton/         # harvested observations, one payload per canton
 data/manifest.json          # source inventory + availability + anchors
 data/COVERAGE.md            # written coverage account
 ```

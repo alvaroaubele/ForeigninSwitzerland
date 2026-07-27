@@ -10,7 +10,7 @@
  * resumed sessions do not re-fetch. Requests are rate-limited to <=4 concurrent
  * with exponential backoff on 429/5xx.
  *
- * Emits: data/harvest.json, data/manifest.json. COVERAGE.md is maintained
+ * Emits: public/data/canton/*.json + summary.json, data/manifest.json. COVERAGE.md is maintained
  * alongside (see docs). Run with:  npm run harvest
  */
 import { createHash } from "node:crypto";
@@ -509,7 +509,7 @@ function buildSources(semUrls: Set<string>): SourceRecord[] {
     records.push({
       id: `SEM ${t}`,
       source: "SEM",
-      title: `SEM Ausländerstatistik table ${t} (sheet ZG, row Chile)`,
+      title: `SEM Ausländerstatistik table ${t} (all 26 canton sheets + CH-Nati, row Chile)`,
       checkedFor: "Chile x Zug figures, monthly/annual",
       yielded: `${bySrc("SEM", t).length} cells`,
       observationCount: bySrc("SEM", t).length,

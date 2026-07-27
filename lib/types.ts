@@ -1,10 +1,10 @@
-// Shared data model for the Chileans-in-Zug data explorer.
+// Shared data model for the Chileans-in-Switzerland data explorer.
 // The same types drive the harvest script and the Next.js application.
 
 /**
  * Every displayed cell resolves to exactly one of four states. The distinction
  * between "the count is genuinely 0" and "this was never published" is the
- * central design problem for a population of ~35 people.
+ * central design problem for populations this small.
  */
 export type CellState =
   | "observed" // a real published figure (may itself be any non-negative number)

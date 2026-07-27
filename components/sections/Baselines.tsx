@@ -66,8 +66,14 @@ export function Baselines() {
           <span className="eyebrow">Comparison</span>
           <h2>Where Chileans actually live</h2>
           <p>
-            Vaud, Zürich and Geneva hold the largest communities. Measured per 1,000 foreign residents the ranking
-            changes, because a big canton has more of everyone. SEM permanent residents,{" "}
+            {baselines.length >= 3 && (
+              <>
+                {cantonName(baselines[0].canton)}, {cantonName(baselines[1].canton)} and{" "}
+                {cantonName(baselines[2].canton)} hold the largest communities.{" "}
+              </>
+            )}
+            Measured per 1,000 foreign residents the ranking changes, because a big canton has more of everyone. Click
+            any canton to view it across the whole page. SEM permanent residents,{" "}
             {fmtDate(`${sem.year}-${String(sem.month).padStart(2, "0")}-28`).replace(/^\d+ /, "")}.
           </p>
         </div>
@@ -75,7 +81,22 @@ export function Baselines() {
         <div className="baseline-cards">
           <MiniStat label={`Chileans in ${cantonName(canton)}`} value={chileZg} sub="of whom permanent" cell={here?.chile} />
           <MiniStat label={`Share of ${cantonName(canton)}\u2019s foreign residents`} value={null} display={foreignZg !== null && foreignZg > 0 && chileZg !== null ? `${((chileZg / foreignZg) * 100).toFixed(2)}%` : "—"} sub={`${fmtInt(foreignZg)} foreign residents`} cell={here?.foreign} />
-          <MiniStat label="Share of all Chileans in Switzerland" value={null} display={national.value !== null && national.value > 0 && chileZg !== null ? `${((chileZg / national.value) * 100).toFixed(1)}%` : "—"} sub={`${fmtInt(national.value)} in Switzerland`} cell={national} />
+          {canton === "CH" ? (
+            // "Switzerland's share of Switzerland: 100%" says nothing; on the
+            // national view this card names the biggest cantonal community.
+            <MiniStat
+              label={`Largest community: ${baselines[0] ? cantonName(baselines[0].canton) : "—"}`}
+              value={baselines[0]?.chile.value ?? null}
+              sub={
+                national.value && baselines[0]?.chile.value
+                  ? `${((baselines[0].chile.value / national.value) * 100).toFixed(1)}% of the national total`
+                  : ""
+              }
+              cell={baselines[0]?.chile}
+            />
+          ) : (
+            <MiniStat label="Share of all Chileans in Switzerland" value={null} display={national.value !== null && national.value > 0 && chileZg !== null ? `${((chileZg / national.value) * 100).toFixed(1)}%` : "—"} sub={`${fmtInt(national.value)} in Switzerland`} cell={national} />
+          )}
           <MiniStat label="Total incl. non-permanent" value={total.value} sub={`${fmtInt(passport.value)} permanent`} cell={total} />
         </div>
 
@@ -120,6 +141,7 @@ export function Baselines() {
                   }}
                 >
                   <div className="barrow-label">{cantonName(b.canton)}</div>
+                  <span className="barrow-view" aria-hidden>view →</span>
                   <div className="barrow-track">
                     <div
                       className="barrow-fill"

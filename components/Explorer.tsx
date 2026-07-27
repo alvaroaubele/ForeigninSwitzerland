@@ -11,8 +11,12 @@ const DIM_KEYS: (keyof Dimensions)[] = [
   "sex", "permit", "legalBasis", "ageClass", "marital", "lengthOfStay", "reason", "naturalisationType",
 ];
 
-function encodeState(f: FilterState): string {
+function encodeState(f: FilterState, canton: string): string {
   const p = new URLSearchParams();
+  // The canton is owned by the data context, but every URL this component
+  // pushes replaces the whole query string — omitting kt here would silently
+  // strip the canton from the address on the next filter change.
+  if (canton !== "CH") p.set("kt", canton);
   p.set("src", f.source);
   p.set("m", f.metric);
   p.set("y", String(f.year));
@@ -44,7 +48,7 @@ function decodeState(qs: string, fallback: FilterState): FilterState {
 }
 
 export function Explorer() {
-  const { dataset } = useDataset();
+  const { dataset, canton } = useDataset();
   const [filter, setFilter] = useState<FilterState | null>(null);
   /**
    * Set while we are applying a filter that came *from* the history stack, so the
@@ -95,7 +99,7 @@ export function Explorer() {
   // Sync URL when filter changes (shareable views).
   useEffect(() => {
     if (!filter) return;
-    const qs = encodeState(filter);
+    const qs = encodeState(filter, canton);
     if (qs === lastQs.current) return;
     const url = `${window.location.pathname}?${qs}${window.location.hash || "#cross-filter"}`;
     // First paint and history-driven changes replace; a user's own change pushes.
@@ -103,11 +107,12 @@ export function Explorer() {
     else window.history.pushState(null, "", url);
     lastQs.current = qs;
     fromHistory.current = false;
-  }, [filter]);
+  }, [filter, canton]);
 
   const exportView = useCallback(
     (fmt: "csv" | "json") => {
       if (!dataset || !filter) return;
+      const scope = canton.toLowerCase();
       const sel = {
         source: filter.source,
         metric: filter.metric,
@@ -123,10 +128,10 @@ export function Explorer() {
       // set — we never silently substitute a different aggregate.
       const rows: Observation[] = dataset.observations.filter((o) => matches(o, sel));
       const stamp = `${filter.source.toLowerCase()}-${filter.metric}-${filter.year}${filter.month ? "-" + filter.month : ""}`;
-      if (fmt === "csv") download(`chileans-zug-${stamp}.csv`, toCsv(rows), "text/csv");
-      else download(`chileans-zug-${stamp}.json`, toJson(rows), "application/json");
+      if (fmt === "csv") download(`chileans-${scope}-${stamp}.csv`, toCsv(rows), "text/csv");
+      else download(`chileans-${scope}-${stamp}.json`, toJson(rows), "application/json");
     },
-    [dataset, filter],
+    [dataset, filter, canton],
   );
 
   if (!filter) return null;

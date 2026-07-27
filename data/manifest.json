@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-27T11:42:17.592Z",
+  "generatedAt": "2026-07-27T12:39:35.234Z",
   "observationCount": 336084,
   "cellStateCounts": {
     "observed": 134364,
@@ -11,7 +11,7 @@
     {
       "id": "SEM 2-10",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 2-10 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 2-10 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "29916 cells",
       "observationCount": 29916,
@@ -26,7 +26,7 @@
     {
       "id": "SEM 2-20",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 2-20 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 2-20 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "16767 cells",
       "observationCount": 16767,
@@ -41,7 +41,7 @@
     {
       "id": "SEM 2-21",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 2-21 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 2-21 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "29808 cells",
       "observationCount": 29808,
@@ -56,7 +56,7 @@
     {
       "id": "SEM 2-22",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 2-22 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 2-22 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "20493 cells",
       "observationCount": 20493,
@@ -71,7 +71,7 @@
     {
       "id": "SEM 2-23",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 2-23 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 2-23 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "29808 cells",
       "observationCount": 29808,
@@ -86,7 +86,7 @@
     {
       "id": "SEM 2-40",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 2-40 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 2-40 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "27945 cells",
       "observationCount": 27945,
@@ -101,7 +101,7 @@
     {
       "id": "SEM 2-41",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 2-41 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 2-41 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "29808 cells",
       "observationCount": 29808,
@@ -116,7 +116,7 @@
     {
       "id": "SEM 3-30",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 3-30 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 3-30 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "2700 cells",
       "observationCount": 2700,
@@ -131,7 +131,7 @@
     {
       "id": "SEM 3-31",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 3-31 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 3-31 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "1890 cells",
       "observationCount": 1890,
@@ -146,7 +146,7 @@
     {
       "id": "SEM 3-55",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 3-55 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 3-55 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "4050 cells",
       "observationCount": 4050,
@@ -161,7 +161,7 @@
     {
       "id": "SEM 3-60",
       "source": "SEM",
-      "title": "SEM Ausländerstatistik table 3-60 (sheet ZG, row Chile)",
+      "title": "SEM Ausländerstatistik table 3-60 (all 26 canton sheets + CH-Nati, row Chile)",
       "checkedFor": "Chile x Zug figures, monthly/annual",
       "yielded": "3510 cells",
       "observationCount": 3510,

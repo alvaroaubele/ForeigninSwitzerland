@@ -69,16 +69,20 @@ export function Trend() {
   if (loading || !dataset) return <SectionSkeleton title="A 16-year view" />;
 
   const hasData = series.some((s) => s.data.some((d) => d.state === "observed"));
+  // "One family moves the line" is a claim about magnitude; make it only where
+  // the magnitude supports it.
+  const maxSeen = Math.max(0, ...series.flatMap((s) => s.data.map((d) => d.value ?? 0)));
+  const smallScale = maxSeen > 0 && maxSeen < 120;
 
   return (
     <section className="section" id="trend">
       <div className="wrap">
         <div className="section-head">
           <span className="eyebrow">Time · 2010–2026</span>
-          <h2>A population that never left the low tens</h2>
+          <h2>Sixteen years, two registers</h2>
           <p>
             Chilean nationals in {cantonName(canton)}, as counted by two registers that do not agree and are not
-            reconciled here. At these sizes a single family arriving moves the line.
+            reconciled here.{smallScale ? " At this size a single family arriving moves the line." : ""}
           </p>
         </div>
 

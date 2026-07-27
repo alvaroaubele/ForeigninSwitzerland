@@ -42,8 +42,12 @@ export function Reasons() {
   const { dataset, loading } = useDataset();
   const [view, setView] = useState<View>("arrivals");
   const [bySex, setBySex] = useState(false);
-  /** null = the full published run; a year narrows every figure to that calendar year. */
-  const [period, setPeriod] = useState<number | null>(null);
+  /**
+   * null = the full published run; a year narrows to that calendar year;
+   * "12mo" reads the rolling twelve-month release — the freshest flow data the
+   * harvest owns, five months ahead of the last complete calendar year.
+   */
+  const [period, setPeriod] = useState<number | "12mo" | null>(null);
 
   const allYears = useMemo(
     () =>
@@ -84,10 +88,10 @@ export function Reasons() {
       <div className="wrap">
         <div className="section-head">
           <span className="eyebrow">
-            Movement · {years.length === 1 ? years[0] : `${years[0]}–${years[years.length - 1]}`}
+            Movement · {period === "12mo" ? "last 12 months" : years.length === 1 ? years[0] : `${years[0]}–${years[years.length - 1]}`}
           </span>
           <h2>{meta.heading}</h2>
-          <p>{lead(view, rows, totalA, totalB, years)}</p>
+          <p>{lead(view, rows, totalA, totalB, years, period === "12mo")}</p>
         </div>
 
         <div className="controls-row">
@@ -121,15 +125,18 @@ export function Reasons() {
               </button>
             </div>
           )}
-          <label className="xf-field reasons-period">
-            <span className="xf-field-label">Period</span>
+          <label className="reasons-period">
             <select
+              aria-label="Period"
               value={period ?? "all"}
-              onChange={(e) => setPeriod(e.target.value === "all" ? null : Number(e.target.value))}
+              onChange={(e) =>
+                setPeriod(e.target.value === "all" ? null : e.target.value === "12mo" ? "12mo" : Number(e.target.value))
+              }
             >
               <option value="all">
                 Full period {allYears[0]}–{allYears[allYears.length - 1]}
               </option>
+              <option value="12mo">Last 12 months</option>
               {[...allYears].reverse().map((y) => (
                 <option key={y} value={y}>
                   {y}
@@ -137,7 +144,7 @@ export function Reasons() {
               ))}
             </select>
           </label>
-          <span className="portrait-ref mono">{sourceNote(view)}</span>
+          <span className="portrait-ref mono">{sourceNote(view, period === "12mo")}</span>
         </div>
 
         <div className="reasons">
@@ -201,21 +208,24 @@ function totalTitle(total: number, partial: boolean): string {
   return `${fmtInt(total)} people in this period.`;
 }
 
-function lead(view: View, rows: Row[], totalA: number, totalB: number, years: number[]) {
+function lead(view: View, rows: Row[], totalA: number, totalB: number, years: number[], rolling: boolean) {
   const grand = totalA + totalB;
-  const span = years.length === 1 ? `in ${years[0]}` : `over ${years.length} years`;
+  const span = rolling ? "in the last twelve months" : years.length === 1 ? `in ${years[0]}` : `over ${years.length} years`;
   if (view === "arrivals") {
-    const family = rows.find((r) => r.key === "family_reunification");
+    // The largest reason is read off the sorted rows, not asserted: family
+    // reunification leads nationally, but education leads in Basel-Land and
+    // St. Gallen, and a sentence that names the winner must actually check.
+    const top = rows[0];
     const refugeeZero = rows
       .filter((r) => ["refugee", "hardship", "asylum_ruling"].includes(r.key))
       .every((r) => (r.a ?? 0) + (r.b ?? 0) === 0);
     return (
       <>
         {fmtInt(grand)} people arrived {span}.{" "}
-        {family && (
+        {top && (top.a ?? 0) + (top.b ?? 0) > 0 && (
           <>
-            Family reunification is the largest single reason at{" "}
-            <strong>{fmtInt((family.a ?? 0) + (family.b ?? 0))}</strong>.
+            The largest single reason is {top.label.toLowerCase()} at{" "}
+            <strong>{fmtInt((top.a ?? 0) + (top.b ?? 0))}</strong>.
             {refugeeZero && " Nobody arrived as a refugee, on hardship grounds, or through an asylum ruling."}
           </>
         )}
@@ -257,10 +267,11 @@ function foot(view: View, totalA: number, totalB: number, splitOn: boolean) {
   );
 }
 
-function sourceNote(view: View): string {
-  if (view === "arrivals") return "SEM 3-30 + 3-31 · calendar-year totals";
-  if (view === "departures") return "SEM 3-55 · calendar-year totals";
-  return "SEM 3-60 · calendar-year totals";
+function sourceNote(view: View, rolling: boolean): string {
+  const kind = rolling ? "rolling 12-month release" : "calendar-year totals";
+  if (view === "arrivals") return `SEM 3-30 + 3-31 · ${kind}`;
+  if (view === "departures") return `SEM 3-55 · ${kind}`;
+  return `SEM 3-60 · ${kind}`;
 }
 
 function ReasonBar({
@@ -288,23 +299,37 @@ function ReasonBar({
 
 // ---------------------------------------------------------------------------
 
-function build(ds: Dataset, view: View, bySex: boolean, period: number | null) {
+function build(ds: Dataset, view: View, bySex: boolean, period: number | "12mo" | null) {
   const datasets = view === "arrivals" ? ["3-30", "3-31"] : view === "departures" ? ["3-55"] : ["3-60"];
 
-  const years = [
-    ...new Set(
-      ds.observations
-        .filter(
-          (o: Observation) =>
-            datasets.includes(o.dataset) && o.provenance.referenceDate.endsWith("-12-31"),
-        )
-        .map((o) => o.dim.year as number),
-    ),
-  ]
-    .sort((a, b) => a - b)
-    // A chosen year narrows the sums to that calendar year; the caller keeps
-    // the full list for its picker, so this filter stays local.
-    .filter((y) => period === null || y === period);
+  // The rolling twelve-month release is the one flow file whose reference date
+  // is not a 31 December; it is excluded from the calendar-year sums (it would
+  // double-count) and used only when explicitly selected.
+  const rolling = period === "12mo";
+  const years = rolling
+    ? [
+        ...new Set(
+          ds.observations
+            .filter(
+              (o: Observation) => datasets.includes(o.dataset) && !o.provenance.referenceDate.endsWith("-12-31"),
+            )
+            .map((o) => o.dim.year as number),
+        ),
+      ].sort((a, b) => a - b)
+    : [
+        ...new Set(
+          ds.observations
+            .filter(
+              (o: Observation) =>
+                datasets.includes(o.dataset) && o.provenance.referenceDate.endsWith("-12-31"),
+            )
+            .map((o) => o.dim.year as number),
+        ),
+      ]
+        .sort((a, b) => a - b)
+        // A chosen year narrows the sums to that calendar year; the caller keeps
+        // the full list for its picker, so this filter stays local.
+        .filter((y) => period === null || y === period);
 
   /** Sum a cell across every calendar year, keeping unpublished distinct from zero. */
   const sumYears = (
@@ -320,7 +345,9 @@ function build(ds: Dataset, view: View, bySex: boolean, period: number | null) {
         source: "SEM",
         dataset,
         populationType,
-        dim: { nationality: "CL", year, month: 12, sex, ...dim },
+        // The rolling release is keyed to its publication month (2026-05), the
+        // calendar-year releases to December.
+        dim: { nationality: "CL", year, month: rolling ? 5 : 12, sex, ...dim },
       });
       if (c.state === "not_published" || c.state === "suppressed") continue;
       total += c.value ?? 0;

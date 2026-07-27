@@ -19,8 +19,8 @@ export function Method() {
           <span className="eyebrow">Method</span>
           <h2>Four states, two sources, one honest offset</h2>
           <p>
-            At a population of 35, a blank usually means “never measured”, not “nobody here”. Every figure on this page
-            says which of the two it is.
+            In most cantons these populations number in the tens. At that size a blank usually means “never measured”,
+            not “nobody here” — and every figure on this page says which of the two it is.
           </p>
         </div>
 

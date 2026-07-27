@@ -34,7 +34,16 @@ export function Findings() {
   // Reasons are a nine-year sum, so they have to be added up rather than looked
   // up. Computed here rather than asserted, because the balance that held for
   // Zug does not necessarily hold for Geneva or for Switzerland.
-  const reasonYears = [...new Set(dataset.observations.filter((o) => o.dataset === "3-30" && o.dim.reason).map((o) => o.dim.year as number))];
+  const reasonYears = [
+    ...new Set(
+      dataset.observations
+        // Calendar-year releases only — the rolling 12-month file would inflate
+        // the year COUNT while contributing nothing to the sums below, so the
+        // card would say "over 10 years" of a 9-year total.
+        .filter((o) => o.dataset === "3-30" && o.dim.reason && o.provenance.referenceDate.endsWith("-12-31"))
+        .map((o) => o.dim.year as number),
+    ),
+  ];
   const reasonTotal = (reason?: string) =>
     dataset.observations
       .filter(
@@ -49,6 +58,10 @@ export function Findings() {
   const family = reasonTotal("family_reunification");
   const allReasons = reasonTotal();
   const familyShare = allReasons > 0 ? Math.round((family / allReasons) * 100) : null;
+  // "More than work and study together" is checked, not asserted — it fails in
+  // Zürich (dead heat) and several other cantons where study leads.
+  const workStudy = reasonTotal("quota_employment") + reasonTotal("nonquota_employment") + reasonTotal("education");
+  const familyLeads = family > workStudy;
 
   const stay0to4 = resolveCell(dataset, {
     source: "SEM",
@@ -78,13 +91,17 @@ export function Findings() {
       href: "#portrait",
       cta: `Meet the ${fmtInt(born.value)}`,
     },
-    {
-      figure: familyShare !== null ? `${familyShare}%` : "—",
-      headline: "Came to join family",
-      detail: `Of ${fmtInt(allReasons)} arrivals over ${reasonYears.length} years, ${fmtInt(family)} came through family reunification — more than work and study together.`,
-      href: "#reasons",
-      cta: "Why they came",
-    },
+    ...(allReasons > 0
+      ? [
+          {
+            figure: familyShare !== null ? `${familyShare}%` : "—",
+            headline: "Came to join family",
+            detail: `Of ${fmtInt(allReasons)} arrivals over ${reasonYears.length} years, ${fmtInt(family)} came through family reunification${familyLeads ? " — more than work and study together" : ""}.`,
+            href: "#reasons",
+            cta: "Why they came",
+          },
+        ]
+      : []),
     {
       figure: over65.value === 0 ? "Nobody" : fmtInt(over65.value),
       headline: over65.value === 0 ? "Is over 65" : "Are over 65",

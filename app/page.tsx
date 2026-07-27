@@ -1,5 +1,6 @@
 import { DataProvider } from "@/lib/data-context";
 import { Header } from "@/components/Header";
+import { Main } from "@/components/Main";
 import { Findings } from "@/components/sections/Findings";
 import { PassportBirthplace } from "@/components/sections/PassportBirthplace";
 import { Portrait } from "@/components/sections/Portrait";
@@ -14,7 +15,7 @@ export default function Page() {
   return (
     <DataProvider>
       <Header />
-      <main>
+      <Main>
         <Findings />
         <PassportBirthplace />
         <Portrait />
@@ -23,7 +24,7 @@ export default function Page() {
         <Explorer />
         <Baselines />
         <Appendix />
-      </main>
+      </Main>
       <Footer />
     </DataProvider>
   );

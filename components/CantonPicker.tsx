@@ -39,6 +39,16 @@ export function CantonPicker() {
 
   return (
     <div className={`canton-picker ${switching ? "is-switching" : ""}`} ref={ref}>
+      {canton !== SWITZERLAND && (
+        <button
+          type="button"
+          className="canton-reset"
+          onClick={() => setCanton(SWITZERLAND)}
+          title="Back to the national view"
+        >
+          ← Switzerland
+        </button>
+      )}
       <button
         type="button"
         className="canton-trigger"

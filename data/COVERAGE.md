@@ -62,10 +62,11 @@ year-end level. That was wrong on both counts. The month-to-month path is where
 the information is at this size: the recovery from the 2020 trough turns out to
 be a staircase of long flat runs with single-person steps between them, which
 the annual series renders as a smooth slope that never happened. And the weight
-objection did not survive the arithmetic — 7 228 SEM cells across 69 periods
-gzip to 192 kB, against 83 kB for the 14. Nothing serves raw JSON.
+objection did not survive the arithmetic then or since: the current national
+harvest ships one payload per canton at roughly 70 kB gzipped each. Nothing
+serves raw JSON.
 
-| Table | Concept | Dimensions carried for Chile × ZG |
+| Table | Concept | Dimensions carried for Chile, per canton sheet |
 |---|---|---|
 | 2-10 | Stock by permit | permanent total, permit L/B/C, non-permanent, each × sex; grand total |
 | 2-20 | Stock by legal basis | FZA (free movement) vs AIG (third-country) × sex |
@@ -97,7 +98,7 @@ dimension total.
 
 | Cube | Span | What it uniquely carries |
 |---|---|---|
-| px-x-0103010000_101 | 2010–2024 | Chilean **nationals** in ZG by year × population type × permit × sex × age class; plus cantonal and Switzerland totals |
+| px-x-0103010000_101 | 2010–2024 | Chilean **nationals** per canton and nationally by year × population type × permit × sex × age class; plus cantonal and Switzerland totals |
 | px-x-0103010000_399 | 2020–2024 | Chilean-**born** residents by **passport group** (the citizenship-vs-birthplace split: 33 Swiss / 29 EU / 34 LatAm), sex, age |
 | px-x-0103010000_423 | 2023 only | marital status crossed with nationality **and** birth country |
 
@@ -168,21 +169,11 @@ series with 2017 peak 34, 2020 trough 20, 2024 = 33 nationals; 99 Chilean-born
 
 ## BFS harvest state (this build)
 
-Complete. All 13 configured BFS cube queries return live data and all 30 anchors
-pass, including the cube-423 anchor (27 of 28 Chilean nationals in Zug in 2023
-were born in Chile) that earlier builds could not reach.
+Complete, for every canton and the national total. All configured BFS cube
+queries return live data and all 33 anchors pass (see `manifest.json →
+anchors`). Cell counts per cube are recorded in `data/verification-bfs.md`,
+which re-fetches every one of them independently.
 
-| Cube | Cells | What it carries |
-| --- | --- | --- |
-| `px-x-0103010000_101` | 1 203 | Chilean nationals in Zug: 2010–2024 series, by permit type, sex and age class; plus the 2024 all-canton denominator |
-| `px-x-0103010000_399` | 394 | Chilean-born residents by passport group, sex and age class |
-| `px-x-0103010000_423` | 52 | Nationality × birth country, and marital status by sex (2023) |
-
-Thirty-nine of those cells come from two responses captured during
-reconnaissance and committed under `data/bfs-seed/`; the rest were fetched live.
-Both routes are the same API and every cell records which one produced it in
-`provenance.access`, so the distinction is visible in the app rather than
-flattened away.
 
 ### How BFS access was actually blocked
 

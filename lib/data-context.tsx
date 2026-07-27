@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { Manifest, Observation } from "./types";
 import type { Dataset } from "./model";
 import { decodeCanton, type CantonPayload } from "./payload";
@@ -106,12 +106,40 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     };
   }, [canton, cache]);
 
-  const setCanton = useCallback((code: string) => setCantonState(code), []);
+  const setCanton = useCallback((code: string) => {
+    setCantonState(code);
+    // The canton is part of the address: a shared link must reopen on the same
+    // scope, or the same query silently answers with different numbers.
+    try {
+      const url = new URL(window.location.href);
+      if (code === SWITZERLAND) url.searchParams.delete("kt");
+      else url.searchParams.set("kt", code);
+      window.history.replaceState(null, "", url.toString());
+    } catch {
+      // Server rendering or a sandboxed context: the URL just does not update.
+    }
+  }, []);
+
+  // On first load, honour a canton named in the URL.
+  useEffect(() => {
+    try {
+      const kt = new URLSearchParams(window.location.search).get("kt");
+      if (kt && /^[A-Z]{2}$/.test(kt)) setCantonState(kt);
+    } catch {
+      /* no URL to read */
+    }
+  }, []);
 
   const observations = cache[canton];
+  // While a switch is in flight the previous canton's data stays on screen,
+  // dimmed — unmounting every section into skeletons and losing the reader's
+  // scroll position is far worse than showing year-old figures for 300 ms.
+  const lastGood = useRef<{ observations: Observation[]; canton: string } | null>(null);
+  if (observations) lastGood.current = { observations, canton };
+  const effective = observations ?? lastGood.current?.observations;
   const dataset = useMemo<Dataset | null>(
-    () => (observations && manifest ? { observations, manifest } : null),
-    [observations, manifest],
+    () => (effective && manifest ? { observations: effective, manifest } : null),
+    [effective, manifest],
   );
 
   const value = useMemo<DataState>(

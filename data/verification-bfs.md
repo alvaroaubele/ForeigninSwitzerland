@@ -1,8 +1,8 @@
 # BFS Harvest Verification Report
 
-_Generated 2026-07-27T12:05:29.190Z by `scripts/verify-bfs.ts` (independent re-fetch, no local cache)._
+_Generated 2026-07-27T12:38:02.474Z by `scripts/verify-bfs.ts` (independent re-fetch, no local cache)._
 
-**Verdict: ATTENTION.** 9 discrepancy(ies) across 139389 cells, 9 anchors and 14 code-meaning claims. See the tables below.
+**Verdict: PASS.** All 139389 non-null BFS cells (100% — not a sample) and all 9 BFS anchors were re-fetched directly from `www.pxweb.bfs.admin.ch` and reproduced exactly. Queries were reconstructed by inverting the harvested dimensions back to PxWeb codes with a map written in this script; json-stat2 was decoded by a decoder written in this script; the harvest's fetcher, walker, and query definitions were not imported. Each cube's metadata was also re-fetched and the source's own labels confirm the code meanings the harvest relied on.
 
 ## Summary
 
@@ -11,9 +11,9 @@ _Generated 2026-07-27T12:05:29.190Z by `scripts/verify-bfs.ts` (independent re-f
 | Eligible non-null BFS cells | 139389 |
 | Cells re-fetched and reproduced | 139389 (100.0%) |
 | Coordinates absent from the fresh response | 0 |
-| BFS anchors reproduced | 0/9 |
+| BFS anchors reproduced | 9/9 |
 | Code-meaning claims confirmed from metadata | 14/14 |
-| HTTP requests issued | 22 (sequential, 6s apart) |
+| HTTP requests issued | 23 (sequential, 6s apart) |
 
 ## Per-cube reproduction
 
@@ -74,29 +74,19 @@ Each block is the per-dimension union of the coordinates of the cells that claim
 
 | Anchor | Source | Expected | Re-fetched | Result |
 | --- | --- | --- | --- | --- |
-| Zug BFS 2024 Chilean nationals (perm) | BFS 101 | 33 | — | FAIL |
-| Zug BFS 2017 Chilean nationals (perm) | BFS 101 | 34 | — | FAIL |
-| Zug BFS 2020 Chilean nationals (perm) | BFS 101 | 20 | — | FAIL |
-| Zug BFS 2024 Chilean-born (perm) | BFS 399 | 99 | — | FAIL |
-| Zug BFS 2024 Chilean-born Swiss passport | BFS 399 | 33 | — | FAIL |
-| Zug BFS 2024 Chilean-born LatAm passport | BFS 399 | 34 | — | FAIL |
-| Zug BFS 2024 Chilean-born EU passport | BFS 399 | 29 | — | FAIL |
-| Zug BFS 2023 Chilean nationals born in Chile | BFS 423 | 27 | — | FAIL |
-| Switzerland BFS 2024 Chilean nationals (perm) | BFS 101 CH | 3394 | — | FAIL |
+| Zug BFS 2024 Chilean nationals (perm) | BFS 101 | 33 | 33 | PASS |
+| Zug BFS 2017 Chilean nationals (perm) | BFS 101 | 34 | 34 | PASS |
+| Zug BFS 2020 Chilean nationals (perm) | BFS 101 | 20 | 20 | PASS |
+| Zug BFS 2024 Chilean-born (perm) | BFS 399 | 99 | 99 | PASS |
+| Zug BFS 2024 Chilean-born Swiss passport | BFS 399 | 33 | 33 | PASS |
+| Zug BFS 2024 Chilean-born LatAm passport | BFS 399 | 34 | 34 | PASS |
+| Zug BFS 2024 Chilean-born EU passport | BFS 399 | 29 | 29 | PASS |
+| Zug BFS 2023 Chilean nationals born in Chile | BFS 423 | 27 | 27 | PASS |
+| Switzerland BFS 2024 Chilean nationals (perm) | BFS 101 CH | 3394 | 3394 | PASS |
 
 ## Discrepancies
 
-| Kind | Cube/Source | Dim/Label | Expected (harvest) | Got (fresh) | Note |
-| --- | --- | --- | --- | --- | --- |
-| anchor | BFS 101 | `Zug BFS 2024 Chilean nationals (perm)` | 33 | — | no independent predicate written for this anchor |
-| anchor | BFS 101 | `Zug BFS 2017 Chilean nationals (perm)` | 34 | — | no independent predicate written for this anchor |
-| anchor | BFS 101 | `Zug BFS 2020 Chilean nationals (perm)` | 20 | — | no independent predicate written for this anchor |
-| anchor | BFS 399 | `Zug BFS 2024 Chilean-born (perm)` | 99 | — | no independent predicate written for this anchor |
-| anchor | BFS 399 | `Zug BFS 2024 Chilean-born Swiss passport` | 33 | — | no independent predicate written for this anchor |
-| anchor | BFS 399 | `Zug BFS 2024 Chilean-born LatAm passport` | 34 | — | no independent predicate written for this anchor |
-| anchor | BFS 399 | `Zug BFS 2024 Chilean-born EU passport` | 29 | — | no independent predicate written for this anchor |
-| anchor | BFS 423 | `Zug BFS 2023 Chilean nationals born in Chile` | 27 | — | no independent predicate written for this anchor |
-| anchor | BFS 101 CH | `Switzerland BFS 2024 Chilean nationals (perm)` | 3394 | — | no independent predicate written for this anchor |
+None. Every re-fetched cell, every anchor, and every code meaning matched.
 
 ## Method notes
 

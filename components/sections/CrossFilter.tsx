@@ -5,7 +5,7 @@ import { resolveCell, type Dataset, type Selection } from "@/lib/model";
 import { distinctValues, latestSemMonth } from "@/lib/selectors";
 import { fmtInt, label, DIM_LABELS, METRIC_LABELS, fmtDate } from "@/lib/format";
 import { CELL_STATE_LABEL, CELL_STATE_DESCRIPTION } from "@/lib/model";
-import { StateSwatch, StateLegend } from "../StateBits";
+import { StateSwatch } from "../StateBits";
 import { ProvenanceTip } from "../Provenance";
 import { OptionChips, type ChipOption } from "../OptionChips";
 import type { Dimensions, Observation } from "@/lib/types";
@@ -87,6 +87,16 @@ const PRESETS: Preset[] = [
       year: latest.year, month: latest.month, dim: { ageClass: "65+" },
     }),
   },
+  {
+    // Lands on "not published" ON PURPOSE, and the label says so — meeting the
+    // wall is this page's signature outcome, but it has to be a kept promise
+    // rather than a surprise that reads as a bug.
+    label: "Married newcomers — never counted",
+    apply: (f, latest) => ({
+      ...f, source: "SEM", metric: "stock", populationType: "permanent",
+      year: latest.year, month: latest.month, dim: { marital: "married", lengthOfStay: "0-4" },
+    }),
+  },
 ];
 
 export function CrossFilter({
@@ -131,6 +141,17 @@ export function CrossFilter({
     return out;
   }, [dataset, filter]);
 
+  /**
+   * The same question with every breakdown dropped — the denominator the
+   * headline figure is a share of. Itself a harvested cell, so the percentage
+   * shown is a ratio of two published figures, not an estimate.
+   */
+  const parent = useMemo(() => {
+    if (!dataset || Object.keys(filter.dim).length === 0) return null;
+    const cell = resolveCell(dataset, toSelection({ ...filter, dim: {} }));
+    return cell.state === "observed" && cell.value ? cell : null;
+  }, [dataset, filter]);
+
   if (loading || !dataset) return <SectionSkeleton />;
 
   const breakdowns = BREAKDOWNS_BY_METRIC[filter.metric];
@@ -145,6 +166,10 @@ export function CrossFilter({
   };
 
   const activeCount = Object.keys(filter.dim).length;
+
+  /** The last breakdown the reader touched, for the sibling comparison. */
+  const lastDim = (Object.keys(filter.dim) as BreakdownKey[]).filter((k) => filter.dim[k] !== undefined).pop() ?? null;
+  const siblings = lastDim ? chipsByKey[lastDim] : undefined;
   // Only a preview of a *different* option is worth showing; echoing the
   // committed figure back would just make the panel flicker on hover.
   const showPreview =
@@ -264,6 +289,12 @@ export function CrossFilter({
             </Field>
 
             <div className="xf-divider" />
+            {result && result.cell.state === "not_published" && (
+              <p className="xf-wall-banner">
+                Every option below is dashed because the current combination was never published — drop one of the
+                selected dimensions to continue.
+              </p>
+            )}
             <p className="xf-hint">
               Each option shows what it resolves to. A dotted mark means the sources never crossed those dimensions —
               still selectable, because that absence is itself the finding.
@@ -312,7 +343,10 @@ export function CrossFilter({
                 <div className="xf-number-wrap">
                   {result.cell.state === "not_published" ? (
                     <div className="xf-notpub">
-                      <div className="xf-notpub-x">—</div>
+                      <div className="xf-notpub-mark" aria-hidden>
+                        <StateSwatch state="not_published" />
+                        <span>Never published</span>
+                      </div>
                       <p>
                         {result.cell.wouldBeCarriedBy ? (
                           <>
@@ -324,8 +358,9 @@ export function CrossFilter({
                         )}
                       </p>
                       {drop && (
-                        <button className="xf-drop" onClick={() => setFilter({ ...filter, dim: drop.dim })}>
-                          Drop “{DIM_LABELS[drop.dropped]}” → {fmtInt(drop.cell.value)} ({CELL_STATE_LABEL[drop.cell.state].toLowerCase()})
+                        <button className="xf-drop is-primary" onClick={() => setFilter({ ...filter, dim: drop.dim })}>
+                          Nearest published answer: drop “{DIM_LABELS[drop.dropped]}” →{" "}
+                          <strong>{fmtInt(drop.cell.value)}</strong>
                         </button>
                       )}
                     </div>
@@ -343,7 +378,45 @@ export function CrossFilter({
                     </ProvenanceTip>
                   )}
                   <div className="xf-unit">persons{result.cell.state === "structural_zero" ? " · a genuine zero, not missing data" : ""}</div>
+                  {parent && result.cell.value !== null && result.cell.state === "observed" && (
+                    <button
+                      className="xf-share"
+                      onClick={() => setFilter({ ...filter, dim: {} })}
+                      title="Clear the breakdowns to see the whole group"
+                    >
+                      = {((result.cell.value / (parent.value ?? 1)) * 100).toFixed(1)}% of{" "}
+                      <span className="mono">{fmtInt(parent.value)}</span> in the whole group
+                    </button>
+                  )}
                 </div>
+
+                {siblings && siblings.length > 2 && result.cell.state !== "not_published" && (
+                  <div className="xf-siblings">
+                    <div className="xf-siblings-h">{lastDim ? DIM_LABELS[lastDim] : ""} — the full split</div>
+                    {siblings
+                      // "Any" and the published total row both restate the whole
+                      // group, which the share line above already gives.
+                      .filter((sib) => sib.value !== "" && sib.value !== "total" && sib.state !== "not_published")
+                      .sort((a, b) => (b.result ?? 0) - (a.result ?? 0))
+                      .map((sib) => {
+                        const maxSib = Math.max(1, ...siblings.map((x) => x.result ?? 0));
+                        const on = sib.value === ((filter.dim[lastDim as BreakdownKey] as string) ?? "");
+                        return (
+                          <button
+                            key={sib.value}
+                            className={`xf-sib ${on ? "is-on" : ""}`}
+                            onClick={() => lastDim && setDim(lastDim, sib.value)}
+                          >
+                            <span className="xf-sib-label">{sib.label}</span>
+                            <span className="xf-sib-track">
+                              <span className="xf-sib-fill" style={{ width: `${((sib.result ?? 0) / maxSib) * 100}%` }} />
+                            </span>
+                            <span className="xf-sib-val mono">{fmtInt(sib.result)}</span>
+                          </button>
+                        );
+                      })}
+                  </div>
+                )}
 
                 <div className={`xf-preview ${showPreview ? "is-live" : ""}`} aria-live="polite">
                   {showPreview ? (
@@ -369,9 +442,6 @@ export function CrossFilter({
                     {fmtDate(result.cell.observation.provenance.referenceDate)}
                   </div>
                 )}
-                <div className="xf-legend">
-                  <StateLegend compact />
-                </div>
               </>
             )}
           </div>
