@@ -8,6 +8,7 @@ const NAV = [
   { id: "passport-birthplace", label: "Contrast" },
   { id: "portrait", label: "Portrait" },
   { id: "trend", label: "Trend" },
+  { id: "reasons", label: "Why" },
   { id: "cross-filter", label: "Cross-filter" },
   { id: "baselines", label: "Comparison" },
   { id: "availability", label: "Availability" },

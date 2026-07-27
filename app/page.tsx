@@ -3,6 +3,7 @@ import { Header } from "@/components/Header";
 import { PassportBirthplace } from "@/components/sections/PassportBirthplace";
 import { Portrait } from "@/components/sections/Portrait";
 import { Trend } from "@/components/sections/Trend";
+import { Reasons } from "@/components/sections/Reasons";
 import { Explorer } from "@/components/Explorer";
 import { Baselines } from "@/components/sections/Baselines";
 import { AvailabilityMatrix } from "@/components/sections/AvailabilityMatrix";
@@ -17,6 +18,7 @@ export default function Page() {
         <PassportBirthplace />
         <Portrait />
         <Trend />
+        <Reasons />
         <Explorer />
         <Baselines />
         <AvailabilityMatrix />

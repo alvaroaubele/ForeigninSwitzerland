@@ -247,6 +247,32 @@ export const CUBE_399_QUERIES: CubeQuerySpec[] = [
     referenceDateFor: refDec,
     crossTab: ["birthCountry", "ageClass"],
   },
+  // The three queries above each hold sex or the breakdown at its total, which
+  // left the Chilean-born population with no attribute actually crossed against
+  // sex. The app then reported those crosses as "never published" — a claim
+  // about BFS that is false: Geschlecht is a full dimension of this cube and it
+  // will return either cross on request. Asking for them is one extra query
+  // each; inferring their absence from our own query plan was the bug.
+  {
+    id: "399-natgroup-sex",
+    cube: CUBE_399,
+    concept: "Chilean-born residents of Zug by passport group and sex",
+    query: q399Base(["-99999", "1", "2", "3", "4", "5", "6", "7", "8", "9", "-1", "-9"], [TOTAL, "1", "2"], [TOTAL]),
+    map: (c) => ({ ...map399(c), populationType: POP_101[c["Bevölkerungstyp"]] }),
+    metric: "stock",
+    referenceDateFor: refDec,
+    crossTab: ["nationalityGroup", "sex"],
+  },
+  {
+    id: "399-age-sex",
+    cube: CUBE_399,
+    concept: "Chilean-born residents of Zug by 5-year age class and sex",
+    query: q399Base([TOTAL], [TOTAL, "1", "2"], ALL_AGE),
+    map: (c) => ({ ...map399(c), populationType: POP_101[c["Bevölkerungstyp"]] }),
+    metric: "stock",
+    referenceDateFor: refDec,
+    crossTab: ["ageClass", "sex"],
+  },
 ];
 
 // ---- Cube 423: marital status (2023) ----------------------------------------
@@ -288,12 +314,16 @@ export const CUBE_423_QUERIES: CubeQuerySpec[] = [
   {
     id: "423-born-marital",
     cube: CUBE_423,
-    concept: "Chilean-born residents of Zug by marital status, 2023",
-    query: q423([TOTAL], [CHILE], [TOTAL], ["-99999", "1", "2", "3", "4", "-9"]),
+    // Sex included, as it is for the nationality side above. Asking only for the
+    // total here is what made the app claim BFS does not publish marital status
+    // by sex for the Chilean-born; it does, and the cost of knowing is nothing —
+    // the same query with a wider Geschlecht selection.
+    concept: "Chilean-born residents of Zug by marital status and sex, 2023",
+    query: q423([TOTAL], [CHILE], [TOTAL, "1", "2"], ["-99999", "1", "2", "3", "4", "-9"]),
     map: (c) => ({ ...map423(c, "birthCountry"), populationType: POP_101[c["Bevölkerungstyp"]] }),
     metric: "stock",
     referenceDateFor: () => "2023-12-31",
-    crossTab: ["birthCountry", "marital"],
+    crossTab: ["birthCountry", "marital", "sex"],
   },
   {
     id: "423-nationality-birth",

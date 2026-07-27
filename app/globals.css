@@ -1284,3 +1284,96 @@ svg[tabindex="0"]:focus-visible {
   font-size: 12px;
   color: var(--fg-muted);
 }
+
+/* =========================================================================
+   Reasons for arriving
+   ========================================================================= */
+.reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.reason-row {
+  display: grid;
+  grid-template-columns: 210px 1fr 48px;
+  gap: 14px;
+  align-items: center;
+}
+.reason-name {
+  font-size: 13px;
+  color: var(--fg);
+}
+.reason-track {
+  min-width: 0;
+}
+.reason-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.reason-caption {
+  font-size: 10.5px;
+  color: var(--fg-subtle);
+  width: 92px;
+  flex: none;
+  text-align: right;
+}
+.reason-caption-val {
+  font-size: 11px;
+  color: var(--fg-muted);
+  width: 22px;
+  flex: none;
+}
+.reason-bar-track {
+  flex: 1;
+  height: 16px;
+  background: var(--bg-sunken);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.reason-bar {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.25s ease;
+}
+.reason-bar.is-perm {
+  background: var(--fg);
+}
+.reason-bar.is-nonperm {
+  background: var(--series-2);
+}
+.reason-split {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.reason-total {
+  font-size: 14px;
+  font-weight: 600;
+  text-align: right;
+}
+.reason-total.is-zero {
+  font-weight: 400;
+}
+.reason-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--state-zero);
+  color: var(--state-zero);
+  font-size: 11px;
+}
+.reasons-foot {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--fg-subtle);
+  line-height: 1.5;
+}
+.reason-partial {
+  color: var(--fg-subtle);
+  font-weight: 400;
+  margin-left: 1px;
+}

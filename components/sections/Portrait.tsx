@@ -2,12 +2,37 @@
 import { useMemo, useState } from "react";
 import { useDataset } from "@/lib/data-context";
 import { resolveCell, type Dataset } from "@/lib/model";
-import { distinctValues, latestSemMonth } from "@/lib/selectors";
+import { distinctValues, latestSemMonth, CUBE_399, CUBE_423 } from "@/lib/selectors";
 import { fmtInt, label, DIM_LABELS, STATE_CLASS, fmtDate } from "@/lib/format";
 import type { CellState, Dimensions } from "@/lib/types";
 
-type Key = "permit" | "legalBasis" | "ageClass" | "marital" | "lengthOfStay";
+type Key = "permit" | "legalBasis" | "ageClass" | "marital" | "lengthOfStay" | "nationalityGroup";
 const KEYS: Key[] = ["permit", "legalBasis", "ageClass", "marital", "lengthOfStay"];
+const BORN_KEYS: Key[] = ["nationalityGroup", "ageClass", "marital"];
+
+/** Which population the portrait is describing. */
+type Pop = "nationals" | "born";
+
+/** Latest complete BFS years: cube 399 runs to 2024, cube 423 exists for 2023 only. */
+const BORN_YEAR = 2024;
+const BORN_MARITAL_YEAR = 2023;
+
+/**
+ * Twenty-year buckets for the Chilean-born age profile.
+ *
+ * BFS publishes this in 21 five-year bands. Ninety-nine people spread over 21
+ * bands is a row of ones and twos that reads as noise, so the bands are summed
+ * into decades-pairs. This is exact arithmetic over published figures, not an
+ * estimate — and if any component band were ever withheld the group inherits
+ * that state rather than quietly reporting a short total.
+ */
+const AGE_GROUPS: { label: string; lo: number; hi: number }[] = [
+  { label: "0-19", lo: 0, hi: 19 },
+  { label: "20-39", lo: 20, hi: 39 },
+  { label: "40-59", lo: 40, hi: 59 },
+  { label: "60-79", lo: 60, hi: 79 },
+  { label: "80+", lo: 80, hi: 999 },
+];
 
 interface Seg {
   value: string;
@@ -33,20 +58,18 @@ interface Row {
 export function Portrait() {
   const { dataset, loading } = useDataset();
   const [bySex, setBySex] = useState(false);
+  const [pop, setPop] = useState<Pop>("nationals");
 
   const sem = dataset ? latestSemMonth(dataset) : null;
-  const rows = useMemo(
-    () => (dataset && sem ? buildRows(dataset, sem, "total") : []),
-    [dataset, sem],
+  const build = useMemo(
+    () =>
+      (sex: "total" | "female" | "male"): Row[] =>
+        !dataset || !sem ? [] : pop === "nationals" ? buildRows(dataset, sem, sex) : buildBornRows(dataset, sex),
+    [dataset, sem, pop],
   );
-  const female = useMemo(
-    () => (dataset && sem && bySex ? buildRows(dataset, sem, "female") : []),
-    [dataset, sem, bySex],
-  );
-  const male = useMemo(
-    () => (dataset && sem && bySex ? buildRows(dataset, sem, "male") : []),
-    [dataset, sem, bySex],
-  );
+  const rows = useMemo(() => build("total"), [build]);
+  const female = useMemo(() => (bySex ? build("female") : []), [build, bySex]);
+  const male = useMemo(() => (bySex ? build("male") : []), [build, bySex]);
 
   // SEM 2-22 carries this as a subset flag on the married row rather than as a
   // dimension of its own, so it has no place among the bars — but it is one of
@@ -75,7 +98,17 @@ export function Portrait() {
     );
   }
 
-  const headTotal = rows.find((r) => r.total > 0)?.total ?? 0;
+  // The nationals rows all sum to the same 35; the born rows do not, because
+  // marital status comes from a different cube and an earlier year. Take the
+  // passport-group row, which is the one that counts the whole 99.
+  const headTotal = (pop === "born" ? rows[0]?.total : rows.find((r) => r.total > 0)?.total) ?? 0;
+  // Read from the passport-group row rather than compared against the Chilean-
+  // national count: those come from a different cube at a different date, and
+  // subtracting across registers is exactly the arithmetic this page refuses.
+  const latAmBorn =
+    pop === "born"
+      ? (rows[0]?.segments.find((s) => s.value === "Latin America & Caribbean")?.count ?? null)
+      : null;
 
   return (
     <section className="section" id="portrait">
@@ -84,12 +117,36 @@ export function Portrait() {
           <span className="eyebrow">Portrait</span>
           <h2>Who are the {fmtInt(headTotal)}?</h2>
           <p>
-            Every attribute the register carries, at once. Split by sex to go one level deeper — that is as far as the
-            data goes, because the offices never cross two of these with each other.
+            {pop === "nationals" ? (
+              <>
+                Everyone in Zug holding a Chilean passport, by every attribute the register carries. Split by sex to go
+                one level deeper — that is as far as the data goes, because the offices never cross two of these with
+                each other.
+              </>
+            ) : (
+              <>
+                Everyone in Zug born in Chile — a larger and mostly different group.{" "}
+                {latAmBorn !== null && (
+                  <>
+                    Only <strong>{fmtInt(latAmBorn)}</strong> still hold a Latin-American passport; the other{" "}
+                    <strong>{fmtInt(headTotal - latAmBorn)}</strong> carry Swiss, EU or other citizenship and appear
+                    nowhere in the Chilean-national figures.
+                  </>
+                )}
+              </>
+            )}
           </p>
         </div>
 
         <div className="controls-row">
+          <div className="seg">
+            <button className={`seg-btn ${pop === "nationals" ? "is-on" : ""}`} onClick={() => setPop("nationals")}>
+              Chilean passport
+            </button>
+            <button className={`seg-btn ${pop === "born" ? "is-on" : ""}`} onClick={() => setPop("born")}>
+              Born in Chile
+            </button>
+          </div>
           <div className="seg">
             <button className={`seg-btn ${!bySex ? "is-on" : ""}`} onClick={() => setBySex(false)}>
               Everyone
@@ -99,7 +156,9 @@ export function Portrait() {
             </button>
           </div>
           <span className="portrait-ref mono">
-            SEM · {fmtDate(`${sem.year}-${String(sem.month).padStart(2, "0")}-28`).replace(/^\d+ /, "")} · permanent
+            {pop === "nationals"
+              ? `SEM · ${fmtDate(`${sem.year}-${String(sem.month).padStart(2, "0")}-28`).replace(/^\d+ /, "")} · permanent`
+              : `BFS STATPOP · 31 Dec ${BORN_YEAR} · permanent`}
           </span>
         </div>
 
@@ -118,11 +177,25 @@ export function Portrait() {
                 <div className="portrait-wall">
                   <Bar row={r} caption="Everyone" />
                   <p className="portrait-wall-note">
-                    Not published by sex — SEM reports marital status for the group as a whole only.
+                    {pop === "nationals"
+                      ? "Not published by sex — SEM reports marital status for the group as a whole only."
+                      : "Not published by sex for this population."}
                   </p>
                 </div>
               )}
-              {r.key === "marital" && marriedToSwiss !== null && (
+              {pop === "born" && r.key === "marital" && (
+                <p className="portrait-note">
+                  Marital status for the Chilean-born comes from a different cube and an earlier year (31 Dec{" "}
+                  {BORN_MARITAL_YEAR}), so it counts {fmtInt(r.total)} rather than {fmtInt(headTotal)}. The dates are
+                  not reconciled.
+                </p>
+              )}
+              {pop === "born" && r.key === "ageClass" && (
+                <p className="portrait-note">
+                  Summed from the 21 five-year bands BFS publishes — exact arithmetic, not an estimate.
+                </p>
+              )}
+              {pop === "nationals" && r.key === "marital" && marriedToSwiss !== null && (
                 <p className="portrait-note">
                   Of the married, <strong>{fmtInt(marriedToSwiss)}</strong> are married to a Swiss national.
                 </p>
@@ -243,6 +316,70 @@ function buildRows(
     };
   });
 }
+
+/**
+ * The Chilean-born portrait, from the BFS birthplace cubes.
+ *
+ * A different population and a different pair of sources from the nationals
+ * portrait: passport group and age come from cube 399 at 2024, marital status
+ * from cube 423, which exists for 2023 only. The reference dates are not
+ * reconciled — each row states its own.
+ */
+function buildBornRows(ds: Dataset, sex: "total" | "female" | "male"): Row[] {
+  const cell = (cube: string, year: number, dim: Partial<Dimensions>) =>
+    resolveCell(ds, {
+      source: "BFS",
+      dataset: cube,
+      populationType: "permanent",
+      dim: { canton: "ZG", year, birthCountry: "CL", sex, ...dim },
+    });
+
+  return BORN_KEYS.map((key): Row => {
+    if (key === "nationalityGroup") {
+      const values = distinctValues(ds, "nationalityGroup", (o) => o.dataset === CUBE_399).filter(
+        (v) => v !== "total",
+      );
+      const segments = values.map((v) => {
+        const c = cell(CUBE_399, BORN_YEAR, { nationalityGroup: v });
+        return { value: v, label: label(v), count: c.value, state: c.state };
+      });
+      return { key, segments, total: sum(segments) };
+    }
+
+    if (key === "ageClass") {
+      const bands = distinctValues(ds, "ageClass", (o) => o.dataset === CUBE_399).sort(byBand);
+      const segments = AGE_GROUPS.map((g) => {
+        const members = bands.filter((b) => {
+          const lo = Number(/^(\d+)/.exec(b)?.[1] ?? NaN);
+          return Number.isFinite(lo) && lo >= g.lo && lo <= g.hi;
+        });
+        const cells = members.map((b) => cell(CUBE_399, BORN_YEAR, { ageClass: b }));
+        // A group is only as trustworthy as its weakest component band.
+        const withheld = cells.find((c) => c.state === "not_published" || c.state === "suppressed");
+        return {
+          value: g.label,
+          label: g.label,
+          count: withheld ? null : cells.reduce((n, c) => n + (c.value ?? 0), 0),
+          state: withheld ? withheld.state : ("observed" as CellState),
+        };
+      });
+      return { key, segments, total: sum(segments) };
+    }
+
+    const values = distinctValues(
+      ds,
+      "marital",
+      (o) => o.dataset === CUBE_423 && o.dim.birthCountry === "CL",
+    ).sort();
+    const segments = values.map((v) => {
+      const c = cell(CUBE_423, BORN_MARITAL_YEAR, { marital: v });
+      return { value: v, label: label(v), count: c.value, state: c.state };
+    });
+    return { key, segments, total: sum(segments) };
+  });
+}
+
+const sum = (segs: Seg[]): number => segs.reduce((n, s) => n + (s.count ?? 0), 0);
 
 /** Age and stay bands are labelled by their lower bound; sort on it, not on text. */
 function byBand(a: string, b: string): number {
