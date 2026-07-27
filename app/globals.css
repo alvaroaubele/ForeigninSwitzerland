@@ -1979,3 +1979,182 @@ main {
   background: var(--fg);
   color: var(--bg);
 }
+
+/* =========================================================================
+   Mobile — one coherent block, largest phone-class problems first.
+   The 900px rules above already stack the big grids; this covers what they
+   could not know about: the header's height, the label columns that crush
+   their bars at 390px, and the two tables that must scroll inside themselves.
+   ========================================================================= */
+@media (max-width: 700px) {
+  .wrap {
+    padding: 0 16px;
+  }
+
+  /* --- header: one slim sticky bar instead of a 260px block --- */
+  .header-top {
+    flex-wrap: wrap;
+    row-gap: 8px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .header-title {
+    font-size: 15px;
+  }
+  /* The legend row duplicates what every mark explains on touch; at a third
+     of a phone viewport, sticky, it costs far more than it teaches. */
+  .header-legend {
+    display: none;
+  }
+  .header-nav {
+    order: 3;
+    flex: 1 1 100%;
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .header-nav::-webkit-scrollbar {
+    display: none;
+  }
+  .canton-picker {
+    margin-left: auto;
+    /* Dropdowns anchor poorly in a wrapped header row; on a phone the menu
+       becomes a near-full-width sheet under the header instead. */
+    position: static;
+  }
+  .canton-menu {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: 104px;
+    width: auto;
+    max-height: min(60vh, 420px);
+  }
+  .canton-reset {
+    display: none;
+  }
+  .lang-picker {
+    margin-left: 8px;
+  }
+  .theme-toggle,
+  .theme-toggle-placeholder {
+    margin-left: 8px;
+  }
+  :where(.section, [id]) {
+    scroll-margin-top: 96px;
+  }
+
+  /* --- big figures scale down with the viewport --- */
+  .hero-number {
+    font-size: 46px;
+  }
+  .xf-number {
+    font-size: 52px;
+  }
+  .finding-figure {
+    font-size: 22px;
+  }
+
+  /* --- movement rows: the name gets its own line, the bar gets the width --- */
+  .reason-row {
+    grid-template-columns: 1fr 44px;
+    row-gap: 3px;
+  }
+  .reason-name {
+    grid-column: 1 / -1;
+    font-size: 12.5px;
+    color: var(--fg-muted);
+  }
+  .reason-caption {
+    width: 78px;
+    font-size: 10px;
+  }
+
+  /* --- portrait rows: same treatment --- */
+  .portrait-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .portrait-dim {
+    padding-top: 0;
+  }
+  .portrait-note {
+    grid-column: 1;
+  }
+
+  /* --- canton ranking: shrink the fixed columns, drop the hover-only hint
+         (touch has no hover; the whole row is the tap target) --- */
+  .barrow {
+    grid-template-columns: 92px 1fr 44px;
+    gap: 8px;
+  }
+  .barrow-view {
+    display: none;
+  }
+  .barrow-label {
+    font-size: 11.5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* --- tables scroll inside themselves, never the page --- */
+  .sources-table {
+    overflow-x: auto;
+  }
+  .src-tbl {
+    min-width: 520px;
+  }
+  .method-states {
+    grid-template-columns: 1fr;
+  }
+  .baseline-cards {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  /* --- cross-filter: sibling rows tighten --- */
+  .xf-sib {
+    grid-template-columns: 96px 1fr 44px;
+    gap: 8px;
+  }
+  .xf-result {
+    padding: 16px;
+  }
+  .xf-coords {
+    display: none;
+  }
+
+  .export-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .appendix-summary {
+    padding: 16px;
+  }
+  .appendix-body .wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .baseline-cards {
+    grid-template-columns: 1fr;
+  }
+  .findings {
+    gap: 8px;
+  }
+}
+
+/* Touch has no hover: the preview strip only earns its space when idle text
+   can come true. The live preview still appears via focus when it happens. */
+@media (hover: none) {
+  .xf-preview:not(.is-live) {
+    display: none;
+  }
+}
