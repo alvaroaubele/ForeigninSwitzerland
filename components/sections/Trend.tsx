@@ -21,19 +21,19 @@ const SEXES = [
 ];
 
 export function Trend() {
-  const { dataset, canton, loading } = useDataset();
-  const { t, cName } = useI18n();
+  const { dataset, nat, canton, loading } = useDataset();
+  const { t, cName, natWho } = useI18n();
   const [breakdown, setBreakdown] = useState<Breakdown>("none");
   const [monthly, setMonthly] = useState(false);
 
   const series = useMemo<Series[]>(() => {
     if (!dataset) return [];
     if (breakdown === "none") {
-      const bfs = bfsStockSeries(dataset);
+      const bfs = bfsStockSeries(dataset, nat);
       // BFS is annual by construction (31 December), so only the SEM line gains
       // resolution — which is the point: at monthly resolution the two registers
       // stop looking like one wobbling series.
-      const sem = monthly ? semMonthlySeries(dataset) : semDecemberSeries(dataset);
+      const sem = monthly ? semMonthlySeries(dataset, nat) : semDecemberSeries(dataset, nat);
       const out: Series[] = [];
       if (bfs.some((d) => d.state === "observed")) {
         out.push({ id: "bfs", label: t.trend.seriesBfs, data: bfs, color: "var(--accent)" });
@@ -59,7 +59,7 @@ export function Trend() {
           populationType: "permanent",
           dim: {
             year,
-            nationality: "CL",
+            nationality: nat,
             ...(breakdown === "sex" ? { sex: cat.code as "male" | "female" } : { permit: cat.code, sex: "total" }),
           },
         });
@@ -72,7 +72,7 @@ export function Trend() {
         color: cat.color,
       };
     });
-  }, [dataset, breakdown, monthly, t]);
+  }, [dataset, nat, breakdown, monthly, t]);
 
   if (loading || !dataset) return <SectionSkeleton title="A 16-year view" />;
 
@@ -88,7 +88,7 @@ export function Trend() {
         <div className="section-head">
           <span className="eyebrow">{t.trend.eyebrow}</span>
           <h2>{t.trend.h}</h2>
-          <p>{t.trend.lead(cName(canton), smallScale)}</p>
+          <p>{t.trend.lead(natWho(nat), cName(canton), smallScale)}</p>
         </div>
 
         <div className="controls-row">

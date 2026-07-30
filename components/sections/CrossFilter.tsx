@@ -107,15 +107,15 @@ export function CrossFilter({
   filter: FilterState;
   setFilter: (f: FilterState) => void;
 }) {
-  const { dataset, loading } = useDataset();
-  const { t } = useI18n();
+  const { dataset, nat, loading } = useDataset();
+  const { t, natName } = useI18n();
   /** The option currently hovered or focused, previewed but not committed. */
   const [preview, setPreview] = useState<{ key: BreakdownKey; option: ChipOption } | null>(null);
 
-  const result = useMemo(() => (dataset ? resolve(dataset, filter) : null), [dataset, filter]);
+  const result = useMemo(() => (dataset ? resolve(dataset, nat, filter) : null), [dataset, nat, filter]);
   const drop = useMemo(
-    () => (dataset && result && result.cell.state === "not_published" ? findDropSuggestion(dataset, filter) : null),
-    [dataset, result, filter],
+    () => (dataset && result && result.cell.state === "not_published" ? findDropSuggestion(dataset, nat, filter) : null),
+    [dataset, nat, result, filter],
   );
 
   /**
@@ -130,7 +130,7 @@ export function CrossFilter({
       const values = optionValues(dataset, filter, k);
       if (values.length === 0) continue;
       const chip = (value: string, text: string, dim: Partial<Dimensions>): ChipOption => {
-        const cell = resolveCell(dataset, toSelection({ ...filter, dim }));
+        const cell = resolveCell(dataset, toSelection(nat, { ...filter, dim }));
         return { value, label: text, state: cell.state, result: cell.value };
       };
       const withoutK = { ...filter.dim };
@@ -141,7 +141,7 @@ export function CrossFilter({
       ];
     }
     return out;
-  }, [dataset, filter, t]);
+  }, [dataset, nat, filter, t]);
 
   /**
    * The same question with every breakdown dropped — the denominator the
@@ -150,9 +150,9 @@ export function CrossFilter({
    */
   const parent = useMemo(() => {
     if (!dataset || Object.keys(filter.dim).length === 0) return null;
-    const cell = resolveCell(dataset, toSelection({ ...filter, dim: {} }));
+    const cell = resolveCell(dataset, toSelection(nat, { ...filter, dim: {} }));
     return cell.state === "observed" && cell.value ? cell : null;
-  }, [dataset, filter]);
+  }, [dataset, nat, filter]);
 
   if (loading || !dataset) return <SectionSkeleton />;
 
@@ -195,7 +195,7 @@ export function CrossFilter({
               className="xf-preset"
               onClick={() => setFilter(p.apply(filter, latestSemMonth(dataset), bfsYears[bfsYears.length - 1] ?? 2024))}
             >
-              {t.xf[p.label]}
+              {typeof t.xf[p.label] === "function" ? (t.xf[p.label] as (n: string) => string)(natName(nat)) : (t.xf[p.label] as string)}
             </button>
           ))}
         </div>
@@ -302,7 +302,7 @@ export function CrossFilter({
                       question from "Chilean passport holders" to "people born in
                       Chile" — two populations of very different size. */}
                   <span className="xf-field-label">
-                    {k === "nationalityGroup" ? t.xf.passportOfBorn : DIM_LABELS[k]}
+                    {k === "nationalityGroup" ? t.xf.passportOfBorn(natName(nat)) : DIM_LABELS[k]}
                   </span>
                   <OptionChips
                     name={DIM_LABELS[k]}
@@ -438,7 +438,7 @@ export function CrossFilter({
   );
 }
 
-function toSelection(filter: FilterState): Selection {
+function toSelection(nat: string, filter: FilterState): Selection {
   return {
     source: filter.source,
     metric: filter.metric,
@@ -447,25 +447,25 @@ function toSelection(filter: FilterState): Selection {
       year: filter.year,
       ...(filter.source === "SEM" ? { month: filter.month } : {}),
       ...(filter.source === "SEM"
-        ? { nationality: "CL" }
+        ? { nationality: nat }
         : filter.metric === "stock" && !isBirthplaceSide(filter.dim)
-          ? { nationality: "CL" }
+          ? { nationality: nat }
           : {}),
       ...filter.dim,
     },
   };
 }
 
-function resolve(ds: Dataset, filter: FilterState): { cell: ReturnType<typeof resolveCell> } {
-  return { cell: resolveCell(ds, toSelection(filter)) };
+function resolve(ds: Dataset, nat: string, filter: FilterState): { cell: ReturnType<typeof resolveCell> } {
+  return { cell: resolveCell(ds, toSelection(nat, filter)) };
 }
 
-function findDropSuggestion(ds: Dataset, filter: FilterState) {
+function findDropSuggestion(ds: Dataset, nat: string, filter: FilterState) {
   const keys = Object.keys(filter.dim) as (keyof Dimensions)[];
   for (const k of keys) {
     const dim = { ...filter.dim };
     delete dim[k];
-    const cell = resolveCell(ds, toSelection({ ...filter, dim }));
+    const cell = resolveCell(ds, toSelection(nat, { ...filter, dim }));
     if (cell.state === "observed" || cell.state === "structural_zero") {
       return { dropped: k, dim, cell };
     }

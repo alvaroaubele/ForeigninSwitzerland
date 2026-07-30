@@ -11,8 +11,8 @@ import type { CellResult } from "@/lib/model";
 type View = "count" | "per1000" | "index";
 
 export function Baselines() {
-  const { dataset, summary, manifest, canton, setCanton, loading } = useDataset();
-  const { t, cName } = useI18n();
+  const { dataset, summary, manifest, nat, canton, setCanton, loading } = useDataset();
+  const { t, cName, natWho } = useI18n();
   const [view, setView] = useState<View>("count");
 
   // Ranking every canton needs every canton, which no single canton file holds.
@@ -24,10 +24,10 @@ export function Baselines() {
 
   const baselines = useMemo(() => {
     if (!comparisonSet) return [];
-    return cantonBaselines(comparisonSet, cantonsWithChile(comparisonSet)).sort(
+    return cantonBaselines(comparisonSet, nat, cantonsWithChile(comparisonSet)).sort(
       (a, b) => (b.chile.value ?? 0) - (a.chile.value ?? 0),
     );
-  }, [comparisonSet]);
+  }, [comparisonSet, nat]);
 
   if (loading || !dataset) return <Skeleton />;
 
@@ -36,7 +36,7 @@ export function Baselines() {
   // whatever is selected, Switzerland included, so "here" is resolved on its own
   // rather than looked up in the ranking. Cantons with no Chilean residents at
   // all are equally absent from the ranking and equally need a card.
-  const here = comparisonSet ? cantonBaselines(comparisonSet, [canton])[0] : undefined;
+  const here = comparisonSet ? cantonBaselines(comparisonSet, nat, [canton])[0] : undefined;
   const foreignZg = here?.foreign.value ?? null;
   const chileZg = here?.chile.value ?? null;
   const sem = latestSemMonth(dataset);
@@ -48,7 +48,7 @@ export function Baselines() {
     dataset: "2-10",
     metric: "stock",
     populationType: "permanent",
-    dim: { canton: "CH", nationality: "CL", sex: "total", year: sem.year, month: sem.month },
+    dim: { canton: "CH", nationality: nat, sex: "total", year: sem.year, month: sem.month },
   });
 
   const max =
@@ -58,15 +58,16 @@ export function Baselines() {
         ? Math.max(...baselines.map((b) => b.per1000Foreign ?? 0))
         : Math.max(...baselines.map((b) => b.indexVsNational ?? 0));
 
-  const passport = passportHeadline(dataset);
-  const total = totalHeadline(dataset);
+  const passport = passportHeadline(dataset, nat);
+  const total = totalHeadline(dataset, nat);
+  const who = natWho(nat);
 
   return (
     <section className="section" id="baselines">
       <div className="wrap">
         <div className="section-head">
           <span className="eyebrow">{t.baselines.eyebrow}</span>
-          <h2>{t.baselines.h}</h2>
+          <h2>{t.baselines.h(who)}</h2>
           <p>
             {baselines.length >= 3 &&
               t.baselines.leadTop3(cName(baselines[0].canton), cName(baselines[1].canton), cName(baselines[2].canton))}
@@ -75,7 +76,7 @@ export function Baselines() {
         </div>
 
         <div className="baseline-cards">
-          <MiniStat label={t.baselines.cardIn(cName(canton))} value={chileZg} sub={t.baselines.ofWhomPermanent} cell={here?.chile} />
+          <MiniStat label={t.baselines.cardIn(who, cName(canton))} value={chileZg} sub={t.baselines.ofWhomPermanent} cell={here?.chile} />
           <MiniStat label={t.baselines.shareForeign(cName(canton))} value={null} display={foreignZg !== null && foreignZg > 0 && chileZg !== null ? `${((chileZg / foreignZg) * 100).toFixed(2)}%` : "—"} sub={t.baselines.foreignSub(fmtInt(foreignZg))} cell={here?.foreign} />
           {canton === "CH" ? (
             // "Switzerland's share of Switzerland: 100%" says nothing; on the
@@ -91,7 +92,7 @@ export function Baselines() {
               cell={baselines[0]?.chile}
             />
           ) : (
-            <MiniStat label={t.baselines.shareNational} value={null} display={national.value !== null && national.value > 0 && chileZg !== null ? `${((chileZg / national.value) * 100).toFixed(1)}%` : "—"} sub={t.baselines.nationalSub(fmtInt(national.value))} cell={national} />
+            <MiniStat label={t.baselines.shareNational(who)} value={null} display={national.value !== null && national.value > 0 && chileZg !== null ? `${((chileZg / national.value) * 100).toFixed(1)}%` : "—"} sub={t.baselines.nationalSub(fmtInt(national.value))} cell={national} />
           )}
           <MiniStat label={t.baselines.totalInclNP} value={total.value} sub={t.baselines.permSub(fmtInt(passport.value))} cell={total} />
         </div>
@@ -159,15 +160,11 @@ export function Baselines() {
               );
             })}
             <div className="barrow-foot mono">
-              {view === "count" ? "permanent Chilean nationals" : view === "per1000" ? "per 1,000 foreign residents · dashed = 0" : "index, national rate = 100"}
+              {view === "count" ? t.baselines.axis(who) : view === "per1000" ? t.baselines.segPer1000 : t.baselines.refTitle}
             </div>
           </div>
         </div>
-        <p className="tiny-note">
-          Per-capita uses SEM’s count of all foreign residents per canton as the denominator (register totals including
-          Swiss nationals are a BFS concept with a different reference date). The index expresses each canton’s
-          Chilean-to-foreign ratio relative to the national ratio.
-        </p>
+        <p className="tiny-note">{t.baselines.foot}</p>
       </div>
     </section>
   );

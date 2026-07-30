@@ -34,3 +34,8 @@ next-env.d.ts
 /scratchprobe.mjs
 /_*.mjs
 .claude/settings.local.json
+
+# generated payloads until the v2 wire format shrinks them to committable size
+/public/data/nat/
+/public/data/index.json
+/data/buckets/

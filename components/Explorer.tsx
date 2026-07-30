@@ -12,11 +12,12 @@ const DIM_KEYS: (keyof Dimensions)[] = [
   "sex", "permit", "legalBasis", "ageClass", "marital", "lengthOfStay", "reason", "naturalisationType",
 ];
 
-function encodeState(f: FilterState, canton: string, locale: string): string {
+function encodeState(f: FilterState, nat: string, canton: string, locale: string): string {
   const p = new URLSearchParams();
-  // Canton and language are owned elsewhere, but every URL this component
-  // pushes replaces the whole query string — omitting them here would silently
-  // strip them from the address on the next filter change.
+  // Nationality, canton and language are owned elsewhere, but every URL this
+  // component pushes replaces the whole query string — omitting them here would
+  // silently strip them from the address on the next filter change.
+  if (nat !== "_ALL") p.set("nat", nat);
   if (canton !== "CH") p.set("kt", canton);
   if (locale !== "en") p.set("lang", locale);
   p.set("src", f.source);
@@ -50,7 +51,7 @@ function decodeState(qs: string, fallback: FilterState): FilterState {
 }
 
 export function Explorer() {
-  const { dataset, canton } = useDataset();
+  const { dataset, nat, canton } = useDataset();
   const { t, locale } = useI18n();
   const [filter, setFilter] = useState<FilterState | null>(null);
   /**
@@ -102,7 +103,7 @@ export function Explorer() {
   // Sync URL when filter changes (shareable views).
   useEffect(() => {
     if (!filter) return;
-    const qs = encodeState(filter, canton, locale);
+    const qs = encodeState(filter, nat, canton, locale);
     if (qs === lastQs.current) return;
     const url = `${window.location.pathname}?${qs}${window.location.hash || "#cross-filter"}`;
     // First paint and history-driven changes replace; a user's own change pushes.
@@ -110,7 +111,7 @@ export function Explorer() {
     else window.history.pushState(null, "", url);
     lastQs.current = qs;
     fromHistory.current = false;
-  }, [filter, canton, locale]);
+  }, [filter, nat, canton, locale]);
 
   const exportView = useCallback(
     (fmt: "csv" | "json") => {
@@ -122,7 +123,7 @@ export function Explorer() {
         populationType: filter.populationType,
         dim: {
           year: filter.year,
-          ...(filter.source === "SEM" ? { month: filter.month, nationality: "CL" } : { nationality: "CL" }),
+          ...(filter.source === "SEM" ? { month: filter.month, nationality: nat } : { nationality: nat }),
           ...filter.dim,
         },
       };

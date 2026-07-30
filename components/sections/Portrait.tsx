@@ -57,8 +57,8 @@ interface Row {
  * visible, and marital status shows the wall where even that is not published.
  */
 export function Portrait() {
-  const { dataset, canton, loading } = useDataset();
-  const { t, cName, locale } = useI18n();
+  const { dataset, nat, canton, loading } = useDataset();
+  const { t, cName, natName, natWho, locale } = useI18n();
   const [bySex, setBySex] = useState(false);
   const [pop, setPop] = useState<Pop>("nationals");
 
@@ -66,11 +66,11 @@ export function Portrait() {
   const build = useMemo(
     () =>
       (sex: "total" | "female" | "male"): Row[] =>
-        !dataset || !sem ? [] : pop === "nationals" ? buildRows(dataset, sem, sex) : buildBornRows(dataset, sex),
+        !dataset || !sem ? [] : pop === "nationals" ? buildRows(dataset, nat, sem, sex) : buildBornRows(dataset, nat, sex),
     // locale is a real dependency: the rows bake in label() output, which
     // follows the active language.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- label() reads the locale through a module global
-    [dataset, sem, pop, locale],
+    [dataset, nat, sem, pop, locale],
   );
   const rows = useMemo(() => build("total"), [build]);
   const female = useMemo(() => (bySex ? build("female") : []), [build, bySex]);
@@ -86,12 +86,12 @@ export function Portrait() {
       metric: "stock",
       populationType: "permanent",
       dim: {
-        nationality: "CL", year: sem.year, month: sem.month,
+        nationality: nat, year: sem.year, month: sem.month,
         sex: "total", marital: "married", marriedToSwiss: true,
       },
     });
     return c.state === "observed" ? c.value : null;
-  }, [dataset, sem]);
+  }, [dataset, nat, sem]);
 
   if (loading || !dataset || !sem) {
     return (
@@ -110,9 +110,9 @@ export function Portrait() {
   // Read from the passport-group row rather than compared against the Chilean-
   // national count: those come from a different cube at a different date, and
   // subtracting across registers is exactly the arithmetic this page refuses.
-  const latAmBorn =
+  const swissBorn =
     pop === "born"
-      ? (rows[0]?.segments.find((s) => s.value === "Latin America & Caribbean")?.count ?? null)
+      ? (rows[0]?.segments.find((s) => s.value === "Swiss")?.count ?? null)
       : null;
 
   return (
@@ -123,26 +123,26 @@ export function Portrait() {
           <h2>
             {headTotal === 0
               ? pop === "nationals"
-                ? t.portrait.nobodyPassport(cName(canton))
-                : t.portrait.nobodyBorn(cName(canton))
+                ? t.portrait.nobodyPassport(natName(nat), cName(canton))
+                : t.portrait.nobodyBorn(natName(nat), cName(canton))
               : t.portrait.whoAre(fmtInt(headTotal))}
           </h2>
           <p>
             {pop === "nationals"
-              ? t.portrait.leadNationals(cName(canton))
-              : latAmBorn !== null
-                ? t.portrait.leadBorn(cName(canton), fmtInt(latAmBorn), fmtInt(headTotal - latAmBorn))
-                : t.portrait.leadBorn(cName(canton), "—", "—")}
+              ? t.portrait.leadNationals(natWho(nat), cName(canton))
+              : swissBorn !== null
+                ? t.portrait.leadBorn(natName(nat), cName(canton), fmtInt(swissBorn), fmtInt(headTotal - swissBorn))
+                : t.portrait.leadBorn(natName(nat), cName(canton), "—", "—")}
           </p>
         </div>
 
         <div className="controls-row">
           <div className="seg">
             <button className={`seg-btn ${pop === "nationals" ? "is-on" : ""}`} onClick={() => setPop("nationals")}>
-              {t.portrait.popPassport}
+              {t.portrait.popPassport(natName(nat))}
             </button>
             <button className={`seg-btn ${pop === "born" ? "is-on" : ""}`} onClick={() => setPop("born")}>
-              {t.portrait.popBorn}
+              {t.portrait.popBorn(natName(nat))}
             </button>
           </div>
           <div className="seg">
@@ -179,7 +179,7 @@ export function Portrait() {
               )}
               {pop === "born" && r.key === "marital" && (
                 <p className="portrait-note">
-                  {t.portrait.bornMaritalNote(BORN_MARITAL_YEAR, fmtInt(r.total), fmtInt(headTotal))}
+                  {t.portrait.bornMaritalNote(natName(nat), BORN_MARITAL_YEAR, fmtInt(r.total), fmtInt(headTotal))}
                 </p>
               )}
               {pop === "born" && r.key === "ageClass" && (
@@ -276,6 +276,7 @@ function shadeIndex(row: Row, seg: Seg): number {
 
 function buildRows(
   ds: Dataset,
+  nat: string,
   sem: { year: number; month: number },
   sex: "total" | "female" | "male",
 ): Row[] {
@@ -291,7 +292,7 @@ function buildRows(
         source: "SEM",
         metric: "stock",
         populationType: "permanent",
-        dim: { nationality: "CL", year: sem.year, month: sem.month, sex, ...dim },
+        dim: { nationality: nat, year: sem.year, month: sem.month, sex, ...dim },
       });
 
     const segments: Seg[] = values.map((v) => {
@@ -315,13 +316,13 @@ function buildRows(
  * from cube 423, which exists for 2023 only. The reference dates are not
  * reconciled — each row states its own.
  */
-function buildBornRows(ds: Dataset, sex: "total" | "female" | "male"): Row[] {
+function buildBornRows(ds: Dataset, nat: string, sex: "total" | "female" | "male"): Row[] {
   const cell = (cube: string, year: number, dim: Partial<Dimensions>) =>
     resolveCell(ds, {
       source: "BFS",
       dataset: cube,
       populationType: "permanent",
-      dim: { year, birthCountry: "CL", sex, ...dim },
+      dim: { year, birthCountry: nat, sex, ...dim },
     });
 
   return BORN_KEYS.map((key): Row => {
@@ -359,7 +360,7 @@ function buildBornRows(ds: Dataset, sex: "total" | "female" | "male"): Row[] {
     const values = distinctValues(
       ds,
       "marital",
-      (o) => o.dataset === CUBE_423 && o.dim.birthCountry === "CL",
+      (o) => o.dataset === CUBE_423 && o.dim.birthCountry === nat,
     ).sort();
     const segments = values.map((v) => {
       const c = cell(CUBE_423, BORN_MARITAL_YEAR, { marital: v });

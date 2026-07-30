@@ -22,15 +22,15 @@ interface Finding {
  * to give a first-time reader a reason to scroll, not to replace the sections.
  */
 export function Findings() {
-  const { dataset, canton, loading } = useDataset();
-  const { t, cName } = useI18n();
+  const { dataset, nat, canton, loading } = useDataset();
+  const { t, cName, natName, natWho } = useI18n();
   if (loading || !dataset) return null;
 
-  const passport = passportHeadline(dataset);
-  const born = bornHeadline(dataset, 2024);
-  const split = passportSplit(dataset, 2024);
+  const nName = natName(nat);
+  const passport = passportHeadline(dataset, nat);
+  const born = bornHeadline(dataset, nat, 2024);
+  const split = passportSplit(dataset, nat, 2024);
   const sem = latestSemMonth(dataset);
-  const latAm = split.find((r) => r.group === "Latin America & Caribbean")?.cell.value ?? null;
   const swiss = split.find((r) => r.group === "Swiss")?.cell.value ?? null;
 
   // Reasons are a nine-year sum, so they have to be added up rather than looked
@@ -69,30 +69,37 @@ export function Findings() {
     source: "SEM",
     metric: "stock",
     populationType: "permanent",
-    dim: { nationality: "CL", year: sem.year, month: sem.month, sex: "total", lengthOfStay: "0-4" },
+    dim: { nationality: nat, year: sem.year, month: sem.month, sex: "total", lengthOfStay: "0-4" },
   });
   const over65 = resolveCell(dataset, {
     source: "SEM",
     metric: "stock",
     populationType: "permanent",
-    dim: { nationality: "CL", year: sem.year, month: sem.month, sex: "total", ageClass: "65+" },
+    dim: { nationality: nat, year: sem.year, month: sem.month, sex: "total", ageClass: "65+" },
   });
 
+  // The two birthplace cards only exist for real countries: the grouped
+  // populations (_ALL, EU/EFTA, …) have no birth-country series in cube 399.
+  const birthCards: Finding[] = nat.startsWith("_")
+    ? []
+    : [
+        {
+          figure: `${fmtInt(passport.value)} vs ${fmtInt(born.value)}`,
+          headline: t.findings.twoCountsH,
+          detail: t.findings.twoCountsD(nName, fmtInt(passport.value), fmtInt(born.value)),
+          href: "#passport-birthplace",
+          cta: t.findings.twoCountsCta,
+        },
+        {
+          figure: swiss !== null ? fmtInt(swiss) : "—",
+          headline: t.findings.becameSwissH,
+          detail: t.findings.becameSwissD(nName, fmtInt(born.value), fmtInt(swiss)),
+          href: "#portrait",
+          cta: t.findings.becameSwissCta(fmtInt(born.value)),
+        },
+      ];
   const findings: Finding[] = [
-    {
-      figure: `${fmtInt(passport.value)} vs ${fmtInt(born.value)}`,
-      headline: t.findings.twoCountsH,
-      detail: t.findings.twoCountsD(fmtInt(passport.value), fmtInt(born.value)),
-      href: "#passport-birthplace",
-      cta: t.findings.twoCountsCta,
-    },
-    {
-      figure: swiss !== null ? fmtInt(swiss) : "—",
-      headline: t.findings.becameSwissH,
-      detail: t.findings.becameSwissD(fmtInt(born.value), fmtInt(swiss), fmtInt(latAm)),
-      href: "#portrait",
-      cta: t.findings.becameSwissCta(fmtInt(born.value)),
-    },
+    ...birthCards,
     ...(allReasons > 0
       ? [
           {
@@ -121,7 +128,7 @@ export function Findings() {
       <div className="wrap">
         <div className="findings-intro">
           <h2 className="findings-h">{t.findings.h}</h2>
-          <p>{t.findings.intro(cName(canton))}</p>
+          <p>{t.findings.intro(natWho(nat), cName(canton))}</p>
         </div>
         <div className="findings">
           {findings.map((f) => (

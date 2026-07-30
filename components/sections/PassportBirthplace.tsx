@@ -20,18 +20,18 @@ const GROUP_COLORS: Record<string, string> = {
 };
 
 export function PassportBirthplace() {
-  const { dataset, canton, loading } = useDataset();
-  const { t, cName } = useI18n();
+  const { dataset, nat, canton, loading } = useDataset();
+  const { t, cName, natName } = useI18n();
   if (loading || !dataset) return <HeroSkeleton />;
 
-  const passport = passportHeadline(dataset);
-  const born = bornHeadline(dataset, 2024);
-  const split = passportSplit(dataset, 2024);
+  const nName = natName(nat);
+  const passport = passportHeadline(dataset, nat);
+  const born = bornHeadline(dataset, nat, 2024);
+  const split = passportSplit(dataset, nat, 2024);
   const sem = latestSemMonth(dataset);
 
   const splitTotal = split.reduce((s, r) => s + (r.cell.value ?? 0), 0);
-  const latAm = split.find((r) => r.group === "Latin America & Caribbean")?.cell.value ?? null;
-  const nonLatAm = born.value !== null && latAm !== null ? born.value - latAm : null;
+  const swiss = split.find((r) => r.group === "Swiss")?.cell.value ?? null;
 
   return (
     <section className="section" id="passport-birthplace" style={{ borderTop: "none", paddingTop: 20 }}>
@@ -39,12 +39,12 @@ export function PassportBirthplace() {
         <div className="section-head">
           <span className="eyebrow">{t.hero.eyebrow}</span>
           <h2 style={{ fontSize: 26, marginTop: 8 }}>{t.hero.h}</h2>
-          <p>{t.hero.lead(cName(canton), fmtInt(passport.value), fmtInt(born.value))}</p>
+          <p>{t.hero.lead(nName, cName(canton), fmtInt(passport.value), fmtInt(born.value))}</p>
         </div>
 
         <div className="hero-grid">
           <HeroStat
-            kicker={t.hero.kickerPassport}
+            kicker={t.hero.kickerPassport(nName)}
             value={passport.value}
             state={passport.state}
             observation={passport.observation}
@@ -55,7 +55,7 @@ export function PassportBirthplace() {
             ≠
           </div>
           <HeroStat
-            kicker={t.hero.kickerBorn}
+            kicker={t.hero.kickerBorn(nName)}
             value={born.value}
             state={born.state}
             observation={born.observation}
@@ -65,7 +65,7 @@ export function PassportBirthplace() {
 
         <div className="panel hero-split">
           <div className="hero-split-head">
-            <h3 style={{ fontSize: 15 }}>{t.hero.splitHead(fmtInt(born.value))}</h3>
+            <h3 style={{ fontSize: 15 }}>{t.hero.splitHead(nName, fmtInt(born.value))}</h3>
             <span className="mono" style={{ fontSize: 11, color: "var(--fg-subtle)" }}>
               BFS STATPOP · cube 399 · 2024
             </span>
@@ -106,9 +106,9 @@ export function PassportBirthplace() {
                     </span>
                   ))}
               </div>
-              {nonLatAm !== null && born.value !== null && (
+              {swiss !== null && born.value !== null && born.value > 0 && (
                 <p className="hero-insight">
-                  {t.hero.insight(fmtInt(nonLatAm), fmtInt(born.value), Math.round((nonLatAm / (born.value || 1)) * 100))}
+                  {t.hero.insight(fmtInt(swiss), fmtInt(born.value), Math.round((swiss / born.value) * 100))}
                 </p>
               )}
             </>

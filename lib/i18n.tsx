@@ -19,6 +19,12 @@ interface I18nState {
    * stateless/unknown groups) come from the dictionary.
    */
   natName: (code: string) => string;
+  /**
+   * The population as a noun phrase for prose: "nationals of Chile" for a
+   * country, or the group's own name ("All foreign nationals") for the
+   * pseudo-codes, where "nationals of All foreign nationals" would be garbage.
+   */
+  natWho: (code: string) => string;
 }
 
 const I18nContext = createContext<I18nState>({
@@ -27,6 +33,7 @@ const I18nContext = createContext<I18nState>({
   t: DICTS.en,
   cName: cantonName,
   natName: (code) => code,
+  natWho: (code) => code,
 });
 
 /**
@@ -105,7 +112,12 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     [locale],
   );
 
-  return <I18nContext.Provider value={{ locale, setLocale, t, cName, natName }}>{children}</I18nContext.Provider>;
+  const natWho = useCallback(
+    (code: string) => (code.startsWith("_") ? natName(code) : DICTS[locale].natOf(natName(code))),
+    [locale, natName],
+  );
+
+  return <I18nContext.Provider value={{ locale, setLocale, t, cName, natName, natWho }}>{children}</I18nContext.Provider>;
 }
 
 export function useI18n(): I18nState {

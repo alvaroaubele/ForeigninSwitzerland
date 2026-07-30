@@ -37,8 +37,8 @@ interface Row {
  * Departures and naturalisations do carry sex, and split here.
  */
 export function Reasons() {
-  const { dataset, loading } = useDataset();
-  const { t, locale } = useI18n();
+  const { dataset, nat, loading } = useDataset();
+  const { t, natWho, locale } = useI18n();
   const [view, setView] = useState<View>("arrivals");
   const [bySex, setBySex] = useState(false);
   /**
@@ -63,10 +63,10 @@ export function Reasons() {
   );
 
   const model = useMemo(
-    () => (dataset ? build(dataset, view, view !== "arrivals" && bySex, period) : null),
+    () => (dataset ? build(dataset, nat, view, view !== "arrivals" && bySex, period) : null),
     // locale: the rows bake in label() output, which follows the language.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- label() reads the locale through a module global
-    [dataset, view, bySex, period, locale],
+    [dataset, view, bySex, period, locale, nat],
   );
 
   if (loading || !dataset || !model) {
@@ -96,7 +96,7 @@ export function Reasons() {
             {t.movement.eyebrow} · {period === "12mo" ? t.movement.last12Eyebrow : years.length === 1 ? years[0] : `${years[0]}–${years[years.length - 1]}`}
           </span>
           <h2>{viewTab[view]}</h2>
-          <p>{lead(t, view, rows, totalA, totalB, years, period === "12mo")}</p>
+          <p>{lead(t, natWho(nat), view, rows, totalA, totalB, years, period === "12mo")}</p>
         </div>
 
         <div className="controls-row">
@@ -203,7 +203,7 @@ function totalTitle(t: Dict, total: number, partial: boolean): string {
   return t.movement.titleTotal(fmtInt(total));
 }
 
-function lead(t: Dict, view: View, rows: Row[], totalA: number, totalB: number, years: number[], rolling: boolean) {
+function lead(t: Dict, who: string, view: View, rows: Row[], totalA: number, totalB: number, years: number[], rolling: boolean) {
   const grand = totalA + totalB;
   const span = rolling ? t.movement.span12 : years.length === 1 ? t.movement.spanYear(years[0]) : t.movement.spanYears(years.length);
   if (view === "arrivals") {
@@ -229,7 +229,7 @@ function lead(t: Dict, view: View, rows: Row[], totalA: number, totalB: number, 
   if (view === "departures") {
     return <>{t.movement.leadDepartures(fmtInt(grand), span)}</>;
   }
-  return <>{t.movement.leadSwiss(fmtInt(grand), span)}</>;
+  return <>{t.movement.leadSwiss(who, fmtInt(grand), span)}</>;
 }
 
 function foot(t: Dict, view: View, totalA: number, totalB: number, splitOn: boolean) {
@@ -272,7 +272,7 @@ function ReasonBar({
 
 // ---------------------------------------------------------------------------
 
-function build(ds: Dataset, view: View, bySex: boolean, period: number | "12mo" | null) {
+function build(ds: Dataset, nat: string, view: View, bySex: boolean, period: number | "12mo" | null) {
   const datasets = view === "arrivals" ? ["3-30", "3-31"] : view === "departures" ? ["3-55"] : ["3-60"];
 
   // The rolling twelve-month release is the one flow file whose reference date
@@ -320,7 +320,7 @@ function build(ds: Dataset, view: View, bySex: boolean, period: number | "12mo" 
         populationType,
         // The rolling release is keyed to its publication month (2026-05), the
         // calendar-year releases to December.
-        dim: { nationality: "CL", year, month: rolling ? 5 : 12, sex, ...dim },
+        dim: { nationality: nat, year, month: rolling ? 5 : 12, sex, ...dim },
       });
       if (c.state === "not_published" || c.state === "suppressed") continue;
       total += c.value ?? 0;

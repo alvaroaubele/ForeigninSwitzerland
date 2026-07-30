@@ -4,9 +4,9 @@ import { useI18n } from "@/lib/i18n";
 import { toCsv, toJson, download } from "@/lib/export";
 
 export function Footer() {
-  const { dataset, canton } = useDataset();
-  const { t, cName } = useI18n();
-  const stem = `chileans-${canton.toLowerCase()}-harvest`;
+  const { dataset, nat, canton } = useDataset();
+  const { t, cName, natName } = useI18n();
+  const stem = `${nat.toLowerCase().replace(/^_/, "")}-${canton.toLowerCase()}-harvest`;
   return (
     <footer className="site-footer">
       <div className="wrap">
@@ -34,7 +34,7 @@ export function Footer() {
           </div>
           <div>
             {/* Honest label: this serialises the canton in view, not all 27 files. */}
-            <div className="footer-h">{t.footer.download(cName(canton))}</div>
+            <div className="footer-h">{t.footer.download(`${natName(nat)} · ${cName(canton)}`)}</div>
             <div className="export-btns">
               <button onClick={() => dataset && download(`${stem}.csv`, toCsv(dataset.observations), "text/csv")}>
                 {t.footer.csv}

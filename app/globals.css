@@ -1714,6 +1714,45 @@ svg[tabindex="0"]:focus-visible {
   font-size: 11px;
   color: var(--fg-subtle);
 }
+
+/* nationality picker: the canton menu plus a search field and a longer list */
+.nat-picker {
+  position: relative;
+}
+.nat-picker.is-switching .canton-trigger-name {
+  opacity: 0.45;
+}
+.nat-menu {
+  width: 280px;
+  max-height: 420px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.nat-menu-scroll {
+  overflow-y: auto;
+  min-height: 0;
+}
+.nat-search {
+  width: 100%;
+  margin: 2px 0 6px;
+  padding: 7px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans-stack);
+  font-size: 13.5px;
+}
+.nat-search:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.nat-empty {
+  padding: 12px 10px;
+  font-size: 12.5px;
+  color: var(--fg-muted);
+}
 .canton-option.is-on .canton-option-code {
   color: var(--bg);
   opacity: 0.7;
@@ -2009,11 +2048,15 @@ main {
   .header-nav::-webkit-scrollbar {
     display: none;
   }
-  .canton-picker {
+  .canton-picker,
+  .nat-picker {
     margin-left: auto;
     /* Dropdowns anchor poorly in a wrapped header row; on a phone the menu
        becomes a near-full-width sheet under the header instead. */
     position: static;
+  }
+  .nat-picker {
+    margin-left: 0;
   }
   .canton-menu {
     position: fixed;

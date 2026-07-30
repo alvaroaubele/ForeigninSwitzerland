@@ -4,6 +4,7 @@ import { useDataset } from "@/lib/data-context";
 import { StateLegend } from "./StateBits";
 import { ThemeToggle } from "./ThemeToggle";
 import { CantonPicker } from "./CantonPicker";
+import { NationalityPicker } from "./NationalityPicker";
 import { LanguagePicker } from "./LanguagePicker";
 import { useI18n } from "@/lib/i18n";
 import { fmtInt } from "@/lib/format";
@@ -52,6 +53,7 @@ export function Header() {
               </a>
             ))}
           </nav>
+          <NationalityPicker />
           <CantonPicker />
           <LanguagePicker />
           <ThemeToggle />
