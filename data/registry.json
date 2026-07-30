@@ -1,0 +1,1856 @@
+{
+ "generatedAt": "2026-07-30T09:52:14.767Z",
+ "counts": {
+  "total": 205,
+  "withSem": 196,
+  "withBfs101": 201,
+  "withBfs399": 200,
+  "inBoth": 192
+ },
+ "semSkip": [
+  "Gesamttotal",
+  "EU / EFTA",
+  "Drittstaaten",
+  "Afrika",
+  "Amerika",
+  "Asien",
+  "Europa",
+  "Ozeanien",
+  "Herkunft unbekannt",
+  "Total Europa",
+  "Total Afrika",
+  "Total Amerika",
+  "Total Asien",
+  "Total Ozeanien",
+  "Total Herkunft unbek.",
+  "EU / EFTA\r\nKontinente\r\nNationen",
+  "2-10",
+  "2-20",
+  "2-21",
+  "2-22",
+  "2-23",
+  "2-40",
+  "2-41",
+  "3-30",
+  "3-31",
+  "3-55",
+  "3-60"
+ ],
+ "entries": [
+  {
+   "code": "_ALL",
+   "de": "Ausländische Wohnbevölkerung",
+   "sem": "Gesamttotal"
+  },
+  {
+   "code": "_EU_EFTA",
+   "de": "EU / EFTA",
+   "sem": "EU / EFTA"
+  },
+  {
+   "code": "_NA_BORDERS",
+   "de": "Nicht zuteilbar gemäss den aktuellen Grenzen",
+   "bfs101": "-6",
+   "bfs399Birth": "-6",
+   "bfs423Birth": "-6"
+  },
+  {
+   "code": "_NONAT",
+   "de": "Ohne Nationalität",
+   "sem": "Ohne Nationalität"
+  },
+  {
+   "code": "_SL",
+   "de": "Staatenlos",
+   "bfs101": "-1",
+   "bfs423Nat": "-1",
+   "bfs423Birth": "-1",
+   "sem": "Staatenlos"
+  },
+  {
+   "code": "_THIRD",
+   "de": "Drittstaaten",
+   "sem": "Drittstaaten"
+  },
+  {
+   "code": "_UNK",
+   "de": "Ohne Angabe",
+   "bfs101": "-9",
+   "bfs399Birth": "-9",
+   "bfs423Nat": "-9",
+   "bfs423Birth": "-9",
+   "sem": "Staat unbekannt"
+  },
+  {
+   "code": "AD",
+   "de": "Andorra",
+   "bfs101": "8202",
+   "bfs399Birth": "8202",
+   "bfs423Nat": "8202",
+   "bfs423Birth": "8202",
+   "sem": "Andorra"
+  },
+  {
+   "code": "AE",
+   "de": "Vereinigte Arabische Emirate",
+   "bfs101": "8532",
+   "bfs399Birth": "8532",
+   "bfs423Nat": "8532",
+   "bfs423Birth": "8532",
+   "sem": "V. A. Emirate"
+  },
+  {
+   "code": "AF",
+   "de": "Afghanistan",
+   "bfs101": "8501",
+   "bfs399Birth": "8501",
+   "bfs423Nat": "8501",
+   "bfs423Birth": "8501",
+   "sem": "Afghanistan"
+  },
+  {
+   "code": "AG",
+   "de": "Antigua und Barbuda",
+   "bfs101": "8442",
+   "bfs399Birth": "8442",
+   "bfs423Nat": "8442",
+   "bfs423Birth": "8442",
+   "sem": "Antigua und Barbuda"
+  },
+  {
+   "code": "AL",
+   "de": "Albanien",
+   "bfs101": "8201",
+   "bfs399Birth": "8201",
+   "bfs423Nat": "8201",
+   "bfs423Birth": "8201",
+   "sem": "Albanien"
+  },
+  {
+   "code": "AM",
+   "de": "Armenien",
+   "bfs101": "8560",
+   "bfs399Birth": "8560",
+   "bfs423Nat": "8560",
+   "bfs423Birth": "8560",
+   "sem": "Armenien"
+  },
+  {
+   "code": "AO",
+   "de": "Angola",
+   "bfs101": "8305",
+   "bfs399Birth": "8305",
+   "bfs423Nat": "8305",
+   "bfs423Birth": "8305",
+   "sem": "Angola"
+  },
+  {
+   "code": "AR",
+   "de": "Argentinien",
+   "bfs101": "8401",
+   "bfs399Birth": "8401",
+   "bfs423Nat": "8401",
+   "bfs423Birth": "8401",
+   "sem": "Argentinien"
+  },
+  {
+   "code": "AT",
+   "de": "Österreich",
+   "bfs101": "8229",
+   "bfs399Birth": "8229",
+   "bfs423Nat": "8229",
+   "bfs423Birth": "8229",
+   "sem": "Österreich"
+  },
+  {
+   "code": "AU",
+   "de": "Australien",
+   "bfs101": "8601",
+   "bfs399Birth": "8601",
+   "bfs423Nat": "8601",
+   "bfs423Birth": "8601",
+   "sem": "Australien"
+  },
+  {
+   "code": "AZ",
+   "de": "Aserbaidschan",
+   "bfs101": "8561",
+   "bfs399Birth": "8561",
+   "bfs423Nat": "8561",
+   "bfs423Birth": "8561",
+   "sem": "Aserbaidschan"
+  },
+  {
+   "code": "BA",
+   "de": "Bosnien und Herzegowina",
+   "bfs101": "8252",
+   "bfs399Birth": "8252",
+   "bfs423Nat": "8252",
+   "bfs423Birth": "8252",
+   "sem": "Bosnien u. Herzegowina"
+  },
+  {
+   "code": "BB",
+   "de": "Barbados",
+   "bfs101": "8403",
+   "bfs399Birth": "8403",
+   "bfs423Nat": "8403",
+   "bfs423Birth": "8403",
+   "sem": "Barbados"
+  },
+  {
+   "code": "BD",
+   "de": "Bangladesch",
+   "bfs101": "8546",
+   "bfs399Birth": "8546",
+   "bfs423Nat": "8546",
+   "bfs423Birth": "8546",
+   "sem": "Bangladesh"
+  },
+  {
+   "code": "BE",
+   "de": "Belgien",
+   "bfs101": "8204",
+   "bfs399Birth": "8204",
+   "bfs423Nat": "8204",
+   "bfs423Birth": "8204",
+   "sem": "Belgien"
+  },
+  {
+   "code": "BF",
+   "de": "Burkina Faso",
+   "bfs101": "8337",
+   "bfs399Birth": "8337",
+   "bfs423Nat": "8337",
+   "bfs423Birth": "8337",
+   "sem": "Burkina Faso"
+  },
+  {
+   "code": "BG",
+   "de": "Bulgarien",
+   "bfs101": "8205",
+   "bfs399Birth": "8205",
+   "bfs423Nat": "8205",
+   "bfs423Birth": "8205",
+   "sem": "Bulgarien"
+  },
+  {
+   "code": "BH",
+   "de": "Bahrain",
+   "bfs101": "8502",
+   "bfs399Birth": "8502",
+   "bfs423Nat": "8502",
+   "bfs423Birth": "8502",
+   "sem": "Bahrain"
+  },
+  {
+   "code": "BI",
+   "de": "Burundi",
+   "bfs101": "8308",
+   "bfs399Birth": "8308",
+   "bfs423Nat": "8308",
+   "bfs423Birth": "8308",
+   "sem": "Burundi"
+  },
+  {
+   "code": "BJ",
+   "de": "Benin",
+   "bfs101": "8309",
+   "bfs399Birth": "8309",
+   "bfs423Nat": "8309",
+   "bfs423Birth": "8309",
+   "sem": "Benin"
+  },
+  {
+   "code": "BN",
+   "de": "Brunei Darussalam",
+   "bfs101": "8504",
+   "bfs399Birth": "8504",
+   "bfs423Nat": "8504",
+   "bfs423Birth": "8504",
+   "sem": "Brunei"
+  },
+  {
+   "code": "BO",
+   "de": "Bolivien",
+   "bfs101": "8405",
+   "bfs399Birth": "8405",
+   "bfs423Nat": "8405",
+   "bfs423Birth": "8405",
+   "sem": "Bolivien"
+  },
+  {
+   "code": "BR",
+   "de": "Brasilien",
+   "bfs101": "8406",
+   "bfs399Birth": "8406",
+   "bfs423Nat": "8406",
+   "bfs423Birth": "8406",
+   "sem": "Brasilien"
+  },
+  {
+   "code": "BS",
+   "de": "Bahamas",
+   "bfs101": "8402",
+   "bfs399Birth": "8402",
+   "bfs423Nat": "8402",
+   "bfs423Birth": "8402",
+   "sem": "Bahamas"
+  },
+  {
+   "code": "BT",
+   "de": "Bhutan",
+   "bfs101": "8503",
+   "bfs399Birth": "8503",
+   "bfs423Nat": "8503",
+   "bfs423Birth": "8503",
+   "sem": "Bhutan"
+  },
+  {
+   "code": "BW",
+   "de": "Botsuana",
+   "bfs101": "8307",
+   "bfs399Birth": "8307",
+   "bfs423Nat": "8307",
+   "bfs423Birth": "8307",
+   "sem": "Botsuana"
+  },
+  {
+   "code": "BY",
+   "de": "Belarus",
+   "bfs101": "8266",
+   "bfs399Birth": "8266",
+   "bfs423Nat": "8266",
+   "bfs423Birth": "8266",
+   "sem": "Belarus"
+  },
+  {
+   "code": "BZ",
+   "de": "Belize",
+   "bfs101": "8419",
+   "bfs399Birth": "8419",
+   "bfs423Nat": "8419",
+   "bfs423Birth": "8419",
+   "sem": "Belize"
+  },
+  {
+   "code": "CA",
+   "de": "Kanada",
+   "bfs101": "8423",
+   "bfs399Birth": "8423",
+   "bfs423Nat": "8423",
+   "bfs423Birth": "8423",
+   "sem": "Kanada"
+  },
+  {
+   "code": "CD",
+   "de": "Kongo (Kinshasa)",
+   "bfs101": "8323",
+   "bfs399Birth": "8323",
+   "bfs423Nat": "8323",
+   "bfs423Birth": "8323",
+   "sem": "Kongo DR"
+  },
+  {
+   "code": "CF",
+   "de": "Zentralafrikanische Republik",
+   "bfs101": "8360",
+   "bfs399Birth": "8360",
+   "bfs423Nat": "8360",
+   "bfs423Birth": "8360",
+   "sem": "Zentralafr. Republik"
+  },
+  {
+   "code": "CG",
+   "de": "Kongo (Brazzaville)",
+   "bfs101": "8322",
+   "bfs399Birth": "8322",
+   "bfs423Nat": "8322",
+   "bfs423Birth": "8322",
+   "sem": "Kongo"
+  },
+  {
+   "code": "CI",
+   "de": "Côte d'Ivoire",
+   "bfs101": "8310",
+   "bfs399Birth": "8310",
+   "bfs423Nat": "8310",
+   "bfs423Birth": "8310",
+   "sem": "Côte d'Ivoire"
+  },
+  {
+   "code": "CK",
+   "de": "Cookinseln",
+   "bfs101": "8682",
+   "bfs399Birth": "8682",
+   "bfs423Birth": "8682"
+  },
+  {
+   "code": "CL",
+   "de": "Chile",
+   "bfs101": "8407",
+   "bfs399Birth": "8407",
+   "bfs423Nat": "8407",
+   "bfs423Birth": "8407",
+   "sem": "Chile"
+  },
+  {
+   "code": "CM",
+   "de": "Kamerun",
+   "bfs101": "8317",
+   "bfs399Birth": "8317",
+   "bfs423Nat": "8317",
+   "bfs423Birth": "8317",
+   "sem": "Kamerun"
+  },
+  {
+   "code": "CN",
+   "de": "China",
+   "bfs101": "8508",
+   "bfs399Birth": "8508",
+   "bfs423Nat": "8508",
+   "bfs423Birth": "8508",
+   "sem": "China (Volksrepublik)"
+  },
+  {
+   "code": "CO",
+   "de": "Kolumbien",
+   "bfs101": "8424",
+   "bfs399Birth": "8424",
+   "bfs423Nat": "8424",
+   "bfs423Birth": "8424",
+   "sem": "Kolumbien"
+  },
+  {
+   "code": "CR",
+   "de": "Costa Rica",
+   "bfs101": "8408",
+   "bfs399Birth": "8408",
+   "bfs423Nat": "8408",
+   "bfs423Birth": "8408",
+   "sem": "Costa Rica"
+  },
+  {
+   "code": "CU",
+   "de": "Kuba",
+   "bfs101": "8425",
+   "bfs399Birth": "8425",
+   "bfs423Nat": "8425",
+   "bfs423Birth": "8425",
+   "sem": "Kuba"
+  },
+  {
+   "code": "CV",
+   "de": "Cabo Verde",
+   "bfs101": "8319",
+   "bfs399Birth": "8319",
+   "bfs423Nat": "8319",
+   "bfs423Birth": "8319",
+   "sem": "Kapverden"
+  },
+  {
+   "code": "CY",
+   "de": "Zypern",
+   "bfs101": "8242",
+   "bfs399Birth": "8242",
+   "bfs423Nat": "8242",
+   "bfs423Birth": "8242",
+   "sem": "Zypern"
+  },
+  {
+   "code": "CZ",
+   "de": "Tschechien",
+   "bfs101": "8244",
+   "bfs399Birth": "8244",
+   "bfs423Nat": "8244",
+   "bfs423Birth": "8244",
+   "sem": "Tschechische Republik"
+  },
+  {
+   "code": "DE",
+   "de": "Deutschland",
+   "bfs101": "8207",
+   "bfs399Birth": "8207",
+   "bfs423Nat": "8207",
+   "bfs423Birth": "8207",
+   "sem": "Deutschland"
+  },
+  {
+   "code": "DJ",
+   "de": "Dschibuti",
+   "bfs101": "8303",
+   "bfs399Birth": "8303",
+   "bfs423Nat": "8303",
+   "bfs423Birth": "8303",
+   "sem": "Dschibuti"
+  },
+  {
+   "code": "DK",
+   "de": "Dänemark",
+   "bfs101": "8206",
+   "bfs399Birth": "8206",
+   "bfs423Nat": "8206",
+   "bfs423Birth": "8206",
+   "sem": "Dänemark"
+  },
+  {
+   "code": "DM",
+   "de": "Dominica",
+   "bfs101": "8440",
+   "bfs399Birth": "8440",
+   "bfs423Nat": "8440",
+   "bfs423Birth": "8440",
+   "sem": "Dominica"
+  },
+  {
+   "code": "DO",
+   "de": "Dominikanische Republik",
+   "bfs101": "8409",
+   "bfs399Birth": "8409",
+   "bfs423Nat": "8409",
+   "bfs423Birth": "8409",
+   "sem": "Dominikanische Republik"
+  },
+  {
+   "code": "DZ",
+   "de": "Algerien",
+   "bfs101": "8304",
+   "bfs399Birth": "8304",
+   "bfs423Nat": "8304",
+   "bfs423Birth": "8304",
+   "sem": "Algerien"
+  },
+  {
+   "code": "EC",
+   "de": "Ecuador",
+   "bfs101": "8410",
+   "bfs399Birth": "8410",
+   "bfs423Nat": "8410",
+   "bfs423Birth": "8410",
+   "sem": "Ecuador"
+  },
+  {
+   "code": "EE",
+   "de": "Estland",
+   "bfs101": "8260",
+   "bfs399Birth": "8260",
+   "bfs423Nat": "8260",
+   "bfs423Birth": "8260",
+   "sem": "Estland"
+  },
+  {
+   "code": "EG",
+   "de": "Ägypten",
+   "bfs101": "8359",
+   "bfs399Birth": "8359",
+   "bfs423Nat": "8359",
+   "bfs423Birth": "8359",
+   "sem": "Ägypten"
+  },
+  {
+   "code": "EH",
+   "de": "Westsahara",
+   "bfs101": "8372",
+   "bfs399Birth": "8372",
+   "bfs423Nat": "8372",
+   "bfs423Birth": "8372",
+   "sem": "Westsahara"
+  },
+  {
+   "code": "ER",
+   "de": "Eritrea",
+   "bfs101": "8362",
+   "bfs399Birth": "8362",
+   "bfs423Nat": "8362",
+   "bfs423Birth": "8362",
+   "sem": "Eritrea"
+  },
+  {
+   "code": "ES",
+   "de": "Spanien",
+   "bfs101": "8236",
+   "bfs399Birth": "8236",
+   "bfs423Nat": "8236",
+   "bfs423Birth": "8236",
+   "sem": "Spanien"
+  },
+  {
+   "code": "ET",
+   "de": "Äthiopien",
+   "bfs101": "8302",
+   "bfs399Birth": "8302",
+   "bfs423Nat": "8302",
+   "bfs423Birth": "8302",
+   "sem": "Äthiopien"
+  },
+  {
+   "code": "FI",
+   "de": "Finnland",
+   "bfs101": "8211",
+   "bfs399Birth": "8211",
+   "bfs423Nat": "8211",
+   "bfs423Birth": "8211",
+   "sem": "Finnland"
+  },
+  {
+   "code": "FJ",
+   "de": "Fidschi",
+   "bfs101": "8602",
+   "bfs399Birth": "8602",
+   "bfs423Nat": "8602",
+   "bfs423Birth": "8602",
+   "sem": "Fidschi"
+  },
+  {
+   "code": "FM",
+   "de": "Mikronesien",
+   "bfs101": "8618",
+   "bfs399Birth": "8618",
+   "bfs423Nat": "8618",
+   "bfs423Birth": "8618"
+  },
+  {
+   "code": "FR",
+   "de": "Frankreich",
+   "bfs101": "8212",
+   "bfs399Birth": "8212",
+   "bfs423Nat": "8212",
+   "bfs423Birth": "8212",
+   "sem": "Frankreich"
+  },
+  {
+   "code": "GA",
+   "de": "Gabun",
+   "bfs101": "8311",
+   "bfs399Birth": "8311",
+   "bfs423Nat": "8311",
+   "bfs423Birth": "8311",
+   "sem": "Gabun"
+  },
+  {
+   "code": "GB",
+   "de": "Vereinigtes Königreich",
+   "bfs101": "8215",
+   "bfs399Birth": "8215",
+   "bfs423Nat": "8215",
+   "bfs423Birth": "8215",
+   "sem": "Vereinigtes Königreich"
+  },
+  {
+   "code": "GD",
+   "de": "Grenada",
+   "bfs101": "8441",
+   "bfs399Birth": "8441",
+   "bfs423Nat": "8441",
+   "bfs423Birth": "8441",
+   "sem": "Grenada"
+  },
+  {
+   "code": "GE",
+   "de": "Georgien",
+   "bfs101": "8562",
+   "bfs399Birth": "8562",
+   "bfs423Nat": "8562",
+   "bfs423Birth": "8562",
+   "sem": "Georgien"
+  },
+  {
+   "code": "GH",
+   "de": "Ghana",
+   "bfs101": "8313",
+   "bfs399Birth": "8313",
+   "bfs423Nat": "8313",
+   "bfs423Birth": "8313",
+   "sem": "Ghana"
+  },
+  {
+   "code": "GM",
+   "de": "Gambia",
+   "bfs101": "8312",
+   "bfs399Birth": "8312",
+   "bfs423Nat": "8312",
+   "bfs423Birth": "8312",
+   "sem": "Gambia"
+  },
+  {
+   "code": "GN",
+   "de": "Guinea",
+   "bfs101": "8315",
+   "bfs399Birth": "8315",
+   "bfs423Nat": "8315",
+   "bfs423Birth": "8315",
+   "sem": "Guinea"
+  },
+  {
+   "code": "GQ",
+   "de": "Äquatorialguinea",
+   "bfs101": "8301",
+   "bfs399Birth": "8301",
+   "bfs423Nat": "8301",
+   "bfs423Birth": "8301",
+   "sem": "Äquatorialguinea"
+  },
+  {
+   "code": "GR",
+   "de": "Griechenland",
+   "bfs101": "8214",
+   "bfs399Birth": "8214",
+   "bfs423Nat": "8214",
+   "bfs423Birth": "8214",
+   "sem": "Griechenland"
+  },
+  {
+   "code": "GT",
+   "de": "Guatemala",
+   "bfs101": "8415",
+   "bfs399Birth": "8415",
+   "bfs423Nat": "8415",
+   "bfs423Birth": "8415",
+   "sem": "Guatemala"
+  },
+  {
+   "code": "GW",
+   "de": "Guinea-Bissau",
+   "bfs101": "8314",
+   "bfs399Birth": "8314",
+   "bfs423Nat": "8314",
+   "bfs423Birth": "8314",
+   "sem": "Guinea-Bissau"
+  },
+  {
+   "code": "GY",
+   "de": "Guyana",
+   "bfs101": "8417",
+   "bfs399Birth": "8417",
+   "bfs423Nat": "8417",
+   "bfs423Birth": "8417",
+   "sem": "Guyana (Republik)"
+  },
+  {
+   "code": "HN",
+   "de": "Honduras",
+   "bfs101": "8420",
+   "bfs399Birth": "8420",
+   "bfs423Nat": "8420",
+   "bfs423Birth": "8420",
+   "sem": "Honduras"
+  },
+  {
+   "code": "HR",
+   "de": "Kroatien",
+   "bfs101": "8250",
+   "bfs399Birth": "8250",
+   "bfs423Nat": "8250",
+   "bfs423Birth": "8250",
+   "sem": "Kroatien"
+  },
+  {
+   "code": "HT",
+   "de": "Haiti",
+   "bfs101": "8418",
+   "bfs399Birth": "8418",
+   "bfs423Nat": "8418",
+   "bfs423Birth": "8418",
+   "sem": "Haiti"
+  },
+  {
+   "code": "HU",
+   "de": "Ungarn",
+   "bfs101": "8240",
+   "bfs399Birth": "8240",
+   "bfs423Nat": "8240",
+   "bfs423Birth": "8240",
+   "sem": "Ungarn"
+  },
+  {
+   "code": "ID",
+   "de": "Indonesien",
+   "bfs101": "8511",
+   "bfs399Birth": "8511",
+   "bfs423Nat": "8511",
+   "bfs423Birth": "8511",
+   "sem": "Indonesien"
+  },
+  {
+   "code": "IE",
+   "de": "Irland",
+   "bfs101": "8216",
+   "bfs399Birth": "8216",
+   "bfs423Nat": "8216",
+   "bfs423Birth": "8216",
+   "sem": "Irland"
+  },
+  {
+   "code": "IL",
+   "de": "Israel",
+   "bfs101": "8514",
+   "bfs399Birth": "8514",
+   "bfs423Nat": "8514",
+   "bfs423Birth": "8514",
+   "sem": "Israel"
+  },
+  {
+   "code": "IN",
+   "de": "Indien",
+   "bfs101": "8510",
+   "bfs399Birth": "8510",
+   "bfs423Nat": "8510",
+   "bfs423Birth": "8510",
+   "sem": "Indien"
+  },
+  {
+   "code": "IQ",
+   "de": "Irak",
+   "bfs101": "8512",
+   "bfs399Birth": "8512",
+   "bfs423Nat": "8512",
+   "bfs423Birth": "8512",
+   "sem": "Irak"
+  },
+  {
+   "code": "IR",
+   "de": "Iran",
+   "bfs101": "8513",
+   "bfs399Birth": "8513",
+   "bfs423Nat": "8513",
+   "bfs423Birth": "8513",
+   "sem": "Iran"
+  },
+  {
+   "code": "IS",
+   "de": "Island",
+   "bfs101": "8217",
+   "bfs399Birth": "8217",
+   "bfs423Nat": "8217",
+   "bfs423Birth": "8217",
+   "sem": "Island"
+  },
+  {
+   "code": "IT",
+   "de": "Italien",
+   "bfs101": "8218",
+   "bfs399Birth": "8218",
+   "bfs423Nat": "8218",
+   "bfs423Birth": "8218",
+   "sem": "Italien"
+  },
+  {
+   "code": "JM",
+   "de": "Jamaika",
+   "bfs101": "8421",
+   "bfs399Birth": "8421",
+   "bfs423Nat": "8421",
+   "bfs423Birth": "8421",
+   "sem": "Jamaika"
+  },
+  {
+   "code": "JO",
+   "de": "Jordanien",
+   "bfs101": "8517",
+   "bfs399Birth": "8517",
+   "bfs423Nat": "8517",
+   "bfs423Birth": "8517",
+   "sem": "Jordanien"
+  },
+  {
+   "code": "JP",
+   "de": "Japan",
+   "bfs101": "8515",
+   "bfs399Birth": "8515",
+   "bfs423Nat": "8515",
+   "bfs423Birth": "8515",
+   "sem": "Japan"
+  },
+  {
+   "code": "KE",
+   "de": "Kenia",
+   "bfs101": "8320",
+   "bfs399Birth": "8320",
+   "bfs423Nat": "8320",
+   "bfs423Birth": "8320",
+   "sem": "Kenia"
+  },
+  {
+   "code": "KG",
+   "de": "Kirgisistan",
+   "bfs101": "8564",
+   "bfs399Birth": "8564",
+   "bfs423Nat": "8564",
+   "bfs423Birth": "8564",
+   "sem": "Kirgisistan"
+  },
+  {
+   "code": "KH",
+   "de": "Kambodscha",
+   "bfs101": "8518",
+   "bfs399Birth": "8518",
+   "bfs423Nat": "8518",
+   "bfs423Birth": "8518",
+   "sem": "Kambodscha"
+  },
+  {
+   "code": "KI",
+   "de": "Kiribati",
+   "bfs101": "8616",
+   "bfs399Birth": "8616",
+   "bfs423Nat": "8616",
+   "bfs423Birth": "8616",
+   "sem": "Kiribati"
+  },
+  {
+   "code": "KM",
+   "de": "Komoren",
+   "bfs101": "8321",
+   "bfs399Birth": "8321",
+   "bfs423Nat": "8321",
+   "bfs423Birth": "8321",
+   "sem": "Komoren"
+  },
+  {
+   "code": "KN",
+   "de": "St. Kitts und Nevis",
+   "bfs101": "8445",
+   "bfs399Birth": "8445",
+   "bfs423Nat": "8445",
+   "bfs423Birth": "8445",
+   "sem": "St. Kitts und Nevis"
+  },
+  {
+   "code": "KP",
+   "de": "Korea (Nord-)",
+   "bfs101": "8530",
+   "bfs399Birth": "8530",
+   "bfs423Nat": "8530",
+   "bfs423Birth": "8530",
+   "sem": "Korea (Nord)"
+  },
+  {
+   "code": "KR",
+   "de": "Korea (Süd-)",
+   "bfs101": "8539",
+   "bfs399Birth": "8539",
+   "bfs423Nat": "8539",
+   "bfs423Birth": "8539",
+   "sem": "Korea (Süd)"
+  },
+  {
+   "code": "KW",
+   "de": "Kuwait",
+   "bfs101": "8521",
+   "bfs399Birth": "8521",
+   "bfs423Nat": "8521",
+   "bfs423Birth": "8521",
+   "sem": "Kuwait"
+  },
+  {
+   "code": "KZ",
+   "de": "Kasachstan",
+   "bfs101": "8563",
+   "bfs399Birth": "8563",
+   "bfs423Nat": "8563",
+   "bfs423Birth": "8563",
+   "sem": "Kasachstan"
+  },
+  {
+   "code": "LA",
+   "de": "Laos",
+   "bfs101": "8522",
+   "bfs399Birth": "8522",
+   "bfs423Nat": "8522",
+   "bfs423Birth": "8522",
+   "sem": "Laos"
+  },
+  {
+   "code": "LB",
+   "de": "Libanon",
+   "bfs101": "8523",
+   "bfs399Birth": "8523",
+   "bfs423Nat": "8523",
+   "bfs423Birth": "8523",
+   "sem": "Libanon"
+  },
+  {
+   "code": "LC",
+   "de": "St. Lucia",
+   "bfs101": "8443",
+   "bfs399Birth": "8443",
+   "bfs423Nat": "8443",
+   "bfs423Birth": "8443",
+   "sem": "St. Lucia"
+  },
+  {
+   "code": "LI",
+   "de": "Liechtenstein",
+   "bfs101": "8222",
+   "bfs399Birth": "8222",
+   "bfs423Nat": "8222",
+   "bfs423Birth": "8222",
+   "sem": "Liechtenstein"
+  },
+  {
+   "code": "LK",
+   "de": "Sri Lanka",
+   "bfs101": "8506",
+   "bfs399Birth": "8506",
+   "bfs423Nat": "8506",
+   "bfs423Birth": "8506",
+   "sem": "Sri Lanka"
+  },
+  {
+   "code": "LR",
+   "de": "Liberia",
+   "bfs101": "8325",
+   "bfs399Birth": "8325",
+   "bfs423Nat": "8325",
+   "bfs423Birth": "8325",
+   "sem": "Liberia"
+  },
+  {
+   "code": "LS",
+   "de": "Lesotho",
+   "bfs101": "8324",
+   "bfs399Birth": "8324",
+   "bfs423Nat": "8324",
+   "bfs423Birth": "8324",
+   "sem": "Lesotho"
+  },
+  {
+   "code": "LT",
+   "de": "Litauen",
+   "bfs101": "8262",
+   "bfs399Birth": "8262",
+   "bfs423Nat": "8262",
+   "bfs423Birth": "8262",
+   "sem": "Litauen"
+  },
+  {
+   "code": "LU",
+   "de": "Luxemburg",
+   "bfs101": "8223",
+   "bfs399Birth": "8223",
+   "bfs423Nat": "8223",
+   "bfs423Birth": "8223",
+   "sem": "Luxemburg"
+  },
+  {
+   "code": "LV",
+   "de": "Lettland",
+   "bfs101": "8261",
+   "bfs399Birth": "8261",
+   "bfs423Nat": "8261",
+   "bfs423Birth": "8261",
+   "sem": "Lettland"
+  },
+  {
+   "code": "LY",
+   "de": "Libyen",
+   "bfs101": "8326",
+   "bfs399Birth": "8326",
+   "bfs423Nat": "8326",
+   "bfs423Birth": "8326",
+   "sem": "Libyen"
+  },
+  {
+   "code": "MA",
+   "de": "Marokko",
+   "bfs101": "8331",
+   "bfs399Birth": "8331",
+   "bfs423Nat": "8331",
+   "bfs423Birth": "8331",
+   "sem": "Marokko"
+  },
+  {
+   "code": "MC",
+   "de": "Monaco",
+   "bfs101": "8226",
+   "bfs399Birth": "8226",
+   "bfs423Nat": "8226",
+   "bfs423Birth": "8226",
+   "sem": "Monaco"
+  },
+  {
+   "code": "MD",
+   "de": "Moldau",
+   "bfs101": "8263",
+   "bfs399Birth": "8263",
+   "bfs423Nat": "8263",
+   "bfs423Birth": "8263",
+   "sem": "Moldova"
+  },
+  {
+   "code": "ME",
+   "de": "Montenegro",
+   "bfs101": "8254",
+   "bfs399Birth": "8254",
+   "bfs423Nat": "8254",
+   "bfs423Birth": "8254",
+   "sem": "Montenegro"
+  },
+  {
+   "code": "MG",
+   "de": "Madagaskar",
+   "bfs101": "8327",
+   "bfs399Birth": "8327",
+   "bfs423Nat": "8327",
+   "bfs423Birth": "8327",
+   "sem": "Madagaskar"
+  },
+  {
+   "code": "MH",
+   "de": "Marshallinseln",
+   "bfs101": "8617",
+   "bfs399Birth": "8617",
+   "bfs423Nat": "8617",
+   "bfs423Birth": "8617",
+   "sem": "Marshall-Inseln"
+  },
+  {
+   "code": "MK",
+   "de": "Nordmazedonien",
+   "bfs101": "8255",
+   "bfs399Birth": "8255",
+   "bfs423Nat": "8255",
+   "bfs423Birth": "8255",
+   "sem": "Nordmazedonien"
+  },
+  {
+   "code": "ML",
+   "de": "Mali",
+   "bfs101": "8330",
+   "bfs399Birth": "8330",
+   "bfs423Nat": "8330",
+   "bfs423Birth": "8330",
+   "sem": "Mali"
+  },
+  {
+   "code": "MM",
+   "de": "Myanmar",
+   "bfs101": "8505",
+   "bfs399Birth": "8505",
+   "bfs423Nat": "8505",
+   "bfs423Birth": "8505",
+   "sem": "Myanmar"
+  },
+  {
+   "code": "MN",
+   "de": "Mongolei",
+   "bfs101": "8528",
+   "bfs399Birth": "8528",
+   "bfs423Nat": "8528",
+   "bfs423Birth": "8528",
+   "sem": "Mongolei"
+  },
+  {
+   "code": "MR",
+   "de": "Mauretanien",
+   "bfs101": "8332",
+   "bfs399Birth": "8332",
+   "bfs423Nat": "8332",
+   "bfs423Birth": "8332",
+   "sem": "Mauretanien"
+  },
+  {
+   "code": "MT",
+   "de": "Malta",
+   "bfs101": "8224",
+   "bfs399Birth": "8224",
+   "bfs423Nat": "8224",
+   "bfs423Birth": "8224",
+   "sem": "Malta"
+  },
+  {
+   "code": "MU",
+   "de": "Mauritius",
+   "bfs101": "8333",
+   "bfs399Birth": "8333",
+   "bfs423Nat": "8333",
+   "bfs423Birth": "8333",
+   "sem": "Mauritius"
+  },
+  {
+   "code": "MV",
+   "de": "Malediven",
+   "bfs101": "8526",
+   "bfs399Birth": "8526",
+   "bfs423Nat": "8526",
+   "bfs423Birth": "8526",
+   "sem": "Malediven"
+  },
+  {
+   "code": "MW",
+   "de": "Malawi",
+   "bfs101": "8329",
+   "bfs399Birth": "8329",
+   "bfs423Nat": "8329",
+   "bfs423Birth": "8329",
+   "sem": "Malawi"
+  },
+  {
+   "code": "MX",
+   "de": "Mexiko",
+   "bfs101": "8427",
+   "bfs399Birth": "8427",
+   "bfs423Nat": "8427",
+   "bfs423Birth": "8427",
+   "sem": "Mexiko"
+  },
+  {
+   "code": "MY",
+   "de": "Malaysia",
+   "bfs101": "8525",
+   "bfs399Birth": "8525",
+   "bfs423Nat": "8525",
+   "bfs423Birth": "8525",
+   "sem": "Malaysia"
+  },
+  {
+   "code": "MZ",
+   "de": "Mosambik",
+   "bfs101": "8334",
+   "bfs399Birth": "8334",
+   "bfs423Nat": "8334",
+   "bfs423Birth": "8334",
+   "sem": "Mosambik"
+  },
+  {
+   "code": "NA",
+   "de": "Namibia",
+   "bfs101": "8351",
+   "bfs399Birth": "8351",
+   "bfs423Nat": "8351",
+   "bfs423Birth": "8351",
+   "sem": "Namibia"
+  },
+  {
+   "code": "NE",
+   "de": "Niger",
+   "bfs101": "8335",
+   "bfs399Birth": "8335",
+   "bfs423Nat": "8335",
+   "bfs423Birth": "8335",
+   "sem": "Niger"
+  },
+  {
+   "code": "NG",
+   "de": "Nigeria",
+   "bfs101": "8336",
+   "bfs399Birth": "8336",
+   "bfs423Nat": "8336",
+   "bfs423Birth": "8336",
+   "sem": "Nigeria"
+  },
+  {
+   "code": "NI",
+   "de": "Nicaragua",
+   "bfs101": "8429",
+   "bfs399Birth": "8429",
+   "bfs423Nat": "8429",
+   "bfs423Birth": "8429",
+   "sem": "Nicaragua"
+  },
+  {
+   "code": "NL",
+   "de": "Niederlande",
+   "bfs101": "8227",
+   "bfs399Birth": "8227",
+   "bfs423Nat": "8227",
+   "bfs423Birth": "8227",
+   "sem": "Niederlande"
+  },
+  {
+   "code": "NO",
+   "de": "Norwegen",
+   "bfs101": "8228",
+   "bfs399Birth": "8228",
+   "bfs423Nat": "8228",
+   "bfs423Birth": "8228",
+   "sem": "Norwegen"
+  },
+  {
+   "code": "NP",
+   "de": "Nepal",
+   "bfs101": "8529",
+   "bfs399Birth": "8529",
+   "bfs423Nat": "8529",
+   "bfs423Birth": "8529",
+   "sem": "Nepal"
+  },
+  {
+   "code": "NR",
+   "de": "Nauru",
+   "bfs101": "8604",
+   "bfs399Birth": "8604",
+   "bfs423Nat": "8604",
+   "bfs423Birth": "8604"
+  },
+  {
+   "code": "NZ",
+   "de": "Neuseeland",
+   "bfs101": "8607",
+   "bfs399Birth": "8607",
+   "bfs423Nat": "8607",
+   "bfs423Birth": "8607",
+   "sem": "Neuseeland"
+  },
+  {
+   "code": "OM",
+   "de": "Oman",
+   "bfs101": "8527",
+   "bfs399Birth": "8527",
+   "bfs423Nat": "8527",
+   "bfs423Birth": "8527",
+   "sem": "Oman"
+  },
+  {
+   "code": "PA",
+   "de": "Panama",
+   "bfs101": "8430",
+   "bfs399Birth": "8430",
+   "bfs423Nat": "8430",
+   "bfs423Birth": "8430",
+   "sem": "Panama"
+  },
+  {
+   "code": "PE",
+   "de": "Peru",
+   "bfs101": "8432",
+   "bfs399Birth": "8432",
+   "bfs423Nat": "8432",
+   "bfs423Birth": "8432",
+   "sem": "Peru"
+  },
+  {
+   "code": "PG",
+   "de": "Papua-Neuguinea",
+   "bfs101": "8608",
+   "bfs399Birth": "8608",
+   "bfs423Nat": "8608",
+   "bfs423Birth": "8608",
+   "sem": "Papua-Neuguinea"
+  },
+  {
+   "code": "PH",
+   "de": "Philippinen",
+   "bfs101": "8534",
+   "bfs399Birth": "8534",
+   "bfs423Nat": "8534",
+   "bfs423Birth": "8534",
+   "sem": "Philippinen"
+  },
+  {
+   "code": "PK",
+   "de": "Pakistan",
+   "bfs101": "8533",
+   "bfs399Birth": "8533",
+   "bfs423Nat": "8533",
+   "bfs423Birth": "8533",
+   "sem": "Pakistan"
+  },
+  {
+   "code": "PL",
+   "de": "Polen",
+   "bfs101": "8230",
+   "bfs399Birth": "8230",
+   "bfs423Nat": "8230",
+   "bfs423Birth": "8230",
+   "sem": "Polen"
+  },
+  {
+   "code": "PS",
+   "de": "Palästina",
+   "bfs101": "8550",
+   "bfs399Birth": "8550",
+   "bfs423Nat": "8550",
+   "bfs423Birth": "8550"
+  },
+  {
+   "code": "PT",
+   "de": "Portugal",
+   "bfs101": "8231",
+   "bfs399Birth": "8231",
+   "bfs423Nat": "8231",
+   "bfs423Birth": "8231",
+   "sem": "Portugal"
+  },
+  {
+   "code": "PW",
+   "de": "Palau",
+   "bfs101": "8619",
+   "bfs399Birth": "8619",
+   "bfs423Birth": "8619"
+  },
+  {
+   "code": "PY",
+   "de": "Paraguay",
+   "bfs101": "8431",
+   "bfs399Birth": "8431",
+   "bfs423Nat": "8431",
+   "bfs423Birth": "8431",
+   "sem": "Paraguay"
+  },
+  {
+   "code": "QA",
+   "de": "Katar",
+   "bfs101": "8519",
+   "bfs399Birth": "8519",
+   "bfs423Nat": "8519",
+   "bfs423Birth": "8519",
+   "sem": "Katar"
+  },
+  {
+   "code": "RO",
+   "de": "Rumänien",
+   "bfs101": "8232",
+   "bfs399Birth": "8232",
+   "bfs423Nat": "8232",
+   "bfs423Birth": "8232",
+   "sem": "Rumänien"
+  },
+  {
+   "code": "RS",
+   "de": "Serbien",
+   "bfs101": "8248",
+   "bfs399Birth": "8248",
+   "bfs423Nat": "8248",
+   "bfs423Birth": "8248",
+   "sem": "Serbien"
+  },
+  {
+   "code": "RU",
+   "de": "Russland",
+   "bfs101": "8264",
+   "bfs399Birth": "8264",
+   "bfs423Nat": "8264",
+   "bfs423Birth": "8264",
+   "sem": "Russland"
+  },
+  {
+   "code": "RW",
+   "de": "Ruanda",
+   "bfs101": "8341",
+   "bfs399Birth": "8341",
+   "bfs423Nat": "8341",
+   "bfs423Birth": "8341",
+   "sem": "Ruanda"
+  },
+  {
+   "code": "SA",
+   "de": "Saudi-Arabien",
+   "bfs101": "8535",
+   "bfs399Birth": "8535",
+   "bfs423Nat": "8535",
+   "bfs423Birth": "8535",
+   "sem": "Saudi-Arabien"
+  },
+  {
+   "code": "SB",
+   "de": "Salomoninseln",
+   "bfs101": "8614",
+   "bfs399Birth": "8614",
+   "bfs423Nat": "8614",
+   "bfs423Birth": "8614"
+  },
+  {
+   "code": "SC",
+   "de": "Seychellen",
+   "bfs101": "8346",
+   "bfs399Birth": "8346",
+   "bfs423Nat": "8346",
+   "bfs423Birth": "8346",
+   "sem": "Seychellen"
+  },
+  {
+   "code": "SD",
+   "de": "Sudan",
+   "bfs101": "8350",
+   "bfs399Birth": "8350",
+   "bfs423Nat": "8350",
+   "bfs423Birth": "8350",
+   "sem": "Sudan"
+  },
+  {
+   "code": "SE",
+   "de": "Schweden",
+   "bfs101": "8234",
+   "bfs399Birth": "8234",
+   "bfs423Nat": "8234",
+   "bfs423Birth": "8234",
+   "sem": "Schweden"
+  },
+  {
+   "code": "SG",
+   "de": "Singapur",
+   "bfs101": "8537",
+   "bfs399Birth": "8537",
+   "bfs423Nat": "8537",
+   "bfs423Birth": "8537",
+   "sem": "Singapur"
+  },
+  {
+   "code": "SI",
+   "de": "Slowenien",
+   "bfs101": "8251",
+   "bfs399Birth": "8251",
+   "bfs423Nat": "8251",
+   "bfs423Birth": "8251",
+   "sem": "Slowenien"
+  },
+  {
+   "code": "SK",
+   "de": "Slowakei",
+   "bfs101": "8243",
+   "bfs399Birth": "8243",
+   "bfs423Nat": "8243",
+   "bfs423Birth": "8243",
+   "sem": "Slowakische Republik"
+  },
+  {
+   "code": "SL",
+   "de": "Sierra Leone",
+   "bfs101": "8347",
+   "bfs399Birth": "8347",
+   "bfs423Nat": "8347",
+   "bfs423Birth": "8347",
+   "sem": "Sierra Leone"
+  },
+  {
+   "code": "SM",
+   "de": "San Marino",
+   "bfs101": "8233",
+   "bfs399Birth": "8233",
+   "bfs423Nat": "8233",
+   "bfs423Birth": "8233",
+   "sem": "San Marino"
+  },
+  {
+   "code": "SN",
+   "de": "Senegal",
+   "bfs101": "8345",
+   "bfs399Birth": "8345",
+   "bfs423Nat": "8345",
+   "bfs423Birth": "8345",
+   "sem": "Senegal"
+  },
+  {
+   "code": "SO",
+   "de": "Somalia",
+   "bfs101": "8348",
+   "bfs399Birth": "8348",
+   "bfs423Nat": "8348",
+   "bfs423Birth": "8348",
+   "sem": "Somalia"
+  },
+  {
+   "code": "SR",
+   "de": "Suriname",
+   "bfs101": "8435",
+   "bfs399Birth": "8435",
+   "bfs423Nat": "8435",
+   "bfs423Birth": "8435",
+   "sem": "Suriname"
+  },
+  {
+   "code": "SS",
+   "de": "Südsudan",
+   "bfs101": "8363",
+   "bfs399Birth": "8363",
+   "bfs423Nat": "8363",
+   "bfs423Birth": "8363",
+   "sem": "Südsudan"
+  },
+  {
+   "code": "ST",
+   "de": "São Tomé und Príncipe",
+   "bfs101": "8344",
+   "bfs399Birth": "8344",
+   "bfs423Nat": "8344",
+   "bfs423Birth": "8344",
+   "sem": "Sao Tomé u. Principe"
+  },
+  {
+   "code": "SV",
+   "de": "El Salvador",
+   "bfs101": "8411",
+   "bfs399Birth": "8411",
+   "bfs423Nat": "8411",
+   "bfs423Birth": "8411",
+   "sem": "El Salvador"
+  },
+  {
+   "code": "SY",
+   "de": "Syrien",
+   "bfs101": "8541",
+   "bfs399Birth": "8541",
+   "bfs423Nat": "8541",
+   "bfs423Birth": "8541",
+   "sem": "Syrien"
+  },
+  {
+   "code": "SZ",
+   "de": "Eswatini",
+   "bfs101": "8352",
+   "bfs399Birth": "8352",
+   "bfs423Nat": "8352",
+   "bfs423Birth": "8352",
+   "sem": "Eswatini"
+  },
+  {
+   "code": "TD",
+   "de": "Tschad",
+   "bfs101": "8356",
+   "bfs399Birth": "8356",
+   "bfs423Nat": "8356",
+   "bfs423Birth": "8356",
+   "sem": "Tschad"
+  },
+  {
+   "code": "TG",
+   "de": "Togo",
+   "bfs101": "8354",
+   "bfs399Birth": "8354",
+   "bfs423Nat": "8354",
+   "bfs423Birth": "8354",
+   "sem": "Togo"
+  },
+  {
+   "code": "TH",
+   "de": "Thailand",
+   "bfs101": "8542",
+   "bfs399Birth": "8542",
+   "bfs423Nat": "8542",
+   "bfs423Birth": "8542",
+   "sem": "Thailand"
+  },
+  {
+   "code": "TJ",
+   "de": "Tadschikistan",
+   "bfs101": "8565",
+   "bfs399Birth": "8565",
+   "bfs423Nat": "8565",
+   "bfs423Birth": "8565",
+   "sem": "Tadschikistan"
+  },
+  {
+   "code": "TL",
+   "de": "Timor-Leste",
+   "bfs101": "8547",
+   "bfs399Birth": "8547",
+   "bfs423Nat": "8547",
+   "bfs423Birth": "8547",
+   "sem": "Timor-Leste"
+  },
+  {
+   "code": "TM",
+   "de": "Turkmenistan",
+   "bfs101": "8566",
+   "bfs399Birth": "8566",
+   "bfs423Nat": "8566",
+   "bfs423Birth": "8566",
+   "sem": "Turkmenistan"
+  },
+  {
+   "code": "TN",
+   "de": "Tunesien",
+   "bfs101": "8357",
+   "bfs399Birth": "8357",
+   "bfs423Nat": "8357",
+   "bfs423Birth": "8357",
+   "sem": "Tunesien"
+  },
+  {
+   "code": "TO",
+   "de": "Tonga",
+   "bfs101": "8610",
+   "bfs399Birth": "8610",
+   "bfs423Nat": "8610",
+   "bfs423Birth": "8610",
+   "sem": "Tonga"
+  },
+  {
+   "code": "TR",
+   "de": "Türkiye",
+   "bfs101": "8239",
+   "bfs399Birth": "8239",
+   "bfs423Nat": "8239",
+   "bfs423Birth": "8239",
+   "sem": "Türkei"
+  },
+  {
+   "code": "TT",
+   "de": "Trinidad und Tobago",
+   "bfs101": "8436",
+   "bfs399Birth": "8436",
+   "bfs423Nat": "8436",
+   "bfs423Birth": "8436",
+   "sem": "Trinidad u. Tobago"
+  },
+  {
+   "code": "TV",
+   "de": "Tuvalu",
+   "bfs101": "8615",
+   "bfs399Birth": "8615",
+   "bfs423Birth": "8615"
+  },
+  {
+   "code": "TW",
+   "de": "Taiwan (Chinesisches Taipei)",
+   "bfs101": "8507",
+   "bfs399Birth": "8507",
+   "bfs423Nat": "8507",
+   "bfs423Birth": "8507",
+   "sem": "Taiwan"
+  },
+  {
+   "code": "TZ",
+   "de": "Tansania",
+   "bfs101": "8353",
+   "bfs399Birth": "8353",
+   "bfs423Nat": "8353",
+   "bfs423Birth": "8353",
+   "sem": "Tansania"
+  },
+  {
+   "code": "UA",
+   "de": "Ukraine",
+   "bfs101": "8265",
+   "bfs399Birth": "8265",
+   "bfs423Nat": "8265",
+   "bfs423Birth": "8265",
+   "sem": "Ukraine"
+  },
+  {
+   "code": "UG",
+   "de": "Uganda",
+   "bfs101": "8358",
+   "bfs399Birth": "8358",
+   "bfs423Nat": "8358",
+   "bfs423Birth": "8358",
+   "sem": "Uganda"
+  },
+  {
+   "code": "US",
+   "de": "Vereinigte Staaten",
+   "bfs101": "8439",
+   "bfs399Birth": "8439",
+   "bfs423Nat": "8439",
+   "bfs423Birth": "8439",
+   "sem": "USA"
+  },
+  {
+   "code": "UY",
+   "de": "Uruguay",
+   "bfs101": "8437",
+   "bfs399Birth": "8437",
+   "bfs423Nat": "8437",
+   "bfs423Birth": "8437",
+   "sem": "Uruguay"
+  },
+  {
+   "code": "UZ",
+   "de": "Usbekistan",
+   "bfs101": "8567",
+   "bfs399Birth": "8567",
+   "bfs423Nat": "8567",
+   "bfs423Birth": "8567",
+   "sem": "Usbekistan"
+  },
+  {
+   "code": "VA",
+   "de": "Vatikanstadt",
+   "bfs101": "8241",
+   "bfs399Birth": "8241",
+   "bfs423Nat": "8241",
+   "bfs423Birth": "8241"
+  },
+  {
+   "code": "VC",
+   "de": "St. Vincent und die Grenadinen",
+   "bfs101": "8444",
+   "bfs399Birth": "8444",
+   "bfs423Nat": "8444",
+   "bfs423Birth": "8444",
+   "sem": "St. Vincent/Grenadinen"
+  },
+  {
+   "code": "VE",
+   "de": "Venezuela",
+   "bfs101": "8438",
+   "bfs399Birth": "8438",
+   "bfs423Nat": "8438",
+   "bfs423Birth": "8438",
+   "sem": "Venezuela"
+  },
+  {
+   "code": "VN",
+   "de": "Vietnam",
+   "bfs101": "8545",
+   "bfs399Birth": "8545",
+   "bfs423Nat": "8545",
+   "bfs423Birth": "8545",
+   "sem": "Vietnam"
+  },
+  {
+   "code": "VU",
+   "de": "Vanuatu",
+   "bfs101": "8605",
+   "bfs399Birth": "8605",
+   "bfs423Nat": "8605",
+   "bfs423Birth": "8605",
+   "sem": "Vanuatu"
+  },
+  {
+   "code": "WS",
+   "de": "Samoa",
+   "bfs101": "8612",
+   "bfs399Birth": "8612",
+   "bfs423Nat": "8612",
+   "bfs423Birth": "8612",
+   "sem": "Samoa"
+  },
+  {
+   "code": "XK",
+   "de": "Kosovo",
+   "bfs101": "8256",
+   "bfs399Birth": "8256",
+   "bfs423Nat": "8256",
+   "bfs423Birth": "8256",
+   "sem": "Kosovo"
+  },
+  {
+   "code": "YE",
+   "de": "Jemen",
+   "bfs101": "8516",
+   "bfs399Birth": "8516",
+   "bfs423Nat": "8516",
+   "bfs423Birth": "8516",
+   "sem": "Jemen"
+  },
+  {
+   "code": "ZA",
+   "de": "Südafrika",
+   "bfs101": "8349",
+   "bfs399Birth": "8349",
+   "bfs423Nat": "8349",
+   "bfs423Birth": "8349",
+   "sem": "Südafrika"
+  },
+  {
+   "code": "ZM",
+   "de": "Sambia",
+   "bfs101": "8343",
+   "bfs399Birth": "8343",
+   "bfs423Nat": "8343",
+   "bfs423Birth": "8343",
+   "sem": "Sambia"
+  },
+  {
+   "code": "ZW",
+   "de": "Simbabwe",
+   "bfs101": "8340",
+   "bfs399Birth": "8340",
+   "bfs423Nat": "8340",
+   "bfs423Birth": "8340",
+   "sem": "Zimbabwe"
+  }
+ ]
+}
