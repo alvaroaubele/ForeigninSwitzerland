@@ -388,8 +388,12 @@ function anchorPredicate(label: string): ((o: Obs) => boolean) | null {
   // became "Zug 2026-05...", plus new national ones), and with 27 cantons in one
   // flattened list every predicate must also name its canton — an unconstrained
   // match would resolve to whichever canton happens to sort first.
+  // Every anchor is a CHILE anchor — the regression baseline. With 32
+  // nationalities in the eligible list an unpinned predicate matches whichever
+  // country sorts first, which is how "Zug permanent total 35" came back as
+  // Andorra's 0.
   const semLatestIn = (canton: string, m: (o: Obs) => boolean) => (o: Obs) =>
-    o.source === "SEM" && o.dim.canton === canton && o.dim.year === 2026 && o.dim.month === 5 && m(o);
+    o.source === "SEM" && o.dim.nationality === "CL" && o.dim.canton === canton && o.dim.year === 2026 && o.dim.month === 5 && m(o);
   const semLatest = (m: (o: Obs) => boolean) => semLatestIn("ZG", m);
   const map: Record<string, (o: Obs) => boolean> = {
     "Switzerland 2026-05 permanent total": semLatestIn("CH", (o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"),
@@ -408,11 +412,11 @@ function anchorPredicate(label: string): ((o: Obs) => boolean) | null {
     "Zug 2026-05 age 65+": semLatest((o) => o.dataset === "2-21" && o.dim.ageClass === "65+" && o.dim.sex === "total"),
     "Zug 2026-05 stay 0-4y": semLatest((o) => o.dataset === "2-23" && o.dim.lengthOfStay === "0-4" && o.dim.sex === "total"),
     "Zug 2026-05 stay 20+y": semLatest((o) => o.dataset === "2-23" && o.dim.lengthOfStay === "20+" && o.dim.sex === "total"),
-    "Zug 12mo permanent immigration total": (o) => o.dim.canton === "ZG" && o.dataset === "3-30" && o.metric === "immigration" && o.populationType === "permanent" && o.concept === "Total immigration" && o.dim.year === 2026 && o.dim.month === 5,
-    "Zug 12mo non-permanent immigration total": (o) => o.dim.canton === "ZG" && o.dataset === "3-31" && o.metric === "immigration" && o.populationType === "non_permanent" && o.concept === "Total immigration" && o.dim.year === 2026 && o.dim.month === 5,
-    "Zug 12mo permanent emigration": (o) => o.dim.canton === "ZG" && o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "permanent" && o.concept === "Permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026,
-    "Zug 12mo non-permanent emigration": (o) => o.dim.canton === "ZG" && o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "non_permanent" && o.concept === "Non-permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026,
-    "Zug 12mo naturalisations": (o) => o.dim.canton === "ZG" && o.dataset === "3-60" && o.metric === "naturalisation" && o.dim.year === 2026,
+    "Zug 12mo permanent immigration total": (o) => o.dim.nationality === "CL" && o.dim.canton === "ZG" && o.dataset === "3-30" && o.metric === "immigration" && o.populationType === "permanent" && o.concept === "Total immigration" && o.dim.year === 2026 && o.dim.month === 5,
+    "Zug 12mo non-permanent immigration total": (o) => o.dim.nationality === "CL" && o.dim.canton === "ZG" && o.dataset === "3-31" && o.metric === "immigration" && o.populationType === "non_permanent" && o.concept === "Total immigration" && o.dim.year === 2026 && o.dim.month === 5,
+    "Zug 12mo permanent emigration": (o) => o.dim.nationality === "CL" && o.dim.canton === "ZG" && o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "permanent" && o.concept === "Permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026,
+    "Zug 12mo non-permanent emigration": (o) => o.dim.nationality === "CL" && o.dim.canton === "ZG" && o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "non_permanent" && o.concept === "Non-permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026,
+    "Zug 12mo naturalisations": (o) => o.dim.nationality === "CL" && o.dim.canton === "ZG" && o.dataset === "3-60" && o.metric === "naturalisation" && o.dim.year === 2026,
     "SEM cantonal Chile VD": (o) => o.dataset === "2-10" && o.dim.canton === "VD" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Nationals (cantonal comparison)",
     "SEM cantonal Chile ZH": (o) => o.dataset === "2-10" && o.dim.canton === "ZH" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Nationals (cantonal comparison)",
     "SEM Chile Switzerland total": (o) => o.dataset === "2-10" && o.dim.canton === "CH" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Nationals (cantonal comparison)",

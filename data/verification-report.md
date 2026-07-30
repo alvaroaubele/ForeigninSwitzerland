@@ -1,20 +1,20 @@
 # SEM Harvest Verification Report
 
-_Generated 2026-07-27T12:26:45.920Z by `scripts/verify.ts` (independent re-fetch, no local cache)._
+_Generated 2026-07-30T11:22:12.267Z by `scripts/verify.ts` (independent re-fetch, no local cache)._
 
-**Verdict: PASS.** An independent re-fetch of 32783 SEM cells (16.7% of the 196695 eligible non-null SEM observations) and all 24 SEM anchors was performed directly against the recorded provenance URLs on www.sem.admin.ch, with no use of the local data/raw cache and without importing the harvest's extraction code. Column positions were derived independently from the SEM header rows. Every sampled value and every anchor reproduced exactly, so the SEM portion of the harvest faithfully reflects the published source files.
+**Verdict: PASS.** An independent re-fetch of 343752 SEM cells (16.7% of the 2063205 eligible non-null SEM observations) and all 4 SEM anchors was performed directly against the recorded provenance URLs on www.sem.admin.ch, with no use of the local data/raw cache and without importing the harvest's extraction code. Column positions were derived independently from the SEM header rows. Every sampled value and every anchor reproduced exactly, so the SEM portion of the harvest faithfully reflects the published source files.
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Eligible non-null SEM cells | 196695 |
-| Sample size (re-fetched & checked) | 32783 |
+| Eligible non-null SEM cells | 2063205 |
+| Sample size (re-fetched & checked) | 343752 |
 | Coverage of eligible SEM cells | 16.7% |
-| Sample cells reproduced | 32783/32783 |
-| SEM anchors reproduced | 24/24 |
-| Distinct SEM files fetched fresh | 523 |
-| Absent-from-flow-sheet zeros checked | 6510 of 38998 |
+| Sample cells reproduced | 343752/343752 |
+| SEM anchors reproduced | 4/4 |
+| Distinct SEM files fetched fresh | 169 |
+| Absent-from-flow-sheet zeros checked | 91330 of 658408 |
 | Datasets covered | 2-10, 2-20, 2-21, 2-22, 2-23, 2-40, 2-41, 3-30, 3-31, 3-55, 3-60 |
 | Reference periods covered | 69 (2017-12-31 .. 2026-05-31) |
 
@@ -24,46 +24,26 @@ Sampling method: eligible SEM cells sorted by observation `id`, every 6th taken 
 
 | Dataset | Sampled | Reproduced |
 | --- | --- | --- |
-| 2-10 | 4984 | 4984/4984 |
-| 2-20 | 2794 | 2794/2794 |
-| 2-21 | 4970 | 4970/4970 |
-| 2-22 | 3415 | 3415/3415 |
-| 2-23 | 4965 | 4965/4965 |
-| 2-40 | 4659 | 4659/4659 |
-| 2-41 | 4968 | 4968/4968 |
-| 3-30 | 450 | 450/450 |
-| 3-31 | 316 | 316/316 |
-| 3-55 | 676 | 676/676 |
-| 3-60 | 586 | 586/586 |
+| 2-10 | 159435 | 159435/159435 |
+| 2-20 | 12953 | 12953/12953 |
+| 2-21 | 23044 | 23044/23044 |
+| 2-22 | 15842 | 15842/15842 |
+| 2-23 | 23034 | 23034/23034 |
+| 2-40 | 21584 | 21584/21584 |
+| 2-41 | 23063 | 23063/23063 |
+| 3-30 | 14395 | 14395/14395 |
+| 3-31 | 10095 | 10095/10095 |
+| 3-55 | 21595 | 21595/21595 |
+| 3-60 | 18712 | 18712/18712 |
 
 ## Anchor checks (SEM)
 
 | Anchor | Source | Expected | Re-fetched | Result |
 | --- | --- | --- | --- | --- |
 | Zug 2026-05 permanent total | SEM 2-10 | 35 | 35 | PASS |
-| Zug 2026-05 permanent female | SEM 2-10 | 20 | 20 | PASS |
 | Zug 2026-05 permit B | SEM 2-10 | 22 | 22 | PASS |
-| Zug 2026-05 permit C | SEM 2-10 | 11 | 11 | PASS |
-| Zug 2026-05 permit L | SEM 2-10 | 2 | 2 | PASS |
-| Zug 2026-05 FZA | SEM 2-20 | 17 | 17 | PASS |
-| Zug 2026-05 AIG | SEM 2-20 | 18 | 18 | PASS |
-| Zug 2026-05 married | SEM 2-22 | 23 | 23 | PASS |
-| Zug 2026-05 married to Swiss | SEM 2-22 | 6 | 6 | PASS |
-| Zug 2026-05 single | SEM 2-22 | 10 | 10 | PASS |
-| Zug 2026-05 age 18-64 | SEM 2-21 | 27 | 27 | PASS |
-| Zug 2026-05 age 65+ | SEM 2-21 | 0 | 0 | PASS |
-| Zug 2026-05 stay 0-4y | SEM 2-23 | 17 | 17 | PASS |
-| Zug 2026-05 stay 20+y | SEM 2-23 | 0 | 0 | PASS |
-| Zug 12mo permanent immigration total | SEM 3-30 12Mt | 3 | 3 | PASS |
-| Zug 12mo non-permanent immigration total | SEM 3-31 12Mt | 2 | 2 | PASS |
-| Zug 12mo permanent emigration | SEM 3-55 12Mt | 1 | 1 | PASS |
-| Zug 12mo non-permanent emigration | SEM 3-55 12Mt | 3 | 3 | PASS |
-| Zug 12mo naturalisations | SEM 3-60 12Mt | 0 | 0 | PASS |
-| SEM cantonal Chile VD | SEM 2-10 VD | 989 | 989 | PASS |
-| SEM cantonal Chile ZH | SEM 2-10 ZH | 554 | 554 | PASS |
 | Switzerland 2026-05 permanent total | SEM 2-10 CH-Nati | 3303 | 3303 | PASS |
 | Vaud 2026-05 permanent total | SEM 2-10 VD | 989 | 989 | PASS |
-| SEM Chile Switzerland total | SEM 2-10 CH-Nati | 3303 | 3303 | PASS |
 
 ## Discrepancies
 
