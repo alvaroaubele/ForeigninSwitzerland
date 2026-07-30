@@ -1,15 +1,48 @@
 {
-  "generatedAt": "2026-07-30T10:27:24.675Z",
-  "payloadVersion": 1,
-  "observationCount": 40125753,
+  "generatedAt": "2026-07-30T11:06:33.360Z",
+  "payloadVersion": 2,
+  "observationCount": 34069977,
   "cellStateCounts": {
-    "observed": 14941590,
-    "structural_zero": 25184163,
+    "observed": 8102900,
+    "structural_zero": 25967077,
     "suppressed": 0,
     "not_published": 0
   },
-  "nationalities": 204,
+  "nationalities": 205,
   "sources": [
+    {
+      "id": "BFS px-x-0103010000_101",
+      "source": "BFS",
+      "title": "BFS STATPOP cube px-x-0103010000_101 (full cube download, per-nationality slices)",
+      "checkedFor": "every nationality × every canton",
+      "yielded": "10443168 cells",
+      "observationCount": 10443168,
+      "urls": [
+        "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_101"
+      ]
+    },
+    {
+      "id": "BFS px-x-0103010000_399",
+      "source": "BFS",
+      "title": "BFS STATPOP cube px-x-0103010000_399 (full cube download, per-nationality slices)",
+      "checkedFor": "every nationality × every canton",
+      "yielded": "10065600 cells",
+      "observationCount": 10065600,
+      "urls": [
+        "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_399"
+      ]
+    },
+    {
+      "id": "BFS px-x-0103010000_423",
+      "source": "BFS",
+      "title": "BFS STATPOP cube px-x-0103010000_423 (full cube download, per-nationality slices)",
+      "checkedFor": "every nationality × every canton",
+      "yielded": "408132 cells",
+      "observationCount": 408132,
+      "urls": [
+        "https://www.pxweb.bfs.admin.ch/DownloadFile.aspx?file=px-x-0103010000_423"
+      ]
+    },
     {
       "id": "SEM 2-10",
       "source": "SEM",
@@ -24,8 +57,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-20 (all 26 canton sheets + CH-Nati, every country row)",
       "checkedFor": "every nationality × every canton",
-      "yielded": "3420468 cells",
-      "observationCount": 3420468,
+      "yielded": "495720 cells",
+      "observationCount": 495720,
       "urls": []
     },
     {
@@ -33,8 +66,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-21 (all 26 canton sheets + CH-Nati, every country row)",
       "checkedFor": "every nationality × every canton",
-      "yielded": "6080832 cells",
-      "observationCount": 6080832,
+      "yielded": "881280 cells",
+      "observationCount": 881280,
       "urls": []
     },
     {
@@ -42,8 +75,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-22 (all 26 canton sheets + CH-Nati, every country row)",
       "checkedFor": "every nationality × every canton",
-      "yielded": "4180572 cells",
-      "observationCount": 4180572,
+      "yielded": "605880 cells",
+      "observationCount": 605880,
       "urls": []
     },
     {
@@ -51,8 +84,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-23 (all 26 canton sheets + CH-Nati, every country row)",
       "checkedFor": "every nationality × every canton",
-      "yielded": "6080832 cells",
-      "observationCount": 6080832,
+      "yielded": "881280 cells",
+      "observationCount": 881280,
       "urls": []
     },
     {
@@ -60,8 +93,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-40 (all 26 canton sheets + CH-Nati, every country row)",
       "checkedFor": "every nationality × every canton",
-      "yielded": "5700780 cells",
-      "observationCount": 5700780,
+      "yielded": "826200 cells",
+      "observationCount": 826200,
       "urls": []
     },
     {
@@ -69,8 +102,8 @@
       "source": "SEM",
       "title": "SEM Ausländerstatistik table 2-41 (all 26 canton sheets + CH-Nati, every country row)",
       "checkedFor": "every nationality × every canton",
-      "yielded": "6080832 cells",
-      "observationCount": 6080832,
+      "yielded": "881280 cells",
+      "observationCount": 881280,
       "urls": []
     },
     {
@@ -110,6 +143,181 @@
       "urls": []
     }
   ],
+  "availability": [
+    {
+      "datasets": [
+        "SEM 2-10"
+      ],
+      "dimensions": [
+        "permit",
+        "sex"
+      ],
+      "note": "L/B/C x sex, permanent; + non-permanent"
+    },
+    {
+      "datasets": [
+        "SEM 2-20"
+      ],
+      "dimensions": [
+        "legalBasis",
+        "sex"
+      ],
+      "note": "FZA vs AIG x sex, permanent"
+    },
+    {
+      "datasets": [
+        "SEM 2-21"
+      ],
+      "dimensions": [
+        "ageClass",
+        "sex"
+      ],
+      "note": "5 SEM age bands x sex, permanent"
+    },
+    {
+      "datasets": [
+        "SEM 2-22"
+      ],
+      "dimensions": [
+        "marital",
+        "marriedToSwiss"
+      ],
+      "note": "marital + married-to-Swiss subset, permanent"
+    },
+    {
+      "datasets": [
+        "SEM 2-23"
+      ],
+      "dimensions": [
+        "lengthOfStay",
+        "sex"
+      ],
+      "note": "5 stay bands x sex, permanent"
+    },
+    {
+      "datasets": [
+        "SEM 2-40",
+        "SEM 2-41"
+      ],
+      "dimensions": [
+        "permit",
+        "ageClass"
+      ],
+      "note": "non-permanent categories and age"
+    },
+    {
+      "datasets": [
+        "SEM 3-30",
+        "SEM 3-31"
+      ],
+      "dimensions": [
+        "reason",
+        "populationType"
+      ],
+      "note": "immigration by reason"
+    },
+    {
+      "datasets": [
+        "SEM 3-55"
+      ],
+      "dimensions": [
+        "permit",
+        "populationType"
+      ],
+      "note": "emigration by permit"
+    },
+    {
+      "datasets": [
+        "SEM 3-60"
+      ],
+      "dimensions": [
+        "naturalisationType",
+        "sex"
+      ],
+      "note": "naturalisation types"
+    },
+    {
+      "datasets": [
+        "BFS 101"
+      ],
+      "dimensions": [
+        "year",
+        "permit"
+      ],
+      "note": "2010-2024, any nationality"
+    },
+    {
+      "datasets": [
+        "BFS 101"
+      ],
+      "dimensions": [
+        "year",
+        "ageClass"
+      ],
+      "note": "5-year age classes"
+    },
+    {
+      "datasets": [
+        "BFS 101"
+      ],
+      "dimensions": [
+        "year",
+        "sex"
+      ]
+    },
+    {
+      "datasets": [
+        "BFS 101"
+      ],
+      "dimensions": [
+        "permit",
+        "sex",
+        "ageClass"
+      ],
+      "note": "full cross, latest year"
+    },
+    {
+      "datasets": [
+        "BFS 399"
+      ],
+      "dimensions": [
+        "birthCountry",
+        "nationalityGroup"
+      ],
+      "note": "born abroad by passport, 2020-2024"
+    },
+    {
+      "datasets": [
+        "BFS 399"
+      ],
+      "dimensions": [
+        "nationalityGroup",
+        "sex",
+        "ageClass"
+      ],
+      "note": "full cross, latest year"
+    },
+    {
+      "datasets": [
+        "BFS 423"
+      ],
+      "dimensions": [
+        "marital",
+        "sex"
+      ],
+      "note": "2023 only"
+    },
+    {
+      "datasets": [
+        "BFS 423"
+      ],
+      "dimensions": [
+        "nationality",
+        "birthCountry"
+      ],
+      "note": "own-country birthplace pairs, 2023"
+    }
+  ],
   "anchors": [
     {
       "label": "Zug 2026-05 permanent total",
@@ -142,64 +350,64 @@
     {
       "label": "Zug BFS 2024 Chilean nationals (perm)",
       "expected": 33,
-      "observed": null,
-      "pass": false,
+      "observed": 33,
+      "pass": true,
       "source": "BFS 101"
     },
     {
       "label": "Zug BFS 2017 Chilean nationals (perm)",
       "expected": 34,
-      "observed": null,
-      "pass": false,
+      "observed": 34,
+      "pass": true,
       "source": "BFS 101"
     },
     {
       "label": "Zug BFS 2020 Chilean nationals (perm)",
       "expected": 20,
-      "observed": null,
-      "pass": false,
+      "observed": 20,
+      "pass": true,
       "source": "BFS 101"
     },
     {
       "label": "Switzerland BFS 2024 Chilean nationals (perm)",
       "expected": 3394,
-      "observed": null,
-      "pass": false,
+      "observed": 3394,
+      "pass": true,
       "source": "BFS 101 CH"
     },
     {
       "label": "Zug BFS 2024 Chilean-born (perm)",
       "expected": 99,
-      "observed": null,
-      "pass": false,
+      "observed": 99,
+      "pass": true,
       "source": "BFS 399"
     },
     {
       "label": "Zug BFS 2024 Chilean-born Swiss passport",
       "expected": 33,
-      "observed": null,
-      "pass": false,
+      "observed": 33,
+      "pass": true,
       "source": "BFS 399"
     },
     {
       "label": "Zug BFS 2024 Chilean-born LatAm passport",
       "expected": 34,
-      "observed": null,
-      "pass": false,
+      "observed": 34,
+      "pass": true,
       "source": "BFS 399"
     },
     {
       "label": "Zug BFS 2024 Chilean-born EU passport",
       "expected": 29,
-      "observed": null,
-      "pass": false,
+      "observed": 29,
+      "pass": true,
       "source": "BFS 399"
     },
     {
       "label": "Zug BFS 2023 Chilean nationals born in Chile",
       "expected": 27,
-      "observed": null,
-      "pass": false,
+      "observed": 27,
+      "pass": true,
       "source": "BFS 423"
     }
   ],
