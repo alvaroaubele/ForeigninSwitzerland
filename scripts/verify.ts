@@ -163,7 +163,7 @@ const norm = (s: unknown) => String(s).replace(/\s+/g, "").toLowerCase();
  * row that is legitimately missing fails as "row not found" — turning a correct
  * structural zero into a fake discrepancy, or masking a real one.
  */
-const isAbsentMarker = (rowLabel: unknown): boolean => /^chile\s*\(absent/i.test(String(rowLabel ?? ""));
+const isAbsentMarker = (rowLabel: unknown): boolean => /\(absent from (flow table|canton sheet) = 0\)\s*$/i.test(String(rowLabel ?? ""));
 function findRow(rows: Row[], label: string): { row: Row; index: number } | null {
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i];
@@ -223,9 +223,11 @@ function resolveTarget(o: Obs): Target {
   if (isAbsentMarker(o.provenance.rowLabel)) {
     return { kind: "absent", sheet: o.provenance.sheet || "ZG" };
   }
-  // Cantonal baseline: Chile row (T/F/M) in a canton sheet of the 2-10 workbook.
-  if (c === "Chilean nationals (cantonal comparison)") {
-    return { kind: "cell", sheet: o.provenance.sheet, rowLabel: "chile", col: 1 + so };
+  // Cantonal baseline: the nationality\u2019s own row (T/F/M) in a canton sheet of
+  // the 2-10 workbook. The row is located by the label the harvest recorded in
+  // provenance \u2014 the one string that pins the cell to a physical sheet row.
+  if (c === "Nationals (cantonal comparison)") {
+    return { kind: "cell", sheet: o.provenance.sheet, rowLabel: norm(o.provenance.rowLabel), col: 1 + so };
   }
   // Per-capita denominator: "Gesamttotal" row, first data column.
   if (c === "Foreign residents (per-capita denominator)") {
@@ -235,7 +237,7 @@ function resolveTarget(o: Obs): Target {
   // The sheet comes from provenance now. It was "ZG" for every cell when the
   // harvest covered one canton; hardcoding it would send all 26 others to the
   // wrong sheet and report every one of them as a mismatch.
-  const cell = (col: number): Target => ({ kind: "cell", sheet: o.provenance.sheet || "ZG", rowLabel: "chile", col });
+  const cell = (col: number): Target => ({ kind: "cell", sheet: o.provenance.sheet || "ZG", rowLabel: norm(o.provenance.rowLabel), col });
 
   switch (o.dataset) {
     case "2-10":
@@ -356,10 +358,13 @@ async function checkObs(o: Obs): Promise<CheckResult> {
   if (t.kind === "absent") {
     const rows = await getSheetRows(o.provenance.url, t.sheet);
     if (!rows) return { ok: false, got: null, note: `sheet ${t.sheet} missing` };
-    const found = findRow(rows, "chile");
-    if (found) return { ok: false, got: null, note: `expected Chile ABSENT but found at row ${found.index}` };
+    // "Nordmazedonien (absent from canton sheet = 0)" -> assert no row named
+    // "Nordmazedonien" exists in the sheet.
+    const name = String(o.provenance.rowLabel ?? "").replace(/\s*\(absent from .*$/i, "");
+    const found = findRow(rows, norm(name));
+    if (found) return { ok: false, got: null, note: `expected "${name}" ABSENT but found at row ${found.index}` };
     const got = 0; // absent -> structural zero
-    return { ok: got === o.value, got, note: "Chile absent -> structural zero" };
+    return { ok: got === o.value, got, note: `${name} absent -> structural zero` };
   }
 
   const rows = await getSheetRows(o.provenance.url, t.sheet);
@@ -408,9 +413,9 @@ function anchorPredicate(label: string): ((o: Obs) => boolean) | null {
     "Zug 12mo permanent emigration": (o) => o.dim.canton === "ZG" && o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "permanent" && o.concept === "Permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026,
     "Zug 12mo non-permanent emigration": (o) => o.dim.canton === "ZG" && o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "non_permanent" && o.concept === "Non-permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026,
     "Zug 12mo naturalisations": (o) => o.dim.canton === "ZG" && o.dataset === "3-60" && o.metric === "naturalisation" && o.dim.year === 2026,
-    "SEM cantonal Chile VD": (o) => o.dataset === "2-10" && o.dim.canton === "VD" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Chilean nationals (cantonal comparison)",
-    "SEM cantonal Chile ZH": (o) => o.dataset === "2-10" && o.dim.canton === "ZH" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Chilean nationals (cantonal comparison)",
-    "SEM Chile Switzerland total": (o) => o.dataset === "2-10" && o.dim.canton === "CH" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Chilean nationals (cantonal comparison)",
+    "SEM cantonal Chile VD": (o) => o.dataset === "2-10" && o.dim.canton === "VD" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Nationals (cantonal comparison)",
+    "SEM cantonal Chile ZH": (o) => o.dataset === "2-10" && o.dim.canton === "ZH" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Nationals (cantonal comparison)",
+    "SEM Chile Switzerland total": (o) => o.dataset === "2-10" && o.dim.canton === "CH" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Nationals (cantonal comparison)",
   };
   return map[label] ?? null;
 }
@@ -421,22 +426,25 @@ function anchorPredicate(label: string): ((o: Obs) => boolean) | null {
 // category is represented.
 // ---------------------------------------------------------------------------
 function buildSample(eligible: Obs[]): Obs[] {
-  const sorted = [...eligible].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+  // Ids are only unique within one nationality's files; the tiebreaker keeps
+  // the sample deterministic across the multi-nationality list.
+  const keyOf = (o: Obs) => `${o.id}|${JSON.stringify(o.dim)}|${o.concept}`;
+  const sorted = [...eligible].sort((a, b) => (keyOf(a) < keyOf(b) ? -1 : keyOf(a) > keyOf(b) ? 1 : 0));
   const step = 6; // 1/6 = 16.7% >= 15%
   const chosen = new Map<string, Obs>();
-  for (let i = 0; i < sorted.length; i += step) chosen.set(sorted[i].id, sorted[i]);
+  for (let i = 0; i < sorted.length; i += step) chosen.set(keyOf(sorted[i]), sorted[i]);
 
   const ensure = (pred: (o: Obs) => boolean) => {
     if ([...chosen.values()].some(pred)) return;
     const first = sorted.find(pred);
-    if (first) chosen.set(first.id, first);
+    if (first) chosen.set(keyOf(first), first);
   };
   // Every dataset present.
   for (const ds of new Set(eligible.map((o) => o.dataset))) ensure((o) => o.dataset === ds);
   // A spread of reference periods.
   for (const rd of new Set(eligible.map((o) => o.provenance.referenceDate))) ensure((o) => o.provenance.referenceDate === rd);
   // Special categories.
-  ensure((o) => o.concept === "Chilean nationals (cantonal comparison)");
+  ensure((o) => o.concept === "Nationals (cantonal comparison)");
   ensure((o) => o.concept === "Foreign residents (per-capita denominator)");
   ensure((o) => isAbsentMarker(o.provenance.rowLabel));
   return [...chosen.values()];
@@ -459,16 +467,34 @@ interface Discrepancy {
 }
 
 /**
- * Load every harvested observation from the per-canton payload files.
+ * Which nationalities this run verifies.
  *
- * The harvest used to write one data/harvest.json; it now writes one file per
- * canton under public/data/canton/. This reads all of them and flattens, so the
- * verifier still sees a single list. It decodes the payload with the shared
- * decoder — the only harvest-side code either verifier touches, and only because
- * it is the wire format itself rather than any extraction logic.
+ * At ~200 nationalities × ~60k SEM cells each, decoding everything into one
+ * array is gigabytes; the verifier samples nationalities first, then cells
+ * within each. The forced set pins the regression baseline (Chile), the
+ * default view (_ALL), the biggest community, several mid-sized ones with
+ * non-Latin label histories, and a microstate that is absent from most
+ * sheets. VERIFY_NATS overrides; VERIFY_ALL_NATS=1 sweeps every directory.
  */
-function loadAllObservations(): Obs[] {
-  const dir = join(process.cwd(), "public", "data", "canton");
+function sampleNationalities(): string[] {
+  const dir = join(process.cwd(), "public", "data", "nat");
+  const all = readdirSync(dir).sort();
+  if (process.env.VERIFY_ALL_NATS === "1") return all;
+  if (process.env.VERIFY_NATS) return process.env.VERIFY_NATS.split(",").filter((c) => all.includes(c));
+  const forced = ["CL", "_ALL", "_EU_EFTA", "DE", "IT", "PT", "ES", "TR", "XK", "ER", "UA", "IN", "BR", "PE", "MK", "NR"];
+  // A deterministic spread of the rest: every 11th by sort order.
+  const spread = all.filter((_, i) => i % 11 === 0);
+  return [...new Set([...forced.filter((c) => all.includes(c)), ...spread])].sort();
+}
+
+/**
+ * Load every harvested observation for one nationality, from its per-canton
+ * payload files (+ its cross-canton summary). Decoding uses the shared wire
+ * decoder — the only harvest-side code either verifier touches, and only
+ * because it is the wire format itself rather than any extraction logic.
+ */
+function loadNatObservations(code: string): Obs[] {
+  const dir = join(process.cwd(), "public", "data", "nat", code);
   const files = readdirSync(dir).filter((f: string) => f.endsWith(".json")).sort();
   const out: Obs[] = [];
   for (const f of files) {
@@ -479,12 +505,20 @@ function loadAllObservations(): Obs[] {
 }
 
 async function main(): Promise<void> {
-  const harvest = { observations: loadAllObservations() };
   const manifest = JSON.parse(readFileSync(join(DATA, "manifest.json"), "utf8")) as { anchors: Anchor[] };
 
-  const eligible = harvest.observations.filter(
-    (o) => o.source === "SEM" && o.value !== null && (o.state === "observed" || o.state === "structural_zero"),
-  );
+  const nats = sampleNationalities();
+  console.log(`Nationalities sampled: ${nats.length} (${nats.slice(0, 12).join(", ")}${nats.length > 12 ? ", …" : ""})`);
+  const eligible: Obs[] = [];
+  for (const code of nats) {
+    for (const o of loadNatObservations(code)) {
+      if (o.source === "SEM" && o.value !== null && (o.state === "observed" || o.state === "structural_zero")) {
+        eligible.push(o as Obs);
+      }
+    }
+  }
+  // Anchors resolve against the regression nationality regardless of sampling.
+  const harvest = { observations: eligible };
   console.log(`Eligible SEM cells (non-null, observed/structural_zero): ${eligible.length}`);
 
   const sample = buildSample(eligible);

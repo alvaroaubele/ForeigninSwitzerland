@@ -1,50 +1,46 @@
 // Wire format for the harvested observations.
 //
-// Zug alone was ~12 500 observations and shipped as one file. All 26 cantons
-// plus Switzerland is roughly thirty times that, and the verbose form does not
-// survive the multiplication: a single observation spends ~200 bytes on a
-// provenance URL that repeats thousands of times within its own file, plus a
-// retrieval timestamp identical across the run and a hashed id nothing reads.
+// v1 interned the long strings but kept one JSON object per observation. At
+// Chile-scale that was fine; at every-nationality scale (~40 million cells)
+// the per-observation envelope alone is gigabytes. v2 is grouped-columnar:
+// observations that share their categorical fields (source, dataset, metric,
+// population, concept, sheet, row label, query) form a group, and inside a
+// group the per-cell data is four parallel arrays — dim-tuple index, refDate
+// index, url index, value. Cell state is not stored at all: the harvest's
+// classification is a pure function of the value (null -> suppressed,
+// 0 -> structural zero, >0 -> observed), and any future exception goes into
+// the sparse `st` array.
 //
-// So the payload interns the repeated strings and is split one file per canton.
-// The decoder returns ordinary `Observation` objects, which is the point — the
-// model, the selectors and every component stay exactly as they were, and only
-// the loader knows this format exists.
+// The decoder still returns ordinary `Observation` objects — the model, the
+// selectors, both verifiers and every component stay exactly as they were.
+// Only the loader knows this format exists.
 import type { CellState, Dimensions, Observation } from "./types";
 
-export const PAYLOAD_VERSION = 1;
+export const PAYLOAD_VERSION = 2;
 
 const SOURCES = ["SEM", "BFS"] as const;
 const METRICS = ["stock", "immigration", "emigration", "naturalisation"] as const;
 const POPS = ["permanent", "non_permanent", "total"] as const;
 const STATES: CellState[] = ["observed", "structural_zero", "suppressed", "not_published"];
 
-export interface EncodedObs {
-  /** index into SOURCES */
+interface ObsGroup {
+  /** SOURCES / datasets / METRICS / POPS / concepts indices */
   s: number;
-  /** index into the payload's `datasets` table */
   d: number;
-  /** index into METRICS */
   m: number;
-  /** index into POPS */
   p: number;
-  /** the figure, or null where there is none */
-  v: number | null;
-  /** index into STATES */
-  t: number;
-  /** index into the payload's `concepts` table */
   c: number;
-  /** index into the payload's `urls` table */
-  u: number;
-  /** index into the payload's `refDates` table */
-  r: number;
-  /** index into the payload's `sheets` table, when the source is a spreadsheet */
+  /** sheets / rowLabels / queries indices, when present */
   h?: number;
-  /** index into the payload's `rowLabels` table */
   l?: number;
-  /** index into the payload's `queries` table */
   q?: number;
-  dim: Partial<Dimensions>;
+  /** per-cell parallel arrays: dim tuple, refDate, url, value */
+  t: number[];
+  r: number[];
+  u: number[];
+  v: (number | null)[];
+  /** sparse state exceptions: [cellIndex, stateIndex] */
+  st?: [number, number][];
 }
 
 export interface CantonPayload {
@@ -57,19 +53,17 @@ export interface CantonPayload {
   refDates: string[];
   sheets: string[];
   rowLabels: string[];
-  /**
-   * API query bodies, serialised and interned.
-   *
-   * These are provenance and have to survive, but a BFS query naming all 27
-   * cantons and 22 age bands is over a kilobyte and every cell it returned
-   * carried its own copy. Interning them took the Zug file from 6.1 MB to a
-   * fraction of that; they repeat a few dozen times each.
-   */
   queries: string[];
-  obs: EncodedObs[];
+  /**
+   * Interned dim tuples, stringified. A tuple carries every dimension EXCEPT
+   * canton (the file is the scope), year and — for SEM — month, which are
+   * both re-derived from the cell's reference date. Stripping the temporal
+   * fields is what makes tuples repeat across a 69-month series.
+   */
+  dims: string[];
+  groups: ObsGroup[];
 }
 
-/** Small helper for building the string tables while encoding. */
 class Interner {
   private map = new Map<string, number>();
   readonly list: string[] = [];
@@ -83,6 +77,12 @@ class Interner {
   }
 }
 
+/** State a value classifies to when no exception is recorded. */
+function defaultState(v: number | null): CellState {
+  if (v === null) return "suppressed";
+  return v > 0 ? "observed" : "structural_zero";
+}
+
 export function encodeCanton(canton: string, observations: Observation[]): CantonPayload {
   const datasets = new Interner();
   const concepts = new Interner();
@@ -91,31 +91,48 @@ export function encodeCanton(canton: string, observations: Observation[]): Canto
   const sheets = new Interner();
   const rowLabels = new Interner();
   const queries = new Interner();
+  const dims = new Interner();
 
-  const obs: EncodedObs[] = observations.map((o) => {
-    const e: EncodedObs = {
-      s: SOURCES.indexOf(o.source as (typeof SOURCES)[number]),
-      d: datasets.index(o.dataset),
-      m: METRICS.indexOf(o.metric),
-      p: POPS.indexOf(o.populationType),
-      v: o.value,
-      t: STATES.indexOf(o.state),
-      c: concepts.index(o.concept),
-      u: urls.index(o.provenance.url),
-      r: refDates.index(o.provenance.referenceDate),
-      dim: o.dim,
-    };
-    if (o.provenance.sheet) e.h = sheets.index(o.provenance.sheet);
-    if (o.provenance.rowLabel) e.l = rowLabels.index(o.provenance.rowLabel);
-    if (o.provenance.query !== undefined) e.q = queries.index(JSON.stringify(o.provenance.query));
-    return e;
-  });
+  const groups = new Map<string, ObsGroup>();
+
+  for (const o of observations) {
+    const s = SOURCES.indexOf(o.source as (typeof SOURCES)[number]);
+    const d = datasets.index(o.dataset);
+    const m = METRICS.indexOf(o.metric);
+    const p = POPS.indexOf(o.populationType);
+    const c = concepts.index(o.concept);
+    const h = o.provenance.sheet !== undefined ? sheets.index(o.provenance.sheet) : undefined;
+    const l = o.provenance.rowLabel !== undefined ? rowLabels.index(o.provenance.rowLabel) : undefined;
+    const q = o.provenance.query !== undefined ? queries.index(JSON.stringify(o.provenance.query)) : undefined;
+
+    const key = `${s}|${d}|${m}|${p}|${c}|${h ?? ""}|${l ?? ""}|${q ?? ""}`;
+    let g = groups.get(key);
+    if (!g) {
+      g = { s, d, m, p, c, t: [], r: [], u: [], v: [] };
+      if (h !== undefined) g.h = h;
+      if (l !== undefined) g.l = l;
+      if (q !== undefined) g.q = q;
+      groups.set(key, g);
+    }
+
+    // The tuple drops canton (when it equals the file scope — the cross-canton
+    // summary files keep it), year, and month (derived from the reference date
+    // at decode time).
+    const { canton: oc, year: _y, month: _mo, ...rest } = o.dim as Record<string, unknown>;
+    void _y; void _mo;
+    const tuple = oc !== undefined && oc !== canton ? { ...rest, canton: oc } : rest;
+    g.t.push(dims.index(JSON.stringify(tuple)));
+    g.r.push(refDates.index(o.provenance.referenceDate));
+    g.u.push(urls.index(o.provenance.url));
+    g.v.push(o.value);
+    if (o.state !== defaultState(o.value)) {
+      (g.st ??= []).push([g.v.length - 1, STATES.indexOf(o.state)]);
+    }
+  }
 
   return {
     v: PAYLOAD_VERSION,
     canton,
-    // One timestamp for the file: it is the same run for every row, and repeating
-    // an ISO string 14 000 times is 400 kB of nothing.
     retrievedAt: String(observations[0]?.provenance.retrievedAt ?? new Date().toISOString()),
     datasets: datasets.list,
     concepts: concepts.list,
@@ -124,32 +141,61 @@ export function encodeCanton(canton: string, observations: Observation[]): Canto
     sheets: sheets.list,
     rowLabels: rowLabels.list,
     queries: queries.list,
-    obs,
+    dims: dims.list,
+    groups: [...groups.values()],
   };
 }
 
 export function decodeCanton(p: CantonPayload): Observation[] {
-  return p.obs.map((e, i) => ({
-    // Ids are positional rather than hashed. Nothing joins on them across files;
-    // they exist so the verifiers can sample deterministically, and re-deriving a
-    // SHA for every row in the browser would cost more than the format saves.
-    id: `${p.canton}-${i}`,
-    source: SOURCES[e.s],
-    dataset: p.datasets[e.d],
-    metric: METRICS[e.m],
-    populationType: POPS[e.p],
-    dim: e.dim,
-    value: e.v,
-    state: STATES[e.t],
-    concept: p.concepts[e.c],
-    unit: "persons",
-    provenance: {
-      url: p.urls[e.u],
-      referenceDate: p.refDates[e.r],
-      retrievedAt: p.retrievedAt,
-      ...(e.h !== undefined ? { sheet: p.sheets[e.h] } : {}),
-      ...(e.l !== undefined ? { rowLabel: p.rowLabels[e.l] } : {}),
-      ...(e.q !== undefined ? { query: JSON.parse(p.queries[e.q]) } : {}),
-    },
-  })) as Observation[];
+  if (p.v !== PAYLOAD_VERSION) {
+    throw new Error(`payload ${p.canton}: version ${p.v}, expected ${PAYLOAD_VERSION} — re-run the harvest`);
+  }
+  // Dim tuples parse once; each observation gets its own shallow copy with the
+  // scope and temporal fields restored.
+  const tuples = p.dims.map((s) => JSON.parse(s) as Partial<Dimensions>);
+  const out: Observation[] = [];
+  let n = 0;
+  for (const g of p.groups) {
+    const source = SOURCES[g.s];
+    const dataset = p.datasets[g.d];
+    const metric = METRICS[g.m];
+    const populationType = POPS[g.p];
+    const concept = p.concepts[g.c];
+    const sheet = g.h !== undefined ? p.sheets[g.h] : undefined;
+    const rowLabel = g.l !== undefined ? p.rowLabels[g.l] : undefined;
+    const query = g.q !== undefined ? JSON.parse(p.queries[g.q]) : undefined;
+    const exceptions = new Map(g.st ?? []);
+    for (let i = 0; i < g.v.length; i++) {
+      const refDate = p.refDates[g.r[i]];
+      const year = Number(refDate.slice(0, 4));
+      const value = g.v[i];
+      const stEx = exceptions.get(i);
+      const tuple = tuples[g.t[i]];
+      const dim: Partial<Dimensions> = { canton: p.canton, ...tuple, year };
+      if (source === "SEM") dim.month = Number(refDate.slice(5, 7));
+      out.push({
+        // Positional ids: nothing joins on them across files; they exist so the
+        // verifiers can sample deterministically.
+        id: `${p.canton}-${n++}`,
+        source,
+        dataset,
+        metric,
+        populationType,
+        dim,
+        value,
+        state: stEx !== undefined ? STATES[stEx] : defaultState(value),
+        concept,
+        unit: "persons",
+        provenance: {
+          url: p.urls[g.u[i]],
+          referenceDate: refDate,
+          retrievedAt: p.retrievedAt,
+          ...(sheet !== undefined ? { sheet } : {}),
+          ...(rowLabel !== undefined ? { rowLabel } : {}),
+          ...(query !== undefined ? { query } : {}),
+        },
+      } as Observation);
+    }
+  }
+  return out;
 }

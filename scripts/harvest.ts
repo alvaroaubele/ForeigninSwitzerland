@@ -843,10 +843,24 @@ async function main(): Promise<void> {
   const w = new BucketWriter();
   console.log(`registry: ${reg.entries.length} entries (${reg.semEntries.length} with SEM rows)`);
 
-  console.log("SEM: stock tables, all months, all nationalities …");
-  await runSem(reg, w, { months: stockMonths(), tables: STOCK_TABLES });
+  // 2-10 (the headline stock table) is harvested at every published month —
+  // it powers the monthly trend. The six detail tables (2-20…2-41) exist
+  // monthly too, but the app reads them at the latest month and the yearly
+  // trend only; harvesting them monthly for 200 nationalities is 30 million
+  // cells that nothing displays. December snapshots + the latest month.
+  const table210 = STOCK_TABLES.filter((t) => t.table === "2-10");
+  const detailTables = STOCK_TABLES.filter((t) => t.table !== "2-10");
+  console.log("SEM: 2-10 stock, all months, all nationalities …");
+  await runSem(reg, w, { months: stockMonths(), tables: table210 });
   if (LATEST_SEM[0] === 0) throw new Error("SEM: no 2-10 workbook found in any month");
   console.log(`  latest SEM month: ${LATEST_SEM[0]}-${String(LATEST_SEM[1]).padStart(2, "0")}`);
+
+  console.log("SEM: detail stock tables, Decembers + latest month …");
+  const detailMonths: [number, number][] = [
+    ...Array.from({ length: LATEST_SEM[0] - 2017 }, (_, i) => [2017 + i, 12] as [number, number]),
+    LATEST_SEM,
+  ];
+  await runSem(reg, w, { months: detailMonths, tables: detailTables });
 
   console.log("SEM: annual flows (December releases) …");
   const flowJYears: [number, number][] = [];
@@ -887,6 +901,29 @@ async function main(): Promise<void> {
     urls: id.startsWith("SEM") ? [] : [pxDownloadUrl(id.slice(4))],
   }));
 
+  // Which dimension pairs are actually cross-tabulated — identical for every
+  // nationality by construction, since all of them go through the same tables
+  // and the same cube slices.
+  const availability = [
+    { datasets: ["SEM 2-10"], dimensions: ["permit", "sex"], note: "L/B/C x sex, permanent; + non-permanent" },
+    { datasets: ["SEM 2-20"], dimensions: ["legalBasis", "sex"], note: "FZA vs AIG x sex, permanent" },
+    { datasets: ["SEM 2-21"], dimensions: ["ageClass", "sex"], note: "5 SEM age bands x sex, permanent" },
+    { datasets: ["SEM 2-22"], dimensions: ["marital", "marriedToSwiss"], note: "marital + married-to-Swiss subset, permanent" },
+    { datasets: ["SEM 2-23"], dimensions: ["lengthOfStay", "sex"], note: "5 stay bands x sex, permanent" },
+    { datasets: ["SEM 2-40", "SEM 2-41"], dimensions: ["permit", "ageClass"], note: "non-permanent categories and age" },
+    { datasets: ["SEM 3-30", "SEM 3-31"], dimensions: ["reason", "populationType"], note: "immigration by reason" },
+    { datasets: ["SEM 3-55"], dimensions: ["permit", "populationType"], note: "emigration by permit" },
+    { datasets: ["SEM 3-60"], dimensions: ["naturalisationType", "sex"], note: "naturalisation types" },
+    { datasets: ["BFS 101"], dimensions: ["year", "permit"], note: "2010-2024, any nationality" },
+    { datasets: ["BFS 101"], dimensions: ["year", "ageClass"], note: "5-year age classes" },
+    { datasets: ["BFS 101"], dimensions: ["year", "sex"] },
+    { datasets: ["BFS 101"], dimensions: ["permit", "sex", "ageClass"], note: "full cross, latest year" },
+    { datasets: ["BFS 399"], dimensions: ["birthCountry", "nationalityGroup"], note: "born abroad by passport, 2020-2024" },
+    { datasets: ["BFS 399"], dimensions: ["nationalityGroup", "sex", "ageClass"], note: "full cross, latest year" },
+    { datasets: ["BFS 423"], dimensions: ["marital", "sex"], note: "2023 only" },
+    { datasets: ["BFS 423"], dimensions: ["nationality", "birthCountry"], note: "own-country birthplace pairs, 2023" },
+  ];
+
   const manifest = {
     generatedAt: nowIso(),
     payloadVersion: PAYLOAD_VERSION,
@@ -894,6 +931,7 @@ async function main(): Promise<void> {
     cellStateCounts: stateCounts,
     nationalities: index.length,
     sources,
+    availability,
     anchors,
     referenceDates: {
       sem: lastDay(LATEST_SEM[0], LATEST_SEM[1]),
