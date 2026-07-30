@@ -57,6 +57,8 @@ export interface Dict {
     eyebrow: string;
     h: string;
     lead: (nat: string, canton: string, p: string, b: string) => string;
+    /** Group populations (all foreigners, EU/EFTA…) have no birth-country side. */
+    leadGroup: (who: string, canton: string, p: string, tot: string) => string;
     kickerPassport: (nat: string) => string;
     kickerBorn: (nat: string) => string;
     footSem: (date: string) => string;
@@ -304,6 +306,7 @@ const en: Dict = {
     eyebrow: "Two ways to count",
     h: "The community is bigger than the passport count",
     lead: (nat, canton, p, b) => `${canton} counts ${p} passport holders — and ${b} residents born in ${nat}. Many of those born there have since taken Swiss or other citizenship, so counting passports alone misses a large part of the community.`,
+    leadGroup: (who, canton, p, tot) => `${canton} counts ${p} permanent residents among ${who} — ${tot} including non-permanent permits. Pick a country above to see how its passport count compares with the number of people actually born there.`,
     kickerPassport: (nat) => `Hold a passport — ${nat}`,
     kickerBorn: (nat) => `Were born in ${nat}`,
     footSem: (date) => `SEM · ${date} · permanent residents`,
@@ -546,6 +549,7 @@ const es: Dict = {
     eyebrow: "Dos formas de contar",
     h: "La comunidad es más grande que el conteo de pasaportes",
     lead: (nat, canton, p, b) => `${canton} registra ${p} personas con el pasaporte — y ${b} residentes nacidos en ${nat}. Muchos de los nacidos allí ya tomaron la ciudadanía suiza u otra, así que contar solo pasaportes deja fuera a gran parte de la comunidad.`,
+    leadGroup: (who, canton, p, tot) => `${canton} registra ${p} residentes permanentes (${who}) — ${tot} incluyendo permisos no permanentes. Elige un país arriba para ver cómo su conteo de pasaportes se compara con las personas realmente nacidas allí.`,
     kickerPassport: (nat) => `Tienen pasaporte — ${nat}`,
     kickerBorn: (nat) => `Nacieron en ${nat}`,
     footSem: (date) => `SEM · ${date} · residentes permanentes`,
@@ -788,6 +792,7 @@ const de: Dict = {
     eyebrow: "Zwei Arten zu zählen",
     h: "Die Gemeinschaft ist grösser als die Passzählung",
     lead: (nat, canton, p, b) => `${canton} zählt ${p} Passinhaberinnen und -inhaber — und ${b} Einwohner, die in ${nat} geboren wurden. Viele der dort Geborenen haben inzwischen die Schweizer oder eine andere Staatsbürgerschaft angenommen; wer nur Pässe zählt, verpasst einen grossen Teil der Gemeinschaft.`,
+    leadGroup: (who, canton, p, tot) => `${canton} zählt ${p} ständige Einwohner (${who}) — ${tot} inklusive nichtständiger Bewilligungen. Wähle oben ein Land, um dessen Passzählung mit den tatsächlich dort Geborenen zu vergleichen.`,
     kickerPassport: (nat) => `Führen den Pass — ${nat}`,
     kickerBorn: (nat) => `Wurden in ${nat} geboren`,
     footSem: (date) => `SEM · ${date} · ständige Wohnbevölkerung`,
@@ -1030,6 +1035,7 @@ const fr: Dict = {
     eyebrow: "Deux façons de compter",
     h: "La communauté est plus grande que le compte des passeports",
     lead: (nat, canton, p, b) => `${canton} compte ${p} détenteurs du passeport — et ${b} résidents nés dans le pays (${nat}). Beaucoup des personnes qui y sont nées ont depuis pris la nationalité suisse ou une autre ; ne compter que les passeports fait manquer une grande partie de la communauté.`,
+    leadGroup: (who, canton, p, tot) => `${canton} compte ${p} résidents permanents (${who}) — ${tot} en incluant les autorisations non permanentes. Choisissez un pays ci-dessus pour comparer son compte de passeports aux personnes réellement nées là-bas.`,
     kickerPassport: (nat) => `Détiennent le passeport — ${nat}`,
     kickerBorn: (nat) => `Nés dans le pays — ${nat}`,
     footSem: (date) => `SEM · ${date} · résidents permanents`,

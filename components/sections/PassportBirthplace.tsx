@@ -1,6 +1,6 @@
 "use client";
 import { useDataset } from "@/lib/data-context";
-import { bornHeadline, passportHeadline, passportSplit, latestSemMonth } from "@/lib/selectors";
+import { bornHeadline, passportHeadline, passportSplit, totalHeadline, latestSemMonth } from "@/lib/selectors";
 import { useI18n } from "@/lib/i18n";
 import { fmtInt, fmtMonthYear, label } from "@/lib/format";
 import { ProvenanceTip } from "../Provenance";
@@ -25,7 +25,12 @@ export function PassportBirthplace() {
   if (loading || !dataset) return <HeroSkeleton />;
 
   const nName = natName(nat);
+  // The grouped populations (all foreigners, EU/EFTA, stateless…) have no
+  // birth-country series in cube 399, so their hero contrasts the two SEM
+  // population types instead of passport-vs-birthplace.
+  const isGroup = nat.startsWith("_");
   const passport = passportHeadline(dataset, nat);
+  const totalStock = totalHeadline(dataset, nat);
   const born = bornHeadline(dataset, nat, 2024);
   const split = passportSplit(dataset, nat, 2024);
   const sem = latestSemMonth(dataset);
@@ -39,12 +44,16 @@ export function PassportBirthplace() {
         <div className="section-head">
           <span className="eyebrow">{t.hero.eyebrow}</span>
           <h2 style={{ fontSize: 26, marginTop: 8 }}>{t.hero.h}</h2>
-          <p>{t.hero.lead(nName, cName(canton), fmtInt(passport.value), fmtInt(born.value))}</p>
+          <p>
+            {isGroup
+              ? t.hero.leadGroup(nName, cName(canton), fmtInt(passport.value), fmtInt(totalStock.value))
+              : t.hero.lead(nName, cName(canton), fmtInt(passport.value), fmtInt(born.value))}
+          </p>
         </div>
 
         <div className="hero-grid">
           <HeroStat
-            kicker={t.hero.kickerPassport(nName)}
+            kicker={isGroup ? `${t.xf.popPermanent} — ${nName}` : t.hero.kickerPassport(nName)}
             value={passport.value}
             state={passport.state}
             observation={passport.observation}
@@ -54,15 +63,26 @@ export function PassportBirthplace() {
           <div className="hero-vs" aria-hidden>
             ≠
           </div>
-          <HeroStat
-            kicker={t.hero.kickerBorn(nName)}
-            value={born.value}
-            state={born.state}
-            observation={born.observation}
-            foot={t.hero.footBfs}
-          />
+          {isGroup ? (
+            <HeroStat
+              kicker={t.baselines.totalInclNP}
+              value={totalStock.value}
+              state={totalStock.state}
+              observation={totalStock.observation}
+              foot={t.hero.footSem(fmtMonthYear(sem.year, sem.month))}
+            />
+          ) : (
+            <HeroStat
+              kicker={t.hero.kickerBorn(nName)}
+              value={born.value}
+              state={born.state}
+              observation={born.observation}
+              foot={t.hero.footBfs}
+            />
+          )}
         </div>
 
+        {!isGroup && (
         <div className="panel hero-split">
           <div className="hero-split-head">
             <h3 style={{ fontSize: 15 }}>{t.hero.splitHead(nName, fmtInt(born.value))}</h3>
@@ -119,6 +139,7 @@ export function PassportBirthplace() {
             </div>
           )}
         </div>
+        )}
 
         <p className="offset-note">
           <span className="offset-badge mono">SEM 31 May 2026</span>
