@@ -371,6 +371,95 @@ const isWsByte = (b: number): boolean => b === 0x20 || b === 0x09 || b === 0x0a 
 const MAX_CELLS = 250_000;
 
 /**
+ * Stream every cell of the cube in data order, calling `emit` for each.
+ *
+ * This is the all-nationalities path: a selection-based extract re-scans the
+ * whole data section per selection, which is fine for one country and absurd
+ * for two hundred. Here the caller gets one pass over the file and decides
+ * per cell whether to keep it. The coordinate is maintained as an odometer
+ * over the dimension positions (last dimension varies fastest), so per-token
+ * cost is an increment, not a flat-index decode.
+ *
+ * `emit` receives the positions array (index into each dimension's codes) —
+ * NOT a fresh object per cell. Callers must read what they need and not hold
+ * the array across calls; 130 million retained arrays is a different program.
+ */
+export function pxStreamAll(
+  path: string,
+  header: PxHeader,
+  emit: (positions: number[], value: number | null, raw: string) => void,
+): number {
+  const { dims } = header;
+  const positions = new Array<number>(dims.length).fill(0);
+  positions[dims.length - 1] = -1; // first increment lands on 0
+
+  const advance = (): boolean => {
+    for (let i = dims.length - 1; i >= 0; i--) {
+      positions[i]++;
+      if (positions[i] < dims[i].codes.length) return true;
+      positions[i] = 0;
+    }
+    return false; // wrapped past the first dimension: more tokens than cells
+  };
+
+  const fileSize = statSync(path).size;
+  const CHUNK = 1 << 22;
+  const buf = Buffer.alloc(CHUNK);
+  const fd = openSync(path, "r");
+  let pos = header.dataOffset;
+  let count = 0;
+  let inToken = false;
+  let inQuote = false;
+  let token: number[] = [];
+
+  const finishToken = () => {
+    if (!advance()) throw new Error(`px: ${header.matrix} has more data tokens than cells`);
+    const raw = Buffer.from(token).toString("latin1");
+    emit(positions, parsePxValue(raw), raw);
+    count++;
+  };
+
+  try {
+    scan: while (pos < fileSize) {
+      const n = readSync(fd, buf, 0, CHUNK, pos);
+      if (n <= 0) break;
+      pos += n;
+      for (let k = 0; k < n; k++) {
+        const b = buf[k];
+        if (!inToken) {
+          if (isWsByte(b)) continue;
+          if (b === 0x3b) break scan; // ';' terminates DATA
+          inToken = true;
+          inQuote = b === 0x22;
+          token = [b];
+          continue;
+        }
+        if (b === 0x22) {
+          inQuote = !inQuote;
+          token.push(b);
+          continue;
+        }
+        if (!inQuote && (isWsByte(b) || b === 0x3b)) {
+          finishToken();
+          inToken = false;
+          if (b === 0x3b) break scan;
+          continue;
+        }
+        token.push(b);
+      }
+    }
+    if (inToken) finishToken();
+  } finally {
+    closeSync(fd);
+  }
+  const expected = dims.reduce((n, d) => n * d.codes.length, 1);
+  if (count !== expected) {
+    throw new Error(`px: ${header.matrix} data section has ${count} cells, dimensions declare ${expected}`);
+  }
+  return count;
+}
+
+/**
  * Read the cells named by `selection` (dimension name -> value codes) out of the
  * cube. The data section is a flat row-major array over `header.dims` with the
  * last dimension varying fastest, so each wanted cell has a computable index; we

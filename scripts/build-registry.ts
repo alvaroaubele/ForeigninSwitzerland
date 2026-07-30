@@ -258,7 +258,7 @@ async function main() {
       const special = BFS_SPECIAL[code];
       if (special) {
         const e = upsert(special, text);
-        (e as Record<string, string>)[field] = code;
+        (e as unknown as Record<string, string>)[field] = code;
         return;
       }
       const iso = toIso(text);
@@ -267,12 +267,12 @@ async function main() {
         return;
       }
       const e = upsert(iso, text);
-      const prev = (e as Record<string, string | undefined>)[field];
+      const prev = (e as unknown as Record<string, string | undefined>)[field];
       if (prev !== undefined && prev !== code) {
         failures.push(`BFS ${cube} ${field}: ISO ${iso} claimed by codes ${prev} and ${code}`);
         return;
       }
-      (e as Record<string, string>)[field] = code;
+      (e as unknown as Record<string, string>)[field] = code;
     });
   }
 

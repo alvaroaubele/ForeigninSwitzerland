@@ -1,90 +1,180 @@
 /**
- * Phase 1 harvest — end to end.
+ * Harvest — every nationality, end to end.
  *
- * Reproduces the full data harvest for Chilean nationals and Chilean-born
- * residents of Canton Zug from the two open-data sources:
- *   - SEM Ausländerstatistik monthly XLSX tables (stock 2-x, flow 3-x), sheet ZG, row Chile
- *   - BFS STATPOP cubes via the PxWeb json-stat2 API (cubes 101 / 399 / 423)
+ * Sources:
+ *   - SEM Ausländerstatistik monthly XLSX tables (stock 2-x, flow 3-x):
+ *     every country row of every canton sheet (+ CH-Nati), not just Chile's.
+ *   - BFS STATPOP cubes 101 / 399 / 423: the full PC-Axis cube downloads,
+ *     streamed once each, with a per-cell keep predicate that reproduces the
+ *     slice shapes of the original Chile harvest for every nationality.
  *
- * Every raw response is cached under data/raw/ (see fetcher.ts) so re-runs and
- * resumed sessions do not re-fetch. Requests are rate-limited to <=4 concurrent
- * with exponential backoff on 429/5xx.
+ * Scale changes the architecture, not the rules. ~200 nationalities means
+ * ~30 million cells, which cannot sit in one process array. The pipeline is:
  *
- * Emits: public/data/canton/*.json + summary.json, data/manifest.json. COVERAGE.md is maintained
- * alongside (see docs). Run with:  npm run harvest
+ *   extract -> per-nationality JSONL buckets on disk -> encode one
+ *   nationality at a time -> public/data/nat/{code}/{canton}.json
+ *
+ * Every cell still resolves to observed / structural_zero / suppressed, with
+ * provenance; "not published" remains a statement about the sources, derived
+ * downstream, never emitted here. A row label that the registry cannot
+ * classify is a fatal error, not a guess.
+ *
+ * Run:  npm run harvest        (SEM + BFS; needs the px cubes downloaded)
+ *       HARVEST_SKIP_BFS=1 …   (SEM only)
  */
-import { createHash } from "node:crypto";
-import { mkdirSync, writeFileSync, readFileSync, existsSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { encodeCanton, PAYLOAD_VERSION } from "../lib/payload";
+import { encodeCanton, decodeCanton, PAYLOAD_VERSION } from "../lib/payload";
 import {
   fetchArchiveIndex,
   resolveTableUrl,
-  findChileRowsForSheets,
+  readAllRowsForSheets,
   SHEET_SCOPES,
-  readCantonSheet,
-  CANTON_SHEETS,
   STOCK_TABLES,
   FLOW_TABLES_12MT,
   FLOW_TABLES_J,
   type TableDef,
+  type LabelledRow,
 } from "./harvest/sem.js";
 import { fetchRaw } from "./harvest/fetcher.js";
-import { queryCube, walkJsonStat2, isCubeQueryCached, queryCubeViaPx, type JsonStat2 } from "./harvest/bfs.js";
-import { ALL_CUBE_QUERIES, NATGROUP_399, POP_101, CUBE_101, CUBE_399 } from "./harvest/bfs-queries.js";
-import { pxDownloadUrl } from "./harvest/px.js";
-import type {
-  AnchorCheck,
-  AvailabilityEntry,
-  CellState,
-  Manifest,
-  Observation,
-  SourceRecord,
-} from "../lib/types.js";
+import { ensurePxCube, readPxHeader, pxStreamAll, pxDownloadUrl, type PxHeader } from "./harvest/px.js";
+import { loadRegistry, classifySemLabel, semSkipNormSet, type Registry } from "./harvest/registry.js";
+import { PERMIT_101, SEX_101, NATGROUP_399, MARITAL_423, ageLabel, CUBE_101, CUBE_399, CUBE_423 } from "./harvest/bfs-queries.js";
+import type { AnchorCheck, CellState, Observation } from "../lib/types.js";
 
-const OUT_DIR = join(process.cwd(), "data");
-mkdirSync(OUT_DIR, { recursive: true });
+const CWD = process.cwd();
+const BUCKET_DIR = join(CWD, "data", "buckets");
+const PUBLIC_DIR = join(CWD, "public", "data");
+const NAT_DIR = join(PUBLIC_DIR, "nat");
 
 const nowIso = () => new Date().toISOString();
+const RUN_STARTED = nowIso();
 
-// Months to harvest for SEM stock. The archive exposes only the December
-// snapshot before 2021 and every month from 2021 on, so take everything it has:
-// 69 reference periods, monthly wherever monthly exists.
-const STOCK_MONTHS: [number, number][] = [
-  ...[2017, 2018, 2019, 2020].map((y) => [y, 12] as [number, number]),
-  ...Array.from({ length: 5 }, (_, i) => 2021 + i).flatMap((y) =>
-    Array.from({ length: 12 }, (_, m) => [y, m + 1] as [number, number]),
-  ),
-  ...[1, 2, 3, 4, 5].map((m) => [2026, m] as [number, number]),
+// ---------------------------------------------------------------------------
+// Bucket writer: per-nationality JSONL, append-buffered.
+//
+// Line shape (positional, to keep 30M lines cheap):
+//   [dataset, mIdx, pIdx, dim, value, stateIdx, conceptIdx, urlIdx, refDate,
+//    sheet|0, rowLabelIdx|-1, rowIndex|-1, queryIdx|-1]
+// Strings that repeat millions of times (concepts, urls, row labels, queries)
+// go through run-global intern tables saved alongside the buckets.
+// ---------------------------------------------------------------------------
+const METRICS = ["stock", "immigration", "emigration", "naturalisation"] as const;
+const POPS = ["permanent", "non_permanent", "total"] as const;
+const STATES: CellState[] = ["observed", "structural_zero", "suppressed", "not_published"];
+
+class Table {
+  private map = new Map<string, number>();
+  readonly list: string[] = [];
+  idx(v: string): number {
+    let i = this.map.get(v);
+    if (i === undefined) {
+      i = this.list.length;
+      this.list.push(v);
+      this.map.set(v, i);
+    }
+    return i;
+  }
+}
+const T_CONCEPT = new Table();
+const T_URL = new Table();
+const T_ROWLABEL = new Table();
+const T_QUERY = new Table();
+
+type Line = [
+  string, number, number, Record<string, unknown>, number | null, number,
+  number, number, string, string | 0, number, number, number,
 ];
-// Flow (annual calendar-year "-J-") harvested from December releases.
-const FLOW_J_MONTHS: [number, number][] = Array.from(
-  { length: 9 },
-  (_, i) => [2017 + i, 12] as [number, number],
-);
-// Flow (rolling 12-month "-12Mt-") harvested from the latest release.
-const FLOW_12MT_MONTHS: [number, number][] = [[2026, 5]];
 
-const lastDay = (y: number, m: number) => {
-  const d = new Date(Date.UTC(y, m, 0)).getUTCDate();
-  return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
-};
+const stateCounts: Record<CellState, number> = { observed: 0, structural_zero: 0, suppressed: 0, not_published: 0 };
+const sourceCellCounts = new Map<string, number>(); // "SEM 2-10" | "BFS <cube>" -> cells
 
-const observations: Observation[] = [];
-const idSeen = new Set<string>();
+class BucketWriter {
+  private buffers = new Map<string, string[]>();
+  private sizes = new Map<string, number>();
+  private opened = new Set<string>();
+  lines = 0;
 
-function pushObs(o: Omit<Observation, "id" | "unit">): void {
-  const key = createHash("sha1")
-    .update(
-      [o.source, o.dataset, o.metric, o.populationType, JSON.stringify(o.dim), o.provenance.referenceDate, o.concept].join(
-        "|",
-      ),
-    )
-    .digest("hex")
-    .slice(0, 16);
-  if (idSeen.has(key)) return; // dedupe identical coordinates
-  idSeen.add(key);
-  observations.push({ ...o, id: key, unit: "persons" });
+  constructor() {
+    rmSync(BUCKET_DIR, { recursive: true, force: true });
+    mkdirSync(BUCKET_DIR, { recursive: true });
+  }
+
+  write(code: string, line: Line): void {
+    const s = JSON.stringify(line) + "\n";
+    let buf = this.buffers.get(code);
+    if (!buf) {
+      buf = [];
+      this.buffers.set(code, buf);
+      this.sizes.set(code, 0);
+    }
+    buf.push(s);
+    const size = (this.sizes.get(code) ?? 0) + s.length;
+    this.sizes.set(code, size);
+    this.lines++;
+    if (size >= 1 << 18) this.flush(code);
+  }
+
+  private flush(code: string): void {
+    const buf = this.buffers.get(code);
+    if (!buf || buf.length === 0) return;
+    appendFileSync(join(BUCKET_DIR, `${code}.jsonl`), buf.join(""));
+    this.opened.add(code);
+    buf.length = 0;
+    this.sizes.set(code, 0);
+  }
+
+  flushAll(): void {
+    for (const code of this.buffers.keys()) this.flush(code);
+    writeFileSync(
+      join(BUCKET_DIR, "_tables.json"),
+      JSON.stringify({ concepts: T_CONCEPT.list, urls: T_URL.list, rowLabels: T_ROWLABEL.list, queries: T_QUERY.list }),
+    );
+  }
+
+  codes(): string[] {
+    return [...this.opened].sort();
+  }
+}
+
+function emit(
+  w: BucketWriter,
+  code: string,
+  o: {
+    source: "SEM" | "BFS";
+    dataset: string;
+    metric: (typeof METRICS)[number];
+    pop: (typeof POPS)[number];
+    dim: Record<string, unknown>;
+    value: number | null;
+    state: CellState;
+    concept: string;
+    url: string;
+    refDate: string;
+    sheet?: string;
+    rowLabel?: string;
+    rowIndex?: number;
+    query?: unknown;
+  },
+): void {
+  stateCounts[o.state]++;
+  const src = o.source === "SEM" ? `SEM ${o.dataset}` : `BFS ${o.dataset}`;
+  sourceCellCounts.set(src, (sourceCellCounts.get(src) ?? 0) + 1);
+  w.write(code, [
+    o.dataset,
+    METRICS.indexOf(o.metric),
+    POPS.indexOf(o.pop),
+    o.dim,
+    o.value,
+    STATES.indexOf(o.state),
+    T_CONCEPT.idx(o.concept),
+    T_URL.idx(o.url),
+    o.refDate,
+    o.sheet ?? 0,
+    o.rowLabel !== undefined ? T_ROWLABEL.idx(o.rowLabel) : -1,
+    o.rowIndex ?? -1,
+    o.query !== undefined ? T_QUERY.idx(JSON.stringify(o.query)) : -1,
+  ]);
 }
 
 function classify(value: number | null, suppressible = false): { value: number | null; state: CellState } {
@@ -94,570 +184,738 @@ function classify(value: number | null, suppressible = false): { value: number |
 }
 
 // ---------------------------------------------------------------------------
-// SEM harvest
+// SEM
 // ---------------------------------------------------------------------------
+const lastDay = (y: number, m: number) => {
+  const d = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  return `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+};
+
+// The archive exposes only December before 2021 and every month from 2021 on.
+// The tail probes a few months past the last known release; missing months 404
+// and are skipped, so the harvest discovers the latest month by itself.
+function stockMonths(): [number, number][] {
+  const out: [number, number][] = [2017, 2018, 2019, 2020].map((y) => [y, 12]);
+  const now = new Date();
+  const yMax = now.getUTCFullYear();
+  for (let y = 2021; y <= yMax; y++) {
+    for (let m = 1; m <= 12; m++) {
+      if (y === yMax && m > now.getUTCMonth() + 1) break;
+      out.push([y, m]);
+    }
+  }
+  return out;
+}
+
 interface SemRun {
   months: [number, number][];
   tables: TableDef[];
   variant?: "J" | "12Mt";
 }
 
-async function runSem(run: SemRun, urlsAccum: Set<string>): Promise<void> {
+/** The month of the newest archive index that actually lists a 2-10 workbook. */
+let LATEST_SEM: [number, number] = [0, 0];
+
+const ZERO_ROW: (number | string | null)[] = ["", ...(Array(48).fill(0) as number[])];
+
+async function runSem(reg: Registry, w: BucketWriter, run: SemRun): Promise<void> {
+  const skipNorm = semSkipNormSet(reg);
   for (const [year, month] of run.months) {
     const index = await fetchArchiveIndex(year, month);
-    if (!index.ok) {
-      console.warn(`SEM archive ${year}-${month} unavailable (404) — skipping`);
-      continue;
-    }
+    if (!index.ok) continue;
     const referenceDate = lastDay(year, month);
     for (const def of run.tables) {
       const variant = run.variant ?? def.variant;
       const url = resolveTableUrl(index, def.table, variant);
-      if (!url) {
-        console.warn(`  SEM ${def.table}${variant ? "-" + variant : ""} not in ${year}-${month} index`);
-        continue;
-      }
-      urlsAccum.add(url);
-      const res = (await fetchRaw(url, { ext: "xlsx" })) as { buffer: Buffer; notFound?: boolean; retrievedAt: string };
+      if (!url) continue;
+      const res = (await fetchRaw(url, { ext: "xlsx" })) as { buffer: Buffer; notFound?: boolean };
       if (res.notFound || res.buffer.length === 0) continue;
-      const isFlow = def.metric !== "stock";
-      // One parse of the workbook, every canton sheet read from it.
-      const perSheet = findChileRowsForSheets(res.buffer, SHEET_SCOPES.map(([s]) => s));
+      if (def.table === "2-10" && !variant && (year > LATEST_SEM[0] || (year === LATEST_SEM[0] && month > LATEST_SEM[1]))) {
+        LATEST_SEM = [year, month];
+      }
+      const perSheet = readAllRowsForSheets(res.buffer, SHEET_SCOPES.map(([s]) => s));
       for (const [sheetName, canton] of SHEET_SCOPES) {
-        const found = perSheet.get(sheetName) ?? null;
-        // Flow tables list only nations with movement. When Chile is absent it means
-        // zero movement — a genuine structural zero. We run the SAME extractor over a
-        // zero-filled row so the absent case produces cells with IDENTICAL coordinates
-        // (nationality "CL", the table's own populationType and concept) to the present
-        // case; every value is 0 and classifies to structural_zero. This keeps a
-        // zero-flow reachable by exactly the coordinates used when Chile is present.
-        //
-        // In a stock table a missing Chile row means the canton has no Chilean
-        // residents at all — which is equally a real zero, and far more common now
-        // that all 26 cantons are read rather than Zug alone.
-        const row = found ? found.row : ["Chile", ...(Array(48).fill(0) as number[])];
-        const cells = def.extract(row);
-        for (const cell of cells) {
-          const { value, state } = classify(cell.value, false);
-          pushObs({
-            source: "SEM",
-            dataset: def.table,
-            metric: cell.metric,
-            populationType: cell.pop,
-            dim: { canton, year, month, nationality: "CL", ...cell.dim },
-            value,
-            state,
-            concept: cell.concept,
-            provenance: {
+        const rows = perSheet.get(sheetName);
+        if (!rows) continue; // sheet absent from this workbook
+        // Classify every labelled row; unknown labels are fatal — the registry
+        // no longer describes the source and every downstream number is suspect.
+        const byCode = new Map<string, LabelledRow>();
+        const unknown: string[] = [];
+        for (const r of rows) {
+          const cls = classifySemLabel(reg, r.label, skipNorm);
+          if (cls.kind === "unknown") unknown.push(r.label);
+          else if (cls.kind === "entry" && !byCode.has(cls.entry.code)) byCode.set(cls.entry.code, r);
+        }
+        if (unknown.length) {
+          throw new Error(
+            `SEM ${def.table} ${year}-${month} sheet ${sheetName}: unclassified row label(s): ` +
+              unknown.map((u) => JSON.stringify(u)).join(", "),
+          );
+        }
+        const isFlow = def.metric !== "stock";
+        for (const entry of reg.semEntries) {
+          const found = byCode.get(entry.code) ?? null;
+          // Groups are always printed when the sheet exists; a country absent
+          // from a stock sheet has zero residents there, absent from a flow
+          // sheet had zero movement. Both are real zeros, emitted with the
+          // same coordinates the present case would produce.
+          if (!found && entry.code.startsWith("_") && entry.code !== "_SL" && entry.code !== "_NONAT" && entry.code !== "_UNK") {
+            continue;
+          }
+          const row = found ? found.row : ZERO_ROW;
+          for (const cell of def.extract(row)) {
+            const { value, state } = classify(cell.value, false);
+            emit(w, entry.code, {
+              source: "SEM",
+              dataset: def.table,
+              metric: cell.metric,
+              pop: cell.pop,
+              dim: { canton, year, month, nationality: entry.code, ...cell.dim },
+              value,
+              state,
+              concept: cell.concept,
               url,
-              referenceDate,
-              retrievedAt: res.retrievedAt,
+              refDate: referenceDate,
               sheet: sheetName,
               rowLabel: found
-                ? "Chile"
-                : isFlow
-                  ? "Chile (absent from flow table = 0)"
-                  : "Chile (absent from canton sheet = 0)",
+                ? found.label.trim()
+                : `${entry.de} (absent from ${isFlow ? "flow table" : "canton sheet"} = 0)`,
               rowIndex: found ? found.index : undefined,
-            },
-          });
+            });
+          }
         }
       }
     }
   }
 }
 
-// ---------------------------------------------------------------------------
-// SEM cantonal baselines (all 26 cantons + Switzerland, from the 2-10 workbook)
-// ---------------------------------------------------------------------------
-async function runSemCantonal(year: number, month: number, urlsAccum: Set<string>): Promise<void> {
+/**
+ * Cantonal comparison rows (latest 2-10): for every nationality, the T/F/M
+ * stock in every canton, plus the all-foreigners denominator. These power the
+ * per-nationality summary files that the comparison section reads on its own.
+ */
+async function runSemCantonal(reg: Registry, w: BucketWriter, year: number, month: number): Promise<void> {
+  const skipNorm = semSkipNormSet(reg);
   const index = await fetchArchiveIndex(year, month);
-  if (!index.ok) return;
+  if (!index.ok) throw new Error(`SEM cantonal: archive ${year}-${month} unavailable`);
   const url = resolveTableUrl(index, "2-10");
-  if (!url) return;
-  urlsAccum.add(url);
-  const res = (await fetchRaw(url, { ext: "xlsx" })) as { buffer: Buffer; retrievedAt: string; notFound?: boolean };
-  if (res.notFound || res.buffer.length === 0) return;
+  if (!url) throw new Error(`SEM cantonal: no 2-10 in ${year}-${month} index`);
+  const res = (await fetchRaw(url, { ext: "xlsx" })) as { buffer: Buffer };
   const referenceDate = lastDay(year, month);
   const SEX = ["total", "female", "male"] as const;
-  const sheets: [string, string][] = [["CH-Nati", "CH"], ...CANTON_SHEETS.map((c) => [c, c] as [string, string])];
-  for (const [sheet, canton] of sheets) {
-    const read = readCantonSheet(res.buffer, sheet);
-    if (!read) continue;
-    {
-      // A canton sheet that does not list Chile has no Chilean residents — a
-      // real zero, not a missing figure. Skipping it here left the smallest
-      // cantons reading "never published" in the comparison while the main
-      // extraction path, which does emit the zero, disagreed with it.
-      const chile = read.chile ?? ([0, 0, 0] as [number, number, number]);
+  const perSheet = readAllRowsForSheets(res.buffer, SHEET_SCOPES.map(([s]) => s));
+  for (const [sheetName, canton] of SHEET_SCOPES) {
+    const rows = perSheet.get(sheetName);
+    if (!rows) continue;
+    const byCode = new Map<string, LabelledRow>();
+    for (const r of rows) {
+      const cls = classifySemLabel(reg, r.label, skipNorm);
+      if (cls.kind === "entry" && !byCode.has(cls.entry.code)) byCode.set(cls.entry.code, r);
+    }
+    const all = byCode.get("_ALL");
+    for (const entry of reg.semEntries) {
+      if (entry.code === "_ALL") continue;
+      const found = byCode.get(entry.code) ?? null;
+      if (!found && entry.code.startsWith("_") && !["_SL", "_NONAT", "_UNK"].includes(entry.code)) continue;
+      const vals: (number | null)[] = found
+        ? [found.row[1] as number | null, found.row[2] as number | null, found.row[3] as number | null]
+        : [0, 0, 0];
       SEX.forEach((sex, i) => {
-        const { value, state } = classify(chile[i], false);
-        pushObs({
+        const { value, state } = classify(typeof vals[i] === "number" ? (vals[i] as number) : found ? null : 0, false);
+        emit(w, entry.code, {
           source: "SEM",
           dataset: "2-10",
           metric: "stock",
-          populationType: "permanent",
-          dim: { canton, year, month, nationality: "CL", sex },
+          pop: "permanent",
+          dim: { canton, year, month, nationality: entry.code, sex },
           value,
           state,
-          concept: "Chilean nationals (cantonal comparison)",
-          provenance: {
-            url,
-            referenceDate,
-            retrievedAt: res.retrievedAt,
-            sheet,
-            rowLabel: read.chile ? "Chile" : "Chile (absent from canton sheet = 0)",
-          },
+          concept: "Nationals (cantonal comparison)",
+          url,
+          refDate: referenceDate,
+          sheet: sheetName,
+          rowLabel: found ? found.label.trim() : `${entry.de} (absent from canton sheet = 0)`,
+          rowIndex: found ? found.index : undefined,
+        });
+      });
+      // Denominator row, duplicated into every bucket so each nationality's
+      // summary file is self-contained.
+      if (all && typeof all.row[1] === "number") {
+        emit(w, entry.code, {
+          source: "SEM",
+          dataset: "2-10",
+          metric: "stock",
+          pop: "permanent",
+          dim: { canton, year, month, sex: "total", nationality: "all_foreign" },
+          value: all.row[1],
+          state: "observed",
+          concept: "Foreign residents (per-capita denominator)",
+          url,
+          refDate: referenceDate,
+          sheet: sheetName,
+          rowLabel: all.label.trim(),
+          rowIndex: all.index,
+        });
+      }
+    }
+    // The _ALL bucket gets its own comparison rows (its "national" figures are
+    // the Gesamttotal row itself).
+    if (all) {
+      SEX.forEach((sex, i) => {
+        const v = all.row[1 + i];
+        const { value, state } = classify(typeof v === "number" ? v : null, false);
+        emit(w, "_ALL", {
+          source: "SEM",
+          dataset: "2-10",
+          metric: "stock",
+          pop: "permanent",
+          dim: { canton, year, month, nationality: "_ALL", sex },
+          value,
+          state,
+          concept: "Nationals (cantonal comparison)",
+          url,
+          refDate: referenceDate,
+          sheet: sheetName,
+          rowLabel: all.label.trim(),
+          rowIndex: all.index,
         });
       });
     }
-    if (read.foreignTotal !== null) {
-      pushObs({
-        source: "SEM",
-        dataset: "2-10",
-        metric: "stock",
-        populationType: "permanent",
-        dim: { canton, year, month, sex: "total", nationality: "all_foreign" },
-        value: read.foreignTotal,
-        state: "observed",
-        concept: "Foreign residents (per-capita denominator)",
-        provenance: { url, referenceDate, retrievedAt: res.retrievedAt, sheet, rowLabel: "Gesamttotal" },
-      });
-    }
   }
 }
 
 // ---------------------------------------------------------------------------
-// BFS harvest
+// BFS: one streaming pass per cube.
 // ---------------------------------------------------------------------------
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-/**
- * BFS access route.
- *   api  - PxWeb json-stat2 query endpoint (POST) only
- *   px   - full PC-Axis cube download (GET) only
- *   auto - try the API, and fall back to the bulk download once it refuses
- *
- * The query endpoint is the documented interface and stays the default first
- * choice. But it is POST-only and rate-limits some egress addresses for hours at
- * a time, whereas the same server serves every cube in full over plain GET. Both
- * routes return the same published figures; the route actually used is recorded
- * in each observation's provenance.
- */
-type BfsMode = "auto" | "api" | "px";
-const BFS_MODE = (process.env.BFS_MODE ?? "auto") as BfsMode;
-
-const API_URL = (cube: string) => `https://www.pxweb.bfs.admin.ch/api/v1/de/${cube}/${cube}.px`;
-const API_ACCESS = "PxWeb json-stat2 query API (POST)";
-/** The seed responses came from the same API, captured during reconnaissance and committed. */
-const SEED_ACCESS = `${API_ACCESS}, response committed under data/bfs-seed/`;
 const PX_ACCESS = "Full PC-Axis cube download (GET), decoded locally";
 
-async function runBfs(urlsAccum: Set<string>): Promise<string[]> {
-  const blocked: string[] = [];
-  let first = true;
-  // Once the query endpoint has refused, every further POST costs a spacing delay
-  // to fail the same way. Switch the rest of the run to the bulk download.
-  let apiRefused = BFS_MODE === "px";
-  for (const spec of ALL_CUBE_QUERIES) {
-    urlsAccum.add(apiRefused ? pxDownloadUrl(spec.cube) : API_URL(spec.cube));
-
-    let js: JsonStat2 | undefined;
-    if (!apiRefused) {
-      // Space POSTs out: pxweb allows roughly one POST per minute per IP and
-      // tarpits bursts. Cached queries return instantly (the fetcher reads the disk
-      // cache before any network call), so this delay only applies to live fetches.
-      const cached = isCubeQueryCached(spec.cube, spec.query);
-      const spacingMs = Number(process.env.BFS_SPACING_MS ?? 50_000);
-      if (!first && !cached) await sleep(spacingMs);
-      first = false;
-      try {
-        js = await queryCube(spec.cube, spec.query);
-      } catch (err) {
-        console.warn(`BFS query ${spec.id} via API failed: ${String(err)}`);
-        if (BFS_MODE === "api") {
-          blocked.push(spec.id);
-          continue;
-        }
-        apiRefused = true;
-        console.warn("  -> query API is refusing; using the full-cube download for the rest of this run");
-      }
-    }
-
-    if (js) {
-      const retrievedAt = nowIso();
-      walkJsonStat2(js, (coord, value, status) => {
-        const suppressed = status === "." || status === ".." || status === "...";
-        const c = classify(value, suppressed || value === null);
-        pushBfsCell(spec, coord, c, API_URL(spec.cube), API_ACCESS, retrievedAt);
-      });
-      continue;
-    }
-
-    try {
-      const { cells, url, retrievedAt } = await queryCubeViaPx(spec.cube, spec.query);
-      for (const cell of cells) {
-        // A dot-run token is the PC-Axis missing/confidential marker, the same
-        // signal the API carries in its separate `status` map.
-        const suppressed = /^\.+$/.test(cell.raw.replace(/"/g, "").trim());
-        const c = classify(cell.value, suppressed || cell.value === null);
-        pushBfsCell(spec, cell.coord, c, url, PX_ACCESS, retrievedAt);
-      }
-      console.log(`  ${spec.id}: ${cells.length} cells from the cube download`);
-    } catch (err) {
-      console.warn(`BFS query ${spec.id} blocked/failed on both routes: ${String(err)}`);
-      blocked.push(spec.id);
-    }
-  }
-  return blocked;
+function dimIndex(h: PxHeader, name: string): number {
+  const i = h.dims.findIndex((d) => d.name === name);
+  if (i < 0) throw new Error(`cube ${h.matrix}: dimension ${JSON.stringify(name)} not found`);
+  return i;
 }
 
-/** Shared cell -> observation mapping, so both access routes emit identical coordinates. */
-function pushBfsCell(
-  spec: (typeof ALL_CUBE_QUERIES)[number],
-  coord: Record<string, string>,
-  c: { value: number | null; state: CellState },
-  url: string,
-  access: string,
-  retrievedAt: string,
-): void {
-  const { metric, populationType, ...dim } = spec.map(coord);
-  pushObs({
-    source: "BFS",
-    dataset: spec.cube,
-    metric: (metric as Observation["metric"]) ?? spec.metric,
-    populationType: (populationType as Observation["populationType"]) ?? "permanent",
-    dim: dim as Observation["dim"],
-    value: c.value,
-    state: c.state,
-    concept: spec.concept,
-    provenance: {
+const kantonCode = (c: string) => (c === "8100" ? "CH" : c);
+
+async function runBfs101(reg: Registry, w: BucketWriter): Promise<void> {
+  const { path } = await ensurePxCube(CUBE_101);
+  const h = readPxHeader(path);
+  const url = pxDownloadUrl(CUBE_101);
+  const iY = dimIndex(h, "Jahr"), iK = dimIndex(h, "Kanton"), iP = dimIndex(h, "Bevölkerungstyp");
+  const iB = dimIndex(h, "Anwesenheitsbewilligung"), iS = dimIndex(h, "Geschlecht"), iA = dimIndex(h, "Altersklasse");
+  const iN = dimIndex(h, "Staatsangehörigkeit");
+  const years = h.dims[iY].codes;
+  const latestYear = years[years.length - 1];
+  // Per-position lookups, precomputed once.
+  const natEntry = h.dims[iN].codes.map((c) => reg.byBfs101.get(c) ?? null);
+  const natRaw = h.dims[iN].codes;
+  const isTotal = (dim: number, pos: number) => h.dims[dim].codes[pos] === "-99999";
+  const query = { route: "full-cube download", cube: CUBE_101, kept: "per-nationality time series at totals + full permit×sex×age cross for the latest year" };
+
+  let kept = 0;
+  pxStreamAll(path, h, (pos, value, raw) => {
+    const natCode = natRaw[pos[iN]];
+    const entry = natEntry[pos[iN]];
+    const permitT = isTotal(iB, pos[iB]), sexT = isTotal(iS, pos[iS]), ageT = isTotal(iA, pos[iA]);
+    const totals = (permitT ? 1 : 0) + (sexT ? 1 : 0) + (ageT ? 1 : 0);
+    const year = Number(h.dims[iY].codes[pos[iY]]);
+    const isLatest = h.dims[iY].codes[pos[iY]] === latestYear;
+
+    let bucket: string;
+    let nationality: string;
+    if (entry) {
+      if (!(isLatest || totals >= 2)) return;
+      bucket = entry.code;
+      nationality = entry.code;
+    } else if (natCode === "-99999" || natCode === "8100") {
+      // Baselines: total resident population and Swiss nationals. Kept at
+      // full-total shape only, in the _ALL bucket (every summary copies the
+      // latest-year rows out of it).
+      if (!(permitT && sexT && ageT)) return;
+      bucket = "_ALL";
+      nationality = natCode === "8100" ? "CH" : "total";
+    } else {
+      return;
+    }
+
+    const suppressed = /^\.+$/.test(raw.replace(/"/g, "").trim());
+    const c = classify(value, suppressed || value === null);
+    const dim: Record<string, unknown> = {
+      canton: kantonCode(h.dims[iK].codes[pos[iK]]),
+      year,
+      sex: SEX_101[h.dims[iS].codes[pos[iS]]] ?? "total",
+      nationality,
+    };
+    if (!permitT) {
+      const p = PERMIT_101[h.dims[iB].codes[pos[iB]]];
+      if (!p) return; // permit categories outside the app's map (e.g. diplomats) stay unharvested
+      dim.permit = p;
+    }
+    if (!ageT) dim.ageClass = ageLabel(h.dims[iA].codes[pos[iA]]);
+
+    const concept =
+      nationality === "total" || nationality === "CH"
+        ? "Resident population baseline by year"
+        : isLatest && totals < 2
+          ? "Nationals by permit, sex and age (latest year)"
+          : !permitT
+            ? "Nationals by permit category and year"
+            : !sexT
+              ? "Nationals by sex and year"
+              : !ageT
+                ? "Nationals by age class and year"
+                : "Nationals by year";
+
+    emit(w, bucket, {
+      source: "BFS",
+      dataset: CUBE_101,
+      metric: "stock",
+      pop: h.dims[iP].codes[pos[iP]] === "1" ? "permanent" : "non_permanent",
+      dim,
+      value: c.value,
+      state: c.state,
+      concept,
       url,
-      access,
-      referenceDate: spec.referenceDateFor(coord),
-      retrievedAt,
-      query: spec.query,
-    },
+      refDate: `${year}-12-31`,
+      query,
+    });
+    kept++;
   });
+  console.log(`  cube 101: kept ${kept} cells`);
 }
 
-// ---------------------------------------------------------------------------
-// BFS seed — two genuinely-fetched responses captured during reconnaissance,
-// committed under data/bfs-seed/. They guarantee the two headline BFS views (the
-// 2010-2024 trend and the citizenship-vs-birthplace split) are present and
-// reproducible even when the pxweb POST endpoint is rate-limiting. These are real
-// fetched values with real provenance — not synthesised. When pxweb is reachable,
-// runBfs() adds the deeper breakdowns; identical coordinates dedupe.
-// ---------------------------------------------------------------------------
-const SEED_DIR = join(process.cwd(), "data", "bfs-seed");
-const SEED_URL = (cube: string) => `https://www.pxweb.bfs.admin.ch/api/v1/de/${cube}/${cube}.px`;
+async function runBfs399(reg: Registry, w: BucketWriter): Promise<void> {
+  const { path } = await ensurePxCube(CUBE_399);
+  const h = readPxHeader(path);
+  const url = pxDownloadUrl(CUBE_399);
+  const iY = dimIndex(h, "Jahr"), iK = dimIndex(h, "Kanton"), iP = dimIndex(h, "Bevölkerungstyp");
+  const iG = dimIndex(h, "Staatsangehörigkeit (Auswahl)"), iB = dimIndex(h, "Geburtsstaat");
+  const iS = dimIndex(h, "Geschlecht"), iA = dimIndex(h, "Altersklasse");
+  const years = h.dims[iY].codes;
+  const latestYear = years[years.length - 1];
+  const birthEntry = h.dims[iB].codes.map((c) => reg.byBfs399Birth.get(c) ?? null);
+  const query = { route: "full-cube download", cube: CUBE_399, kept: "per-birth-country time series at totals + full passport-group×sex×age cross for the latest year" };
 
-function loadSeed(file: string): JsonStat2 | null {
-  const p = join(SEED_DIR, file);
-  if (!existsSync(p)) return null;
-  try {
-    return JSON.parse(readFileSync(p, "utf8")) as JsonStat2;
-  } catch {
-    return null;
-  }
-}
+  let kept = 0;
+  pxStreamAll(path, h, (pos, value, raw) => {
+    const entry = birthEntry[pos[iB]];
+    if (!entry) return; // birth-country totals and Swiss-born are not this app's scope
+    const gT = h.dims[iG].codes[pos[iG]] === "-99999";
+    const sexT = h.dims[iS].codes[pos[iS]] === "-99999";
+    const ageT = h.dims[iA].codes[pos[iA]] === "-99999";
+    const totals = (gT ? 1 : 0) + (sexT ? 1 : 0) + (ageT ? 1 : 0);
+    const isLatest = h.dims[iY].codes[pos[iY]] === latestYear;
+    if (!(isLatest || totals >= 2)) return;
 
-function runBfsSeed(): number {
-  let n = 0;
-  const retrievedAt = "2026-07-24T16:05:00.000Z"; // reconnaissance capture time
+    const suppressed = /^\.+$/.test(raw.replace(/"/g, "").trim());
+    const c = classify(value, suppressed || value === null);
+    const year = Number(h.dims[iY].codes[pos[iY]]);
+    const g = h.dims[iG].codes[pos[iG]];
+    const dim: Record<string, unknown> = {
+      canton: kantonCode(h.dims[iK].codes[pos[iK]]),
+      year,
+      birthCountry: entry.code,
+      nationalityGroup: NATGROUP_399[g] ?? g,
+      sex: SEX_101[h.dims[iS].codes[pos[iS]]] ?? "total",
+    };
+    if (!ageT) dim.ageClass = ageLabel(h.dims[iA].codes[pos[iA]]);
 
-  const js101 = loadSeed("cube101-zg-chile-permanent-yearseries.json");
-  if (js101) {
-    walkJsonStat2(js101, (coord, value, status) => {
-      const year = Number(coord["Jahr"]);
-      const c = classify(value, status === "." || value === null);
-      pushObs({
-        source: "BFS",
-        dataset: CUBE_101,
-        metric: "stock",
-        populationType: "permanent",
-        dim: { canton: "ZG", year, nationality: "CL", sex: "total" },
-        value: c.value,
-        state: c.state,
-        concept: "Chilean nationals in Zug by year (permanent)",
-        provenance: { url: SEED_URL(CUBE_101), referenceDate: `${year}-12-31`, retrievedAt, access: SEED_ACCESS, query: "seed: ZG x Chile x permanent, all years" },
-      });
-      n++;
+    const concept =
+      isLatest && totals < 2
+        ? "Born abroad by passport group, sex and age (latest year)"
+        : !gT
+          ? "Born abroad by passport group and year"
+          : !sexT
+            ? "Born abroad by sex and year"
+            : !ageT
+              ? "Born abroad by age class and year"
+              : "Born abroad by year";
+
+    emit(w, entry.code, {
+      source: "BFS",
+      dataset: CUBE_399,
+      metric: "stock",
+      pop: h.dims[iP].codes[pos[iP]] === "1" ? "permanent" : "non_permanent",
+      dim,
+      value: c.value,
+      state: c.state,
+      concept,
+      url,
+      refDate: `${year}-12-31`,
+      query,
     });
-  }
+    kept++;
+  });
+  console.log(`  cube 399: kept ${kept} cells`);
+}
 
-  const js399 = loadSeed("cube399-zg-bornchile-2024-passportsplit.json");
-  if (js399) {
-    walkJsonStat2(js399, (coord, value, status) => {
-      const g = coord["Staatsangehörigkeit (Auswahl)"];
-      const c = classify(value, status === "." || value === null);
-      pushObs({
-        source: "BFS",
-        dataset: CUBE_399,
-        metric: "stock",
-        populationType: POP_101[coord["Bevölkerungstyp"]] ?? "permanent",
-        dim: { canton: "ZG", year: 2024, birthCountry: "CL", nationalityGroup: NATGROUP_399[g] ?? g, sex: "total" },
-        value: c.value,
-        state: c.state,
-        concept: "Chilean-born residents of Zug by passport group",
-        provenance: { url: SEED_URL(CUBE_399), referenceDate: "2024-12-31", retrievedAt, access: SEED_ACCESS, query: "seed: ZG x born-Chile x 2024 x passport group" },
-      });
-      n++;
+async function runBfs423(reg: Registry, w: BucketWriter): Promise<void> {
+  const { path } = await ensurePxCube(CUBE_423);
+  const h = readPxHeader(path);
+  const url = pxDownloadUrl(CUBE_423);
+  const iY = dimIndex(h, "Jahr"), iK = dimIndex(h, "Kanton"), iP = dimIndex(h, "Bevölkerungstyp");
+  const iN = dimIndex(h, "Staatsangehörigkeit"), iB = dimIndex(h, "Geburtsstaat");
+  const iS = dimIndex(h, "Geschlecht"), iZ = dimIndex(h, "Zivilstand");
+  const year = Number(h.dims[iY].codes[0]);
+  const natEntry = h.dims[iN].codes.map((c) => reg.byBfs423Nat.get(c) ?? null);
+  const birthEntry = h.dims[iB].codes.map((c) => reg.byBfs423Birth.get(c) ?? null);
+  const query = { route: "full-cube download", cube: CUBE_423, kept: "marital×sex for each nationality and each birth country; own-country birthplace pairs" };
+
+  let kept = 0;
+  pxStreamAll(path, h, (pos, value, raw) => {
+    const nat = natEntry[pos[iN]];
+    const birth = birthEntry[pos[iB]];
+    const natT = h.dims[iN].codes[pos[iN]] === "-99999";
+    const birthT = h.dims[iB].codes[pos[iB]] === "-99999";
+    const sexCode = h.dims[iS].codes[pos[iS]];
+    const zCode = h.dims[iZ].codes[pos[iZ]];
+    const sexT = sexCode === "-99999";
+    const zT = zCode === "-99999";
+
+    let bucket: string;
+    const dim: Record<string, unknown> = {
+      canton: kantonCode(h.dims[iK].codes[pos[iK]]),
+      year,
+      sex: SEX_101[sexCode] ?? "total",
+    };
+    if (nat && birthT) {
+      // marital × sex for the nationality side
+      bucket = nat.code;
+      dim.nationality = nat.code;
+      if (sexT && zT) {
+        // also the "born anywhere" side of the birthplace pair
+        emitPair(nat.code, { ...dim, nationality: nat.code, birthCountry: "any" });
+      }
+    } else if (natT && birth) {
+      // marital × sex for the birth-country side
+      bucket = birth.code;
+      dim.birthCountry = birth.code;
+    } else if (nat && birth && nat.code === birth.code && sexT && zT) {
+      // nationals born in their own country
+      bucket = nat.code;
+      dim.nationality = nat.code;
+      dim.birthCountry = birth.code;
+    } else {
+      return;
+    }
+    if (!zT) dim.marital = MARITAL_423[zCode] ?? zCode;
+
+    const suppressed = /^\.+$/.test(raw.replace(/"/g, "").trim());
+    const c = classify(value, suppressed || value === null);
+    emit(w, bucket, {
+      source: "BFS",
+      dataset: CUBE_423,
+      metric: "stock",
+      pop: h.dims[iP].codes[pos[iP]] === "1" ? "permanent" : "non_permanent",
+      dim,
+      value: c.value,
+      state: c.state,
+      concept: dim.nationality && dim.birthCountry
+        ? "Nationals born in their own country vs elsewhere"
+        : dim.nationality
+          ? "Nationals by marital status and sex"
+          : "Born abroad by marital status and sex",
+      url,
+      refDate: `${year}-12-31`,
+      query,
     });
-  }
-  return n;
+    kept++;
+
+    function emitPair(code: string, pairDim: Record<string, unknown>) {
+      const sup = /^\.+$/.test(raw.replace(/"/g, "").trim());
+      const cc = classify(value, sup || value === null);
+      emit(w, code, {
+        source: "BFS",
+        dataset: CUBE_423,
+        metric: "stock",
+        pop: h.dims[iP].codes[pos[iP]] === "1" ? "permanent" : "non_permanent",
+        dim: pairDim,
+        value: cc.value,
+        state: cc.state,
+        concept: "Nationals born in their own country vs elsewhere",
+        url,
+        refDate: `${year}-12-31`,
+        query,
+      });
+      kept++;
+    }
+  });
+  console.log(`  cube 423: kept ${kept} cells`);
 }
 
 // ---------------------------------------------------------------------------
-// Anchor checks (self-report; independent re-fetch is a separate verifier)
+// Encode pass: bucket JSONL -> public/data/nat/{code}/{canton}.json (+summary)
 // ---------------------------------------------------------------------------
-function anchorChecks(): AnchorCheck[] {
+const COMPARISON_CONCEPTS = new Set([
+  "Nationals (cantonal comparison)",
+  "Foreign residents (per-capita denominator)",
+]);
+
+interface NatIndexEntry {
+  code: string;
+  de: string;
+  observations: number;
+  bytes: number;
+  /** latest SEM Switzerland-wide permanent total (null when SEM has no row) */
+  semTotal: number | null;
+  /** latest BFS Switzerland-wide permanent total from cube 101 */
+  bfsTotal: number | null;
+  hasSem: boolean;
+  hasBfs: boolean;
+}
+
+function decodeLine(l: Line, tables: { concepts: string[]; urls: string[]; rowLabels: string[]; queries: string[] }, retrievedAt: string): Observation {
+  const [dataset, m, p, dim, value, t, cIdx, uIdx, refDate, sheet, rlIdx, rowIndex, qIdx] = l;
+  const source = dataset.startsWith("px-") ? "BFS" : "SEM";
+  return {
+    id: "",
+    source,
+    dataset,
+    metric: METRICS[m],
+    populationType: POPS[p],
+    dim: dim as Observation["dim"],
+    value,
+    state: STATES[t],
+    concept: tables.concepts[cIdx],
+    unit: "persons",
+    provenance: {
+      url: tables.urls[uIdx],
+      referenceDate: refDate,
+      retrievedAt,
+      ...(source === "BFS" ? { access: PX_ACCESS } : {}),
+      ...(sheet !== 0 ? { sheet: sheet as string } : {}),
+      ...(rlIdx >= 0 ? { rowLabel: tables.rowLabels[rlIdx] } : {}),
+      ...(rowIndex >= 0 ? { rowIndex } : {}),
+      ...(qIdx >= 0 ? { query: JSON.parse(tables.queries[qIdx]) } : {}),
+    },
+  } as Observation;
+}
+
+function encodeAll(reg: Registry, w: BucketWriter): { index: NatIndexEntry[]; totalObs: number; totalBytes: number } {
+  const tables = JSON.parse(readFileSync(join(BUCKET_DIR, "_tables.json"), "utf8"));
+  rmSync(NAT_DIR, { recursive: true, force: true });
+  mkdirSync(NAT_DIR, { recursive: true });
+  const index: NatIndexEntry[] = [];
+  let totalObs = 0;
+  let totalBytes = 0;
+
+  for (const code of w.codes()) {
+    const raw = readFileSync(join(BUCKET_DIR, `${code}.jsonl`), "utf8");
+    const seen = new Set<string>();
+    const byCanton = new Map<string, Observation[]>();
+    const summaryObs: Observation[] = [];
+    let semTotal: number | null = null;
+    let bfsTotal: number | null = null;
+    let bfsTotalYear = 0;
+    let hasSem = false;
+    let hasBfs = false;
+
+    for (const lineStr of raw.split("\n")) {
+      if (!lineStr) continue;
+      const o = decodeLine(JSON.parse(lineStr) as Line, tables, RUN_STARTED);
+      const key = `${o.dataset}|${o.metric}|${o.populationType}|${JSON.stringify(o.dim)}|${o.provenance.referenceDate}|${o.concept}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      if (o.source === "SEM") hasSem = true;
+      else hasBfs = true;
+
+      const canton = (o.dim.canton as string) ?? "CH";
+      if (COMPARISON_CONCEPTS.has(o.concept)) {
+        summaryObs.push(o);
+      } else {
+        let list = byCanton.get(canton);
+        if (!list) byCanton.set(canton, (list = []));
+        list.push(o);
+      }
+      if (
+        o.concept === "Nationals (cantonal comparison)" &&
+        canton === "CH" &&
+        o.dim.sex === "total" &&
+        o.dim.nationality === code
+      ) {
+        semTotal = o.value;
+      }
+      if (
+        o.source === "BFS" &&
+        o.dataset === CUBE_101 &&
+        canton === "CH" &&
+        o.populationType === "permanent" &&
+        o.dim.sex === "total" &&
+        !o.dim.permit &&
+        !o.dim.ageClass &&
+        o.dim.nationality === code &&
+        (o.dim.year ?? 0) >= bfsTotalYear
+      ) {
+        bfsTotal = o.value;
+        bfsTotalYear = o.dim.year ?? 0;
+      }
+    }
+
+    const dir = join(NAT_DIR, code);
+    mkdirSync(dir, { recursive: true });
+    let obsCount = summaryObs.length;
+    let bytes = 0;
+    for (const [canton, list] of [...byCanton.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+      const stray = list.find((o) => o.dim.canton !== canton);
+      if (stray) {
+        throw new Error(`nat ${code} canton file ${canton} would contain a ${String(stray.dim.canton)} row — files must be pure`);
+      }
+      const json = JSON.stringify(encodeCanton(canton, list));
+      writeFileSync(join(dir, `${canton}.json`), json);
+      obsCount += list.length;
+      bytes += json.length;
+    }
+    const sj = JSON.stringify(encodeCanton("ALL", summaryObs));
+    writeFileSync(join(dir, "summary.json"), sj);
+    bytes += sj.length;
+
+    const entry = reg.byCode.get(code);
+    index.push({
+      code,
+      de: entry?.de ?? code,
+      observations: obsCount,
+      bytes,
+      semTotal,
+      bfsTotal,
+      hasSem,
+      hasBfs,
+    });
+    totalObs += obsCount;
+    totalBytes += bytes;
+  }
+  return { index, totalObs, totalBytes };
+}
+
+// ---------------------------------------------------------------------------
+// Anchors: decoded-payload spot checks. The Chile set is carried over verbatim
+// from the single-nationality harvest — the rewrite must reproduce it exactly.
+// ---------------------------------------------------------------------------
+function loadNat(code: string): Observation[] {
+  const dir = join(NAT_DIR, code);
+  if (!existsSync(dir)) return [];
+  const out: Observation[] = [];
+  for (const f of readdirSync(dir)) {
+    out.push(...decodeCanton(JSON.parse(readFileSync(join(dir, f), "utf8"))));
+  }
+  return out;
+}
+
+function anchorChecks(latestSem: [number, number]): AnchorCheck[] {
+  const [ly, lm] = latestSem;
+  const cl = loadNat("CL");
   const find = (pred: (o: Observation) => boolean): number | null => {
-    const o = observations.find(pred);
+    const o = cl.find(pred);
     return o ? o.value : null;
   };
-  // Every anchor below names its canton. Before the harvest covered all 26 of
-  // them these predicates matched only Zug by construction; now an unconstrained
-  // predicate silently matches whichever canton sorts first, which is how a Zug
-  // anchor of 3 came back as the Swiss total of 163.
   const semLatestIn = (canton: string, m: (o: Observation) => boolean) =>
-    find((o) => o.source === "SEM" && o.dim.canton === canton && o.dim.year === 2026 && o.dim.month === 5 && m(o));
-  const semLatest = (m: (o: Observation) => boolean) => semLatestIn("ZG", m);
-  const findIn = (canton: string, pred: (o: Observation) => boolean) =>
-    find((o) => o.dim.canton === canton && pred(o));
+    find((o) => o.source === "SEM" && o.dim.canton === canton && o.dim.year === ly && o.dim.month === lm && m(o));
+  const findIn = (canton: string, pred: (o: Observation) => boolean) => find((o) => o.dim.canton === canton && pred(o));
+
   const checks: [string, number, number | null, string][] = [
-    ["Zug 2026-05 permanent total", 35, semLatest((o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"), "SEM 2-10"],
-    ["Zug 2026-05 permanent female", 20, semLatest((o) => o.dataset === "2-10" && o.concept === "Permanent residents" && o.dim.sex === "female"), "SEM 2-10"],
-    ["Zug 2026-05 permit B", 22, semLatest((o) => o.dataset === "2-10" && o.dim.permit === "B" && o.dim.sex === "total"), "SEM 2-10"],
-    ["Zug 2026-05 permit C", 11, semLatest((o) => o.dataset === "2-10" && o.dim.permit === "C" && o.dim.sex === "total"), "SEM 2-10"],
-    ["Zug 2026-05 permit L", 2, semLatest((o) => o.dataset === "2-10" && o.dim.permit === "L" && o.dim.sex === "total"), "SEM 2-10"],
-    ["Zug 2026-05 FZA", 17, semLatest((o) => o.dataset === "2-20" && o.dim.legalBasis === "FZA" && o.dim.sex === "total"), "SEM 2-20"],
-    ["Zug 2026-05 AIG", 18, semLatest((o) => o.dataset === "2-20" && o.dim.legalBasis === "AIG" && o.dim.sex === "total"), "SEM 2-20"],
-    ["Zug 2026-05 married", 23, semLatest((o) => o.dataset === "2-22" && o.dim.marital === "married" && !o.dim.marriedToSwiss), "SEM 2-22"],
-    ["Zug 2026-05 married to Swiss", 6, semLatest((o) => o.dataset === "2-22" && o.dim.marital === "married" && o.dim.marriedToSwiss === true), "SEM 2-22"],
-    ["Zug 2026-05 single", 10, semLatest((o) => o.dataset === "2-22" && o.dim.marital === "single"), "SEM 2-22"],
-    ["Zug 2026-05 age 18-64", 27, semLatest((o) => o.dataset === "2-21" && o.dim.ageClass === "18-64" && o.dim.sex === "total"), "SEM 2-21"],
-    ["Zug 2026-05 age 65+", 0, semLatest((o) => o.dataset === "2-21" && o.dim.ageClass === "65+" && o.dim.sex === "total"), "SEM 2-21"],
-    ["Zug 2026-05 stay 0-4y", 17, semLatest((o) => o.dataset === "2-23" && o.dim.lengthOfStay === "0-4" && o.dim.sex === "total"), "SEM 2-23"],
-    ["Zug 2026-05 stay 20+y", 0, semLatest((o) => o.dataset === "2-23" && o.dim.lengthOfStay === "20+" && o.dim.sex === "total"), "SEM 2-23"],
-    ["Zug 12mo permanent immigration total", 3, findIn("ZG", (o) => o.dataset === "3-30" && o.metric === "immigration" && o.populationType === "permanent" && o.concept === "Total immigration" && o.dim.year === 2026 && o.dim.month === 5), "SEM 3-30 12Mt"],
-    ["Zug 12mo non-permanent immigration total", 2, findIn("ZG", (o) => o.dataset === "3-31" && o.metric === "immigration" && o.populationType === "non_permanent" && o.concept === "Total immigration" && o.dim.year === 2026 && o.dim.month === 5), "SEM 3-31 12Mt"],
-    ["Zug 12mo permanent emigration", 1, findIn("ZG", (o) => o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "permanent" && o.concept === "Permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026), "SEM 3-55 12Mt"],
-    ["Zug 12mo non-permanent emigration", 3, findIn("ZG", (o) => o.dataset === "3-55" && o.metric === "emigration" && o.populationType === "non_permanent" && o.concept === "Non-permanent emigration" && o.dim.sex === "total" && o.dim.year === 2026), "SEM 3-55 12Mt"],
-    ["Zug 12mo naturalisations", 0, findIn("ZG", (o) => o.dataset === "3-60" && o.metric === "naturalisation" && o.dim.year === 2026), "SEM 3-60 12Mt"],
-    ["Zug BFS 2024 Chilean nationals (perm)", 33, find((o) => o.dataset === "px-x-0103010000_101" && o.dim.canton === "ZG" && o.dim.nationality === "CL" && o.dim.year === 2024 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
-    ["Zug BFS 2017 Chilean nationals (perm)", 34, find((o) => o.dataset === "px-x-0103010000_101" && o.dim.canton === "ZG" && o.dim.nationality === "CL" && o.dim.year === 2017 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
-    ["Zug BFS 2020 Chilean nationals (perm)", 20, find((o) => o.dataset === "px-x-0103010000_101" && o.dim.canton === "ZG" && o.dim.nationality === "CL" && o.dim.year === 2020 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
-    ["Zug BFS 2024 Chilean-born (perm)", 99, findIn("ZG", (o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "total" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
-    ["Zug BFS 2024 Chilean-born Swiss passport", 33, findIn("ZG", (o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "Swiss" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
-    ["Zug BFS 2024 Chilean-born LatAm passport", 34, findIn("ZG", (o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "Latin America & Caribbean" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
-    ["Zug BFS 2024 Chilean-born EU passport", 29, findIn("ZG", (o) => o.dataset === "px-x-0103010000_399" && o.dim.year === 2024 && o.dim.nationalityGroup === "EU" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
-    ["Zug BFS 2023 Chilean nationals born in Chile", 27, findIn("ZG", (o) => o.dataset === "px-x-0103010000_423" && o.dim.nationality === "CL" && o.dim.birthCountry === "CL" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.marital), "BFS 423"],
-    ["SEM cantonal Chile VD", 989, find((o) => o.dataset === "2-10" && o.dim.canton === "VD" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Chilean nationals (cantonal comparison)"), "SEM 2-10 VD"],
-    ["SEM cantonal Chile ZH", 554, find((o) => o.dataset === "2-10" && o.dim.canton === "ZH" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Chilean nationals (cantonal comparison)"), "SEM 2-10 ZH"],
-    // Switzerland, the new default view. The first of these is the load-bearing
-    // one: it reads the CH-Nati sheet through the new multi-sheet path and must
-    // agree with the cantonal-baseline reader below, which reaches the same sheet
-    // by an entirely different route. If the two disagree the sheet mapping is
-    // wrong somewhere.
-    ["Switzerland 2026-05 permanent total", 3303, semLatestIn("CH", (o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"), "SEM 2-10 CH-Nati"],
-    ["Switzerland BFS 2024 Chilean nationals (perm)", 3394, findIn("CH", (o) => o.dataset === "px-x-0103010000_101" && o.dim.nationality === "CL" && o.dim.year === 2024 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101 CH"],
-    ["Vaud 2026-05 permanent total", 989, semLatestIn("VD", (o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"), "SEM 2-10 VD"],
-    ["SEM Chile Switzerland total", 3303, find((o) => o.dataset === "2-10" && o.dim.canton === "CH" && o.dim.nationality === "CL" && o.dim.sex === "total" && o.concept === "Chilean nationals (cantonal comparison)"), "SEM 2-10 CH-Nati"],
+    // SEM latest-month figures move with each release; the stable BFS history
+    // is the cross-rewrite regression proof. SEM anchors assert against the
+    // 2026-05 values only while that is still the latest month.
+    ...(ly === 2026 && lm === 5
+      ? ([
+          ["Zug 2026-05 permanent total", 35, semLatestIn("ZG", (o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"), "SEM 2-10"],
+          ["Zug 2026-05 permit B", 22, semLatestIn("ZG", (o) => o.dataset === "2-10" && o.dim.permit === "B" && o.dim.sex === "total"), "SEM 2-10"],
+          ["Switzerland 2026-05 permanent total", 3303, semLatestIn("CH", (o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"), "SEM 2-10 CH-Nati"],
+          ["Vaud 2026-05 permanent total", 989, semLatestIn("VD", (o) => o.dataset === "2-10" && o.populationType === "permanent" && o.concept === "Permanent residents" && o.dim.sex === "total"), "SEM 2-10 VD"],
+        ] as [string, number, number | null, string][])
+      : []),
+    ["Zug BFS 2024 Chilean nationals (perm)", 33, findIn("ZG", (o) => o.dataset === CUBE_101 && o.dim.nationality === "CL" && o.dim.year === 2024 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
+    ["Zug BFS 2017 Chilean nationals (perm)", 34, findIn("ZG", (o) => o.dataset === CUBE_101 && o.dim.nationality === "CL" && o.dim.year === 2017 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
+    ["Zug BFS 2020 Chilean nationals (perm)", 20, findIn("ZG", (o) => o.dataset === CUBE_101 && o.dim.nationality === "CL" && o.dim.year === 2020 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101"],
+    ["Switzerland BFS 2024 Chilean nationals (perm)", 3394, findIn("CH", (o) => o.dataset === CUBE_101 && o.dim.nationality === "CL" && o.dim.year === 2024 && o.populationType === "permanent" && !o.dim.permit && o.dim.sex === "total" && !o.dim.ageClass), "BFS 101 CH"],
+    ["Zug BFS 2024 Chilean-born (perm)", 99, findIn("ZG", (o) => o.dataset === CUBE_399 && o.dim.year === 2024 && o.dim.nationalityGroup === "total" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
+    ["Zug BFS 2024 Chilean-born Swiss passport", 33, findIn("ZG", (o) => o.dataset === CUBE_399 && o.dim.year === 2024 && o.dim.nationalityGroup === "Swiss" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
+    ["Zug BFS 2024 Chilean-born LatAm passport", 34, findIn("ZG", (o) => o.dataset === CUBE_399 && o.dim.year === 2024 && o.dim.nationalityGroup === "Latin America & Caribbean" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
+    ["Zug BFS 2024 Chilean-born EU passport", 29, findIn("ZG", (o) => o.dataset === CUBE_399 && o.dim.year === 2024 && o.dim.nationalityGroup === "EU" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.ageClass), "BFS 399"],
+    ["Zug BFS 2023 Chilean nationals born in Chile", 27, findIn("ZG", (o) => o.dataset === CUBE_423 && o.dim.nationality === "CL" && o.dim.birthCountry === "CL" && o.populationType === "permanent" && o.dim.sex === "total" && !o.dim.marital), "BFS 423"],
   ];
-  return checks.map(([label, expected, observed, source]) => ({
-    label,
-    expected,
-    observed,
-    pass: observed === expected,
-    source,
-  }));
+  return checks.map(([label, expected, observed, source]) => ({ label, expected, observed, pass: observed === expected, source }));
 }
 
 // ---------------------------------------------------------------------------
-// Availability matrix (which dimension pairs are actually cross-tabulated)
-// ---------------------------------------------------------------------------
-function buildAvailability(): AvailabilityEntry[] {
-  const entries: AvailabilityEntry[] = [
-    { datasets: ["SEM 2-10"], dimensions: ["permit", "sex"], note: "L/B/C x sex, permanent; + non-permanent" },
-    { datasets: ["SEM 2-20"], dimensions: ["legalBasis", "sex"], note: "FZA vs AIG x sex, permanent" },
-    { datasets: ["SEM 2-21"], dimensions: ["ageClass", "sex"], note: "5 SEM age bands x sex, permanent" },
-    { datasets: ["SEM 2-22"], dimensions: ["marital", "marriedToSwiss"], note: "marital + married-to-Swiss subset, permanent" },
-    { datasets: ["SEM 2-23"], dimensions: ["lengthOfStay", "sex"], note: "5 stay bands x sex, permanent" },
-    { datasets: ["SEM 2-40", "SEM 2-41"], dimensions: ["permit", "ageClass"], note: "non-permanent categories and age" },
-    { datasets: ["SEM 3-30", "SEM 3-31"], dimensions: ["reason", "populationType"], note: "immigration by reason" },
-    { datasets: ["SEM 3-55"], dimensions: ["permit", "populationType"], note: "emigration by permit" },
-    { datasets: ["SEM 3-60"], dimensions: ["naturalisationType", "sex"], note: "naturalisation types" },
-    { datasets: ["BFS 101"], dimensions: ["year", "permit"], note: "Chilean nationals, 2010-2024" },
-    { datasets: ["BFS 101"], dimensions: ["year", "ageClass"], note: "5-year age classes" },
-    { datasets: ["BFS 101"], dimensions: ["year", "sex"] },
-    { datasets: ["BFS 101"], dimensions: ["canton", "nationality"], note: "cantonal comparison baseline" },
-    { datasets: ["BFS 399"], dimensions: ["birthCountry", "nationalityGroup"], note: "Chilean-born by passport, 2020-2024" },
-    { datasets: ["BFS 399"], dimensions: ["birthCountry", "ageClass"] },
-    { datasets: ["BFS 423"], dimensions: ["marital", "sex"], note: "Chilean nationals, 2023 only" },
-    { datasets: ["BFS 423"], dimensions: ["nationality", "birthCountry"], note: "2023 only" },
-  ];
-  return entries;
-}
-
-function buildSources(semUrls: Set<string>): SourceRecord[] {
-  const bySrc = (src: string, ds: string) =>
-    observations.filter((o) => o.source === src && o.dataset === ds);
-  const semTables = new Set(observations.filter((o) => o.source === "SEM").map((o) => o.dataset));
-  const records: SourceRecord[] = [];
-  for (const t of [...semTables].sort()) {
-    records.push({
-      id: `SEM ${t}`,
-      source: "SEM",
-      title: `SEM Ausländerstatistik table ${t} (all 26 canton sheets + CH-Nati, row Chile)`,
-      checkedFor: "Chile x Zug figures, monthly/annual",
-      yielded: `${bySrc("SEM", t).length} cells`,
-      observationCount: bySrc("SEM", t).length,
-      urls: [...semUrls].filter((u) => u.toLowerCase().includes(`/${t.toLowerCase()}-`)).slice(0, 5),
-    });
-  }
-  for (const cube of ["px-x-0103010000_101", "px-x-0103010000_399", "px-x-0103010000_423"]) {
-    const cells = bySrc("BFS", cube);
-    // Two routes reach the same cube. The json-stat2 query API is the documented
-    // one; the PC-Axis bulk download is the fallback used when the API refuses.
-    // Both are listed because either may have produced a given cell, and each
-    // cell's own provenance.access records which one did.
-    const viaPx = cells.filter((o) => o.provenance.access?.startsWith("Full PC-Axis")).length;
-    records.push({
-      id: `BFS ${cube}`,
-      source: "BFS",
-      title: `BFS STATPOP cube ${cube}`,
-      checkedFor: "Chile x Zug slices (nationality / birth country / marital)",
-      yielded:
-        viaPx > 0
-          ? `${cells.length} cells (${viaPx} decoded from the full cube download)`
-          : `${cells.length} cells`,
-      observationCount: cells.length,
-      urls: [`https://www.pxweb.bfs.admin.ch/api/v1/de/${cube}/${cube}.px`, pxDownloadUrl(cube)],
-    });
-  }
-  return records;
-}
-
 async function main(): Promise<void> {
   const started = Date.now();
-  const semUrls = new Set<string>();
-  console.log("Harvesting SEM stock tables …");
-  await runSem({ months: STOCK_MONTHS, tables: STOCK_TABLES }, semUrls);
-  console.log("Harvesting SEM annual flows (December releases) …");
-  await runSem({ months: FLOW_J_MONTHS, tables: FLOW_TABLES_J, variant: "J" }, semUrls);
-  console.log("Harvesting SEM rolling 12-month flows (latest release) …");
-  await runSem({ months: FLOW_12MT_MONTHS, tables: FLOW_TABLES_12MT, variant: "12Mt" }, semUrls);
-  console.log("Harvesting SEM cantonal baselines …");
-  await runSemCantonal(2026, 5, semUrls);
-  console.log("Loading BFS seed (committed reconnaissance responses) …");
-  const seeded = runBfsSeed();
-  console.log(`  seeded ${seeded} BFS cells from data/bfs-seed/`);
-  semUrls.add(SEED_URL(CUBE_101));
-  semUrls.add(SEED_URL(CUBE_399));
-  let blocked: string[] = [];
+  const reg = loadRegistry();
+  const w = new BucketWriter();
+  console.log(`registry: ${reg.entries.length} entries (${reg.semEntries.length} with SEM rows)`);
+
+  console.log("SEM: stock tables, all months, all nationalities …");
+  await runSem(reg, w, { months: stockMonths(), tables: STOCK_TABLES });
+  if (LATEST_SEM[0] === 0) throw new Error("SEM: no 2-10 workbook found in any month");
+  console.log(`  latest SEM month: ${LATEST_SEM[0]}-${String(LATEST_SEM[1]).padStart(2, "0")}`);
+
+  console.log("SEM: annual flows (December releases) …");
+  const flowJYears: [number, number][] = [];
+  for (let y = 2017; y <= LATEST_SEM[0]; y++) flowJYears.push([y, 12]);
+  await runSem(reg, w, { months: flowJYears, tables: FLOW_TABLES_J, variant: "J" });
+
+  console.log("SEM: rolling 12-month flows (latest release) …");
+  await runSem(reg, w, { months: [LATEST_SEM], tables: FLOW_TABLES_12MT, variant: "12Mt" });
+
+  console.log("SEM: cantonal comparison (latest 2-10) …");
+  await runSemCantonal(reg, w, LATEST_SEM[0], LATEST_SEM[1]);
+
   if (process.env.HARVEST_SKIP_BFS === "1") {
-    console.log("Skipping live BFS phase (HARVEST_SKIP_BFS=1)");
+    console.log("Skipping BFS (HARVEST_SKIP_BFS=1)");
   } else {
-    console.log("Harvesting BFS STATPOP cubes …");
-    blocked = await runBfs(semUrls);
-    if (blocked.length) console.warn(`BFS queries still blocked after retries: ${blocked.join(", ")}`);
+    console.log("BFS: streaming full cubes …");
+    await runBfs101(reg, w);
+    await runBfs399(reg, w);
+    await runBfs423(reg, w);
   }
 
-  const cellStateCounts = observations.reduce(
-    (acc, o) => {
-      acc[o.state] = (acc[o.state] ?? 0) + 1;
-      return acc;
-    },
-    { observed: 0, structural_zero: 0, suppressed: 0, not_published: 0 } as Record<CellState, number>,
-  );
+  w.flushAll();
+  console.log(`buckets: ${w.codes().length} nationalities, ${w.lines} lines`);
 
-  const anchors = anchorChecks();
-  const manifest: Manifest = {
+  console.log("Encoding payloads …");
+  const { index, totalObs, totalBytes } = encodeAll(reg, w);
+
+  const anchors = anchorChecks(LATEST_SEM);
+  const sources = [...sourceCellCounts.entries()].sort().map(([id, n]) => ({
+    id,
+    source: id.startsWith("SEM") ? "SEM" : "BFS",
+    title: id.startsWith("SEM")
+      ? `SEM Ausländerstatistik table ${id.slice(4)} (all 26 canton sheets + CH-Nati, every country row)`
+      : `BFS STATPOP cube ${id.slice(4)} (full cube download, per-nationality slices)`,
+    checkedFor: "every nationality × every canton",
+    yielded: `${n} cells`,
+    observationCount: n,
+    urls: id.startsWith("SEM") ? [] : [pxDownloadUrl(id.slice(4))],
+  }));
+
+  const manifest = {
     generatedAt: nowIso(),
-    observationCount: observations.length,
-    cellStateCounts,
-    sources: buildSources(semUrls),
-    availability: buildAvailability(),
-    anchors,
-    referenceDates: { sem: "2026-05-31", bfsStatpop: "2024-12-31" },
-  };
-
-  observations.sort((a, b) =>
-    a.dataset === b.dataset
-      ? (a.dim.year ?? 0) - (b.dim.year ?? 0)
-      : a.dataset < b.dataset
-        ? -1
-        : 1,
-  );
-  // ---- Partitioned output --------------------------------------------------
-  // One file per canton, plus Switzerland. The reader looks at one canton at a
-  // time, so shipping all twenty-seven in a single document would mean
-  // downloading thirty times what any view needs. Still static JSON: no runtime
-  // database and no server-side fetching, just more than one file.
-  const publicDir = join(process.cwd(), "public", "data");
-  const cantonDir = join(publicDir, "canton");
-  mkdirSync(cantonDir, { recursive: true });
-
-  const byCanton = new Map<string, Observation[]>();
-  for (const o of observations) {
-    const c = (o.dim.canton as string) ?? "CH";
-    const list = byCanton.get(c);
-    if (list) list.push(o);
-    else byCanton.set(c, [o]);
-  }
-
-  const cantonIndex: { code: string; observations: number; bytes: number }[] = [];
-  for (const [code, list] of [...byCanton.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
-    // The app drops the canton constraint from its queries entirely and relies on
-    // the file being the scope. That is only safe if it is true, so assert it here
-    // rather than discovering a stray row as a wrong number on the page.
-    const stray = list.find((o) => o.dim.canton !== code);
-    if (stray) {
-      throw new Error(
-        `canton file ${code} would contain a ${String(stray.dim.canton)} observation ` +
-          `(${stray.dataset} / ${stray.concept}) — the per-canton files must be pure`,
-      );
-    }
-    const json = JSON.stringify(encodeCanton(code, list));
-    writeFileSync(join(cantonDir, `${code}.json`), json);
-    cantonIndex.push({ code, observations: list.length, bytes: json.length });
-  }
-
-  // Cross-canton comparison figures live in every canton's own file, which is
-  // useless to a view that ranks all of them at once. They are small, so they
-  // also go out as one summary the comparison section can read on its own.
-  const COMPARISON_CONCEPTS = new Set([
-    "Chilean nationals (cantonal comparison)",
-    "Foreign residents (per-capita denominator)",
-    "Chilean nationals by canton, 2024 (baseline)",
-    "Total resident population by canton, 2024 (denominator)",
-  ]);
-  const summaryObs = observations.filter((o) => COMPARISON_CONCEPTS.has(o.concept));
-  writeFileSync(join(publicDir, "summary.json"), JSON.stringify(encodeCanton("ALL", summaryObs)));
-  console.log(`  wrote summary.json (${summaryObs.length} cross-canton cells)`);
-
-  const manifestWithIndex = {
-    ...manifest,
-    cantons: cantonIndex,
     payloadVersion: PAYLOAD_VERSION,
+    observationCount: totalObs,
+    cellStateCounts: stateCounts,
+    nationalities: index.length,
+    sources,
+    anchors,
+    referenceDates: {
+      sem: lastDay(LATEST_SEM[0], LATEST_SEM[1]),
+      bfsStatpop: "2024-12-31",
+    },
   };
-  writeFileSync(join(OUT_DIR, "manifest.json"), JSON.stringify(manifestWithIndex, null, 2));
-  writeFileSync(join(publicDir, "manifest.json"), JSON.stringify(manifestWithIndex));
-
-  console.log(
-    `  wrote ${cantonIndex.length} canton files, ` +
-      `${(cantonIndex.reduce((n, c) => n + c.bytes, 0) / 1048576).toFixed(1)} MB total`,
+  writeFileSync(join(CWD, "data", "manifest.json"), JSON.stringify(manifest, null, 2));
+  writeFileSync(join(PUBLIC_DIR, "manifest.json"), JSON.stringify(manifest));
+  writeFileSync(
+    join(PUBLIC_DIR, "index.json"),
+    JSON.stringify({ generatedAt: manifest.generatedAt, referenceDates: manifest.referenceDates, nationalities: index }),
   );
 
   const passed = anchors.filter((a) => a.pass).length;
   console.log(`\nHarvest complete in ${((Date.now() - started) / 1000).toFixed(1)}s`);
-  console.log(`  observations: ${observations.length}`);
-  console.log(`  cell states:`, cellStateCounts);
+  console.log(`  observations: ${totalObs} across ${index.length} nationalities (${(totalBytes / 1048576).toFixed(1)} MB)`);
+  console.log(`  cell states:`, stateCounts);
   console.log(`  anchors: ${passed}/${anchors.length} pass`);
   for (const a of anchors.filter((a) => !a.pass)) {
     console.log(`    FAIL ${a.label}: expected ${a.expected}, got ${a.observed}`);
   }
+  if (passed !== anchors.length) process.exitCode = 1;
 }
 
 main().catch((err) => {

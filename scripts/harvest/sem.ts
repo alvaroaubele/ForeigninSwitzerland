@@ -105,9 +105,9 @@ const STOCK_MARITAL: TableDef = {
   extract: (r) => {
     const cells: Cell[] = [
       { metric: "stock", pop: "permanent", concept: "Permanent residents", dim: { sex: "total" }, value: n(r[1]) },
-      // Subset of Chilean nationals born in Switzerland. Left un-dimensioned on
-      // birthCountry to avoid conflating "born in CH" with "born outside Chile".
-      { metric: "stock", pop: "permanent", concept: "Born in Switzerland (of Chilean nationality)", dim: { sex: "total" }, value: n(r[2]) },
+      // Subset of this nationality born in Switzerland. Left un-dimensioned on
+      // birthCountry to avoid conflating "born in CH" with "born elsewhere".
+      { metric: "stock", pop: "permanent", concept: "Born in Switzerland (same nationality)", dim: { sex: "total" }, value: n(r[2]) },
     ];
     for (const [col, concept, dim] of MARITAL_LABELS) {
       cells.push({ metric: "stock", pop: "permanent", concept, dim: { sex: "total", ...dim }, value: n(r[col]) });
@@ -340,6 +340,51 @@ export function findChileRowsForSheets(
   const wb = XLSX.read(buffer, { type: "buffer" });
   const out = new Map<string, ChileRow | null>();
   for (const name of sheetNames) out.set(name, chileRowOf(wb, name));
+  return out;
+}
+
+/** One labelled data row of a SEM sheet. */
+export interface LabelledRow {
+  label: string;
+  row: (number | string | null)[];
+  index: number;
+}
+
+/**
+ * Every labelled row of every requested sheet, from one parse of the workbook.
+ *
+ * This is the all-nationalities generalisation of findChileRowsForSheets: the
+ * caller gets each sheet's complete row inventory (country rows, aggregate
+ * rows, title rows alike — classification against the registry is the
+ * caller's job, because only the caller can decide that an unknown label is a
+ * build failure). Sheets absent from the workbook map to null.
+ */
+export function readAllRowsForSheets(
+  buffer: Buffer,
+  sheetNames: string[],
+): Map<string, LabelledRow[] | null> {
+  const wb = XLSX.read(buffer, { type: "buffer" });
+  const out = new Map<string, LabelledRow[] | null>();
+  for (const name of sheetNames) {
+    const sheet = wb.Sheets[name];
+    if (!sheet) {
+      out.set(name, null);
+      continue;
+    }
+    const rows = XLSX.utils.sheet_to_json<(number | string | null)[]>(sheet, {
+      header: 1,
+      raw: true,
+      defval: null,
+    });
+    const labelled: LabelledRow[] = [];
+    for (let i = 0; i < rows.length; i++) {
+      const r = rows[i];
+      if (r && typeof r[0] === "string" && r[0].trim()) {
+        labelled.push({ label: r[0], row: r, index: i });
+      }
+    }
+    out.set(name, labelled);
+  }
   return out;
 }
 
