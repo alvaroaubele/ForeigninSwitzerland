@@ -132,8 +132,9 @@ export function Explorer() {
       // set — we never silently substitute a different aggregate.
       const rows: Observation[] = dataset.observations.filter((o) => matches(o, sel));
       const stamp = `${filter.source.toLowerCase()}-${filter.metric}-${filter.year}${filter.month ? "-" + filter.month : ""}`;
-      if (fmt === "csv") download(`chileans-${scope}-${stamp}.csv`, toCsv(rows), "text/csv");
-      else download(`chileans-${scope}-${stamp}.json`, toJson(rows), "application/json");
+      const natStem = nat.toLowerCase().replace(/^_/, "");
+      if (fmt === "csv") download(`${natStem}-${scope}-${stamp}.csv`, toCsv(rows), "text/csv");
+      else download(`${natStem}-${scope}-${stamp}.json`, toJson(rows), "application/json");
     },
     [dataset, filter, canton],
   );
