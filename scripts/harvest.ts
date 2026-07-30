@@ -395,7 +395,12 @@ function dimIndex(h: PxHeader, name: string): number {
   return i;
 }
 
-const kantonCode = (c: string) => (c === "8100" ? "CH" : c);
+/**
+ * Cube canton code -> app canton code. "-9" is BFS's "canton unknown" — a real
+ * published residual, but not a place the app can show; those cells are
+ * skipped (null) rather than emitted as a 28th pseudo-canton file.
+ */
+const kantonCode = (c: string) => (c === "8100" ? "CH" : /^[A-Z]{2}$/.test(c) ? c : null);
 
 async function runBfs101(reg: Registry, w: BucketWriter): Promise<void> {
   const { path } = await ensurePxCube(CUBE_101);
@@ -438,10 +443,12 @@ async function runBfs101(reg: Registry, w: BucketWriter): Promise<void> {
       return;
     }
 
+    const kt = kantonCode(h.dims[iK].codes[pos[iK]]);
+    if (kt === null) return;
     const suppressed = /^\.+$/.test(raw.replace(/"/g, "").trim());
     const c = classify(value, suppressed || value === null);
     const dim: Record<string, unknown> = {
-      canton: kantonCode(h.dims[iK].codes[pos[iK]]),
+      canton: kt,
       year,
       sex: SEX_101[h.dims[iS].codes[pos[iS]]] ?? "total",
       nationality,
@@ -507,12 +514,14 @@ async function runBfs399(reg: Registry, w: BucketWriter): Promise<void> {
     const isLatest = h.dims[iY].codes[pos[iY]] === latestYear;
     if (!(isLatest || totals >= 2)) return;
 
+    const kt = kantonCode(h.dims[iK].codes[pos[iK]]);
+    if (kt === null) return;
     const suppressed = /^\.+$/.test(raw.replace(/"/g, "").trim());
     const c = classify(value, suppressed || value === null);
     const year = Number(h.dims[iY].codes[pos[iY]]);
     const g = h.dims[iG].codes[pos[iG]];
     const dim: Record<string, unknown> = {
-      canton: kantonCode(h.dims[iK].codes[pos[iK]]),
+      canton: kt,
       year,
       birthCountry: entry.code,
       nationalityGroup: NATGROUP_399[g] ?? g,
@@ -572,9 +581,11 @@ async function runBfs423(reg: Registry, w: BucketWriter): Promise<void> {
     const sexT = sexCode === "-99999";
     const zT = zCode === "-99999";
 
+    const kt = kantonCode(h.dims[iK].codes[pos[iK]]);
+    if (kt === null) return;
     let bucket: string;
     const dim: Record<string, unknown> = {
-      canton: kantonCode(h.dims[iK].codes[pos[iK]]),
+      canton: kt,
       year,
       sex: SEX_101[sexCode] ?? "total",
     };
