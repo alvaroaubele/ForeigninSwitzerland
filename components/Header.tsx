@@ -17,17 +17,17 @@ const NAV_IDS_DEF = [
 const NAV_IDS = [...NAV_IDS_DEF];
 
 export function Header() {
-  // The count is the whole harvest, not the canton in view: the page loads one
-  // canton at a time, but "12 475 harvested cells" next to a Switzerland heading
-  // reads as the size of the project, and understating it by a factor of 27 is
-  // worse than saying nothing.
-  const { dataset, cantons } = useDataset();
+  // The count is the whole harvest, not the slice in view: the page loads one
+  // (nationality, canton) slice at a time, but the figure next to the title
+  // reads as the size of the project, and understating it by three orders of
+  // magnitude is worse than saying nothing.
+  const { dataset, manifest } = useDataset();
   const { t } = useI18n();
   const navLabel: Record<string, string> = {
     "passport-birthplace": t.nav.contrast, portrait: t.nav.portrait, trend: t.nav.trend,
     reasons: t.nav.movement, "cross-filter": t.nav.crossfilter, baselines: t.nav.comparison, appendix: t.nav.method,
   };
-  const n = cantons.length ? cantons.reduce((sum, c) => sum + c.observations, 0) : (dataset?.observations.length ?? null);
+  const n = manifest?.observationCount ?? dataset?.observations.length ?? null;
   // The observed sections only exist once the dataset has rendered them, so the
   // observer has to be (re)built at that point — the header mounts well before.
   const active = useActiveSection(NAV_IDS, dataset !== null);

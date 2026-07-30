@@ -13,8 +13,15 @@ import { useI18n } from "@/lib/i18n";
  * cantons follow alphabetically by name, not by code, because a reader looking
  * for Geneva does not know it sorts under G-E.
  */
+// Every nationality's data covers the same 26 cantons plus Switzerland — the
+// harvest emits a real zero where a canton has nobody — so the list is static.
+const CANTON_CODES = [
+  "AG", "AI", "AR", "BE", "BL", "BS", "FR", "GE", "GL", "GR", "JU", "LU", "NE",
+  "NW", "OW", "SG", "SH", "SO", "SZ", "TG", "TI", "UR", "VD", "VS", "ZG", "ZH",
+];
+
 export function CantonPicker() {
-  const { canton, cantons, setCanton, switching } = useDataset();
+  const { canton, setCanton, switching } = useDataset();
   const { t, cName } = useI18n();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -33,11 +40,10 @@ export function CantonPicker() {
     };
   }, [open]);
 
-  const codes = cantons.map((c) => c.code);
   const ordered = [
     SWITZERLAND,
-    ...codes.filter((c) => c !== SWITZERLAND).sort((a, b) => cantonName(a).localeCompare(cantonName(b))),
-  ].filter((c, i, arr) => arr.indexOf(c) === i);
+    ...CANTON_CODES.slice().sort((a, b) => cantonName(a).localeCompare(cantonName(b))),
+  ];
 
   return (
     <div className={`canton-picker ${switching ? "is-switching" : ""}`} ref={ref}>

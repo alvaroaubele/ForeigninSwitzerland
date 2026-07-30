@@ -13,6 +13,12 @@ interface I18nState {
   t: Dict;
   /** Canton display name: cantons keep their endonyms; "CH" localises. */
   cName: (code: string) => string;
+  /**
+   * Nationality display name. ISO codes localise through Intl.DisplayNames —
+   * no hand-kept 200×4 translation table — and the pseudo-codes (_ALL, the
+   * stateless/unknown groups) come from the dictionary.
+   */
+  natName: (code: string) => string;
 }
 
 const I18nContext = createContext<I18nState>({
@@ -20,6 +26,7 @@ const I18nContext = createContext<I18nState>({
   setLocale: () => {},
   t: DICTS.en,
   cName: cantonName,
+  natName: (code) => code,
 });
 
 /**
@@ -85,8 +92,20 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     (code: string) => (code === "CH" ? DICTS[locale].values.CH : cantonName(code)),
     [locale],
   );
+  const natName = useCallback(
+    (code: string) => {
+      const special = DICTS[locale].nats[code as keyof Dict["nats"]];
+      if (special) return special;
+      try {
+        return new Intl.DisplayNames([locale], { type: "region" }).of(code) ?? code;
+      } catch {
+        return code;
+      }
+    },
+    [locale],
+  );
 
-  return <I18nContext.Provider value={{ locale, setLocale, t, cName }}>{children}</I18nContext.Provider>;
+  return <I18nContext.Provider value={{ locale, setLocale, t, cName, natName }}>{children}</I18nContext.Provider>;
 }
 
 export function useI18n(): I18nState {

@@ -35,36 +35,36 @@ export function latestSemMonth(ds: Dataset): { year: number; month: number } {
 }
 
 /** SEM permanent Chilean nationals at the latest month (the headline "35"). */
-export function passportHeadline(ds: Dataset): CellResult {
+export function passportHeadline(ds: Dataset, nat: string): CellResult {
   const { year, month } = latestSemMonth(ds);
   return resolveCell(ds, {
     source: "SEM",
     dataset: "2-10",
     metric: "stock",
     populationType: "permanent",
-    dim: { year, month, nationality: "CL", sex: "total" },
+    dim: { year, month, nationality: nat, sex: "total" },
   });
 }
 
 /** SEM total (permanent + non-permanent) at latest month. */
-export function totalHeadline(ds: Dataset): CellResult {
+export function totalHeadline(ds: Dataset, nat: string): CellResult {
   const { year, month } = latestSemMonth(ds);
   return resolveCell(ds, {
     source: "SEM",
     dataset: "2-10",
     metric: "stock",
     populationType: "total",
-    dim: { year, month, nationality: "CL", sex: "total" },
+    dim: { year, month, nationality: nat, sex: "total" },
   });
 }
 
 /** BFS Chilean-born residents (permanent) in a given year — the headline "99". */
-export function bornHeadline(ds: Dataset, year = 2024): CellResult {
+export function bornHeadline(ds: Dataset, nat: string, year = 2024): CellResult {
   return resolveCell(ds, {
     source: "BFS",
     dataset: CUBE_399,
     populationType: "permanent",
-    dim: { year, birthCountry: "CL", nationalityGroup: "total", sex: "total" },
+    dim: { year, birthCountry: nat, nationalityGroup: "total", sex: "total" },
   });
 }
 
@@ -74,14 +74,14 @@ export interface PassportSplitRow {
 }
 
 /** BFS: the Chilean-born population split by passport group. */
-export function passportSplit(ds: Dataset, year = 2024): PassportSplitRow[] {
+export function passportSplit(ds: Dataset, nat: string, year = 2024): PassportSplitRow[] {
   return PASSPORT_GROUPS.map((group) => ({
     group,
     cell: resolveCell(ds, {
       source: "BFS",
       dataset: CUBE_399,
       populationType: "permanent",
-      dim: { year, birthCountry: "CL", nationalityGroup: group, sex: "total" },
+      dim: { year, birthCountry: nat, nationalityGroup: group, sex: "total" },
     }),
   })).filter((r) => r.cell.observation !== null || r.cell.state !== "not_published");
 }
@@ -97,20 +97,20 @@ export interface AnnualPoint {
 }
 
 /** BFS Chilean-nationals stock time series (permanent) for the annual chart. */
-export function bfsStockSeries(ds: Dataset, years = YEARS): AnnualPoint[] {
+export function bfsStockSeries(ds: Dataset, nat: string, years = YEARS): AnnualPoint[] {
   return years.map((year) => {
     const c = resolveCell(ds, {
       source: "BFS",
       dataset: CUBE_101,
       populationType: "permanent",
-      dim: { year, nationality: "CL", sex: "total" },
+      dim: { year, nationality: nat, sex: "total" },
     });
     return { year, value: c.value, state: c.state, refDate: c.observation?.provenance.referenceDate, source: "BFS" };
   });
 }
 
 /** SEM December stock series (permanent), for years where a December snapshot exists. */
-export function semDecemberSeries(ds: Dataset): AnnualPoint[] {
+export function semDecemberSeries(ds: Dataset, nat: string): AnnualPoint[] {
   const years = Array.from(
     new Set(
       ds.observations
@@ -124,7 +124,7 @@ export function semDecemberSeries(ds: Dataset): AnnualPoint[] {
       dataset: "2-10",
       metric: "stock",
       populationType: "permanent",
-      dim: { year, month: 12, nationality: "CL", sex: "total" },
+      dim: { year, month: 12, nationality: nat, sex: "total" },
     });
     return { year, value: c.value, state: c.state, refDate: c.observation?.provenance.referenceDate, source: "SEM" };
   });
@@ -137,7 +137,7 @@ export function semDecemberSeries(ds: Dataset): AnnualPoint[] {
  * year scale carries both resolutions and the two series stay comparable; the
  * printed month label rides along on the point for the tooltip.
  */
-export function semMonthlySeries(ds: Dataset): AnnualPoint[] {
+export function semMonthlySeries(ds: Dataset, nat: string): AnnualPoint[] {
   const periods = new Map<string, { year: number; month: number }>();
   for (const o of ds.observations) {
     if (o.source === "SEM" && o.dataset === "2-10" && o.dim.year !== undefined && o.dim.month !== undefined) {
@@ -152,7 +152,7 @@ export function semMonthlySeries(ds: Dataset): AnnualPoint[] {
         dataset: "2-10",
         metric: "stock",
         populationType: "permanent",
-        dim: { year, month, nationality: "CL", sex: "total" },
+        dim: { year, month, nationality: nat, sex: "total" },
       });
       return {
         year: year + (month - 1) / 12,
@@ -201,15 +201,15 @@ function cantonalCell(ds: Dataset, canton: string, nationality: string): CellRes
 }
 
 /** Cantonal comparison baselines from SEM 2-10 (all cantons + Switzerland). */
-export function cantonBaselines(ds: Dataset, cantons: string[]): CantonBaseline[] {
-  const national = cantonalCell(ds, "CH", "CL");
+export function cantonBaselines(ds: Dataset, nat: string, cantons: string[]): CantonBaseline[] {
+  const national = cantonalCell(ds, "CH", nat);
   const nationalForeign = cantonalCell(ds, "CH", "all_foreign");
   const nationalRatio =
     national.value !== null && nationalForeign.value && nationalForeign.value > 0
       ? national.value / nationalForeign.value
       : null;
   return cantons.map((canton) => {
-    const chile = cantonalCell(ds, canton, "CL");
+    const chile = cantonalCell(ds, canton, nat);
     const foreign = cantonalCell(ds, canton, "all_foreign");
     const per1000 =
       chile.value !== null && foreign.value && foreign.value > 0 ? (chile.value / foreign.value) * 1000 : null;
@@ -222,7 +222,7 @@ export function cantonBaselines(ds: Dataset, cantons: string[]): CantonBaseline[
 export function cantonsWithChile(ds: Dataset): string[] {
   const set = new Set<string>();
   for (const o of ds.observations) {
-    if (o.dataset === "2-10" && o.concept === "Chilean nationals (cantonal comparison)" && o.dim.canton && o.dim.canton !== "CH") {
+    if (o.dataset === "2-10" && o.concept === "Nationals (cantonal comparison)" && o.dim.canton && o.dim.canton !== "CH") {
       set.add(o.dim.canton);
     }
   }

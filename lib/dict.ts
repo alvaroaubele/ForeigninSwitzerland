@@ -22,6 +22,11 @@ export const NUMBER_LOCALE: Record<Locale, string> = {
 export interface Dict {
   nav: { contrast: string; portrait: string; trend: string; movement: string; crossfilter: string; comparison: string; method: string };
   header: { title: string; cells: (n: string) => string; loading: string };
+  /** Display names for the non-country population codes (the _ pseudo-codes). */
+  nats: Record<string, string>;
+  /** "nationals of <country>" in this locale, grammar-safe for any country name. */
+  natOf: (name: string) => string;
+  natPicker: { label: string; pickerLabel: string; search: string; empty: string };
   canton: { showing: string; back: string; backTitle: string; pickerLabel: string; rowTitle: (name: string) => string; view: string };
   theme: { toDark: string; toLight: string };
   main: { loadingCanton: string; error: (msg: string) => string };
@@ -31,12 +36,12 @@ export interface Dict {
   metrics: Record<Observation["metric"], string>;
   findings: {
     h: string;
-    intro: (canton: string) => string;
+    intro: (who: string, canton: string) => string;
     twoCountsH: string;
-    twoCountsD: (p: string, b: string) => string;
+    twoCountsD: (nat: string, p: string, b: string) => string;
     twoCountsCta: string;
     becameSwissH: string;
-    becameSwissD: (b: string, swiss: string, latam: string) => string;
+    becameSwissD: (nat: string, b: string, swiss: string) => string;
     becameSwissCta: (b: string) => string;
     familyH: string;
     familyD: (all: string, years: number, family: string, leads: boolean) => string;
@@ -51,26 +56,26 @@ export interface Dict {
   hero: {
     eyebrow: string;
     h: string;
-    lead: (canton: string, p: string, b: string) => string;
-    kickerPassport: string;
-    kickerBorn: string;
+    lead: (nat: string, canton: string, p: string, b: string) => string;
+    kickerPassport: (nat: string) => string;
+    kickerBorn: (nat: string) => string;
     footSem: (date: string) => string;
     footBfs: string;
-    splitHead: (b: string) => string;
+    splitHead: (nat: string, b: string) => string;
     splitAria: string;
-    insight: (nonLatAm: string, born: string, pct: number) => string;
+    insight: (nonOwn: string, born: string, pct: number) => string;
     awaiting: string;
     offsetNote: string;
   };
   portrait: {
     eyebrow: string;
     whoAre: (n: string) => string;
-    nobodyPassport: (canton: string) => string;
-    nobodyBorn: (canton: string) => string;
-    leadNationals: (canton: string) => string;
-    leadBorn: (canton: string, latam: string, rest: string) => string;
-    popPassport: string;
-    popBorn: string;
+    nobodyPassport: (nat: string, canton: string) => string;
+    nobodyBorn: (nat: string, canton: string) => string;
+    leadNationals: (who: string, canton: string) => string;
+    leadBorn: (nat: string, canton: string, own: string, rest: string) => string;
+    popPassport: (nat: string) => string;
+    popBorn: (nat: string) => string;
     everyone: string;
     splitBySex: string;
     women: string;
@@ -80,13 +85,13 @@ export interface Dict {
     wallSem: string;
     wallBorn: string;
     marriedToSwiss: (n: string) => string;
-    bornMaritalNote: (year: number, total: string, head: string) => string;
+    bornMaritalNote: (nat: string, year: number, total: string, head: string) => string;
     ageSumNote: string;
   };
   trend: {
     eyebrow: string;
     h: string;
-    lead: (canton: string, small: boolean) => string;
+    lead: (who: string, canton: string, small: boolean) => string;
     total: string;
     bySex: string;
     byPermit: string;
@@ -114,7 +119,7 @@ export interface Dict {
     leadTop: (label: string, val: string) => string;
     leadNoRefugees: string;
     leadDepartures: (grand: string, span: string) => string;
-    leadSwiss: (grand: string, span: string) => string;
+    leadSwiss: (who: string, grand: string, span: string) => string;
     periodAll: (a: number, b: number) => string;
     period12: string;
     periodAria: string;
@@ -143,7 +148,7 @@ export interface Dict {
     try: string;
     presetWomenC: string;
     presetUnder5: string;
-    presetBornSwiss: string;
+    presetBornSwiss: (nat: string) => string;
     presetRetirement: string;
     presetWall: string;
     fieldSourceMetric: string;
@@ -157,7 +162,7 @@ export interface Dict {
     popTotal: string;
     hint: string;
     wallBanner: string;
-    passportOfBorn: string;
+    passportOfBorn: (nat: string) => string;
     any: string;
     neverPublished: string;
     notPubWithCarrier: (carrier: string) => string;
@@ -176,14 +181,14 @@ export interface Dict {
   explorer: { exportLabel: string; csv: string; json: string };
   baselines: {
     eyebrow: string;
-    h: string;
+    h: (who: string) => string;
     leadTop3: (a: string, b: string, c: string) => string;
     leadRest: (date: string) => string;
-    cardIn: (canton: string) => string;
+    cardIn: (who: string, canton: string) => string;
     ofWhomPermanent: string;
     shareForeign: (canton: string) => string;
     foreignSub: (n: string) => string;
-    shareNational: string;
+    shareNational: (who: string) => string;
     nationalSub: (n: string) => string;
     largest: (canton: string) => string;
     largestSub: (pct: string) => string;
@@ -192,7 +197,7 @@ export interface Dict {
     segCount: string;
     segPer1000: string;
     segIndex: string;
-    axis: string;
+    axis: (who: string) => string;
     refTitle: string;
     foot: string;
   };
@@ -235,7 +240,18 @@ export interface Dict {
 // ---------------------------------------------------------------------------
 const en: Dict = {
   nav: { contrast: "Contrast", portrait: "Portrait", trend: "Trend", movement: "Movement", crossfilter: "Cross-filter", comparison: "Comparison", method: "Method" },
-  header: { title: "Chileans in Switzerland", cells: (n) => `${n} harvested cells`, loading: "loading…" },
+  header: { title: "Foreigners in Switzerland", cells: (n) => `${n} harvested cells`, loading: "loading…" },
+  nats: {
+    _ALL: "All foreign nationals",
+    _EU_EFTA: "EU / EFTA nationals",
+    _THIRD: "Third-country nationals",
+    _SL: "Stateless",
+    _NONAT: "Without nationality",
+    _UNK: "Nationality unknown",
+    _NA_BORDERS: "Not attributable to current borders",
+  },
+  natOf: (name) => `nationals of ${name}`,
+  natPicker: { label: "Population", pickerLabel: "Nationality", search: "Type a country…", empty: "No match — the register carries no such country." },
   canton: { showing: "Showing", back: "← Switzerland", backTitle: "Back to the national view", pickerLabel: "Canton", rowTitle: (name) => `Show ${name} across the whole page`, view: "view →" },
   theme: { toDark: "Switch to dark theme", toLight: "Switch to light theme" },
   main: { loadingCanton: "Loading canton data…", error: (msg) => `Something failed to load: ${msg}. The figures shown may be for the previously selected canton — reloading the page usually fixes it.` },
@@ -267,12 +283,12 @@ const en: Dict = {
   metrics: { stock: "Resident stock", immigration: "Immigration (inflow)", emigration: "Emigration (outflow)", naturalisation: "Naturalisation" },
   findings: {
     h: "What the official numbers say",
-    intro: (canton) => `Four things worth knowing about Chileans in ${canton} — then the data itself, which you can pull apart however you like. Where a figure was never published, this page says so rather than showing a blank.`,
+    intro: (who, canton) => `Four things worth knowing about ${who} in ${canton} — then the data itself, which you can pull apart however you like. Where a figure was never published, this page says so rather than showing a blank.`,
     twoCountsH: "Two counts, one community",
-    twoCountsD: (p, b) => `${p} people hold a Chilean passport; ${b} were born in Chile. Counting one misses most of the other.`,
+    twoCountsD: (nat, p, b) => `${p} people hold the passport; ${b} were born in ${nat}. Counting one misses most of the other.`,
     twoCountsCta: "See the split",
     becameSwissH: "Have become Swiss",
-    becameSwissD: (b, swiss, latam) => `Of the ${b} born in Chile, ${swiss} now hold a Swiss passport and ${latam} a Latin-American one.`,
+    becameSwissD: (nat, b, swiss) => `Of the ${b} born in ${nat}, ${swiss} now hold a Swiss passport.`,
     becameSwissCta: (b) => `Meet the ${b}`,
     familyH: "Came to join family",
     familyD: (all, years, family, leads) => `Of ${all} arrivals over ${years} years, ${family} came through family reunification${leads ? " — more than work and study together" : ""}.`,
@@ -287,26 +303,26 @@ const en: Dict = {
   hero: {
     eyebrow: "Two ways to count",
     h: "The community is bigger than the passport count",
-    lead: (canton, p, b) => `${canton} counts ${p} Chilean passport holders — and ${b} residents born in Chile. Many of the Chilean-born have since taken Swiss or EU citizenship, so counting passports alone misses a large part of the community.`,
-    kickerPassport: "Hold a Chilean passport",
-    kickerBorn: "Were born in Chile",
+    lead: (nat, canton, p, b) => `${canton} counts ${p} passport holders — and ${b} residents born in ${nat}. Many of those born there have since taken Swiss or other citizenship, so counting passports alone misses a large part of the community.`,
+    kickerPassport: (nat) => `Hold a passport — ${nat}`,
+    kickerBorn: (nat) => `Were born in ${nat}`,
     footSem: (date) => `SEM · ${date} · permanent residents`,
     footBfs: "BFS STATPOP · 31 Dec 2024 · permanent residents",
-    splitHead: (b) => `The ${b} Chilean-born residents, by the passport they actually hold`,
+    splitHead: (nat, b) => `The ${b} residents born in ${nat}, by the passport they actually hold`,
     splitAria: "Passport composition of Chilean-born residents",
-    insight: (nonLatAm, born, pct) => `${nonLatAm} of ${born} Chilean-born residents — ${pct}% — hold a passport other than Latin-American. Naturalisation and mixed-nationality families make birthplace and citizenship diverge sharply at this scale.`,
+    insight: (nonOwn, born, pct) => `${nonOwn} of the ${born} — ${pct}% — hold a passport from outside their region of birth. Naturalisation and mixed-nationality families make birthplace and citizenship diverge sharply.`,
     awaiting: "The passport split comes from BFS STATPOP cube 399.",
     offsetNote: "These two reference dates are ~17 months apart. The offset is real and is preserved throughout this explorer — the two series are never reconciled to a single figure.",
   },
   portrait: {
     eyebrow: "Portrait",
     whoAre: (n) => `Who are the ${n}?`,
-    nobodyPassport: (canton) => `Nobody in ${canton} holds a Chilean passport`,
-    nobodyBorn: (canton) => `Nobody in ${canton} was born in Chile`,
-    leadNationals: (canton) => `Everyone in ${canton} holding a Chilean passport, by every attribute the register carries. Split by sex to go one level deeper — as far as SEM goes, since it crosses these with sex and with nothing else. BFS goes further: the cross-filter below answers permit, sex and age together.`,
-    leadBorn: (canton, latam, rest) => `Everyone in ${canton} born in Chile — a larger and mostly different group. Only ${latam} still hold a Latin-American passport; the other ${rest} carry Swiss, EU or other citizenship and appear nowhere in the Chilean-national figures.`,
-    popPassport: "Chilean passport",
-    popBorn: "Born in Chile",
+    nobodyPassport: (nat, canton) => `Nobody in ${canton} holds this passport — ${nat}`,
+    nobodyBorn: (nat, canton) => `Nobody in ${canton} was born in ${nat}`,
+    leadNationals: (who, canton) => `Every one of the ${who} in ${canton}, by every attribute the register carries. Split by sex to go one level deeper — as far as SEM goes, since it crosses these with sex and with nothing else. BFS goes further: the cross-filter below answers permit, sex and age together.`,
+    leadBorn: (nat, canton, own, rest) => `Everyone in ${canton} born in ${nat} — a larger and mostly different group. Only ${own} still hold a passport of that region; the other ${rest} carry Swiss, EU or other citizenship and appear nowhere in the passport figures.`,
+    popPassport: (nat) => `Passport: ${nat}`,
+    popBorn: (nat) => `Born in ${nat}`,
     everyone: "Everyone",
     splitBySex: "Split by sex",
     women: "Women",
@@ -316,13 +332,13 @@ const en: Dict = {
     wallSem: "Not published by sex — SEM reports marital status for the group as a whole only.",
     wallBorn: "Not published by sex for this population.",
     marriedToSwiss: (n) => `Of the married, ${n} are married to a Swiss national.`,
-    bornMaritalNote: (year, total, head) => `Marital status for the Chilean-born comes from a different cube and an earlier year (31 Dec ${year}), so it counts ${total} rather than ${head}. The dates are not reconciled.`,
+    bornMaritalNote: (nat, year, total, head) => `Marital status for those born in ${nat} comes from a different cube and an earlier year (31 Dec ${year}), so it counts ${total} rather than ${head}. The dates are not reconciled.`,
     ageSumNote: "Summed from the 21 five-year bands BFS publishes — exact arithmetic, not an estimate.",
   },
   trend: {
     eyebrow: "Time · 2010–2026",
     h: "Sixteen years, two registers",
-    lead: (canton, small) => `Chilean nationals in ${canton}, as counted by two registers that do not agree and are not reconciled here.${small ? " At this size a single family arriving moves the line." : ""}`,
+    lead: (who, canton, small) => `${who} in ${canton}, as counted by two registers that do not agree and are not reconciled here.${small ? " At this size a single family arriving moves the line." : ""}`,
     total: "Total", bySex: "By sex", byPermit: "By permit", yearly: "Yearly", monthly: "Monthly",
     seriesBfs: "BFS STATPOP (register, 31 Dec)",
     seriesSemDec: "SEM (administrative, 31 Dec)",
@@ -344,7 +360,7 @@ const en: Dict = {
     leadTop: (label, val) => ` The largest single reason is ${label} at ${val}.`,
     leadNoRefugees: " Nobody arrived as a refugee, on hardship grounds, or through an asylum ruling.",
     leadDepartures: (grand, span) => `${grand} people left ${span} — close to the number who arrived, which is why the population changes so slowly.`,
-    leadSwiss: (grand, span) => `${grand} Chilean nationals became Swiss citizens ${span}. Every one of them leaves the Chilean-passport count and joins the Chilean-born count — a large part of why the two differ so much.`,
+    leadSwiss: (who, grand, span) => `${grand} of the ${who} became Swiss citizens ${span}. Every one of them leaves the passport count while remaining in the birthplace count — a large part of why the two differ so much.`,
     periodAll: (a, b) => `Full period ${a}–${b}`,
     period12: "Last 12 months",
     periodAria: "Period",
@@ -370,7 +386,7 @@ const en: Dict = {
     try: "Try:",
     presetWomenC: "Women on a C permit",
     presetUnder5: "Here under 5 years",
-    presetBornSwiss: "Chilean-born with Swiss passports",
+    presetBornSwiss: (nat) => `Born in ${nat}, Swiss passport`,
     presetRetirement: "Of retirement age",
     presetWall: "Married newcomers — never counted",
     fieldSourceMetric: "Source & metric",
@@ -384,7 +400,7 @@ const en: Dict = {
     popTotal: "Total",
     hint: "Each option shows what it resolves to. A dotted mark means the sources never crossed those dimensions — still selectable, because that absence is itself the finding.",
     wallBanner: "Every option below is dashed because the current combination was never published — drop one of the selected dimensions to continue.",
-    passportOfBorn: "Passport group · of the Chilean-born",
+    passportOfBorn: (nat) => `Passport group · of those born in ${nat}`,
     any: "Any",
     neverPublished: "never published",
     notPubWithCarrier: (carrier) => `The sources never cross-tabulated these dimensions for this population — the nearest table, ${carrier}, does not combine them.`,
@@ -403,14 +419,14 @@ const en: Dict = {
   explorer: { exportLabel: "Export current view with full provenance columns", csv: "Download CSV", json: "Download JSON" },
   baselines: {
     eyebrow: "Comparison",
-    h: "Where Chileans actually live",
+    h: (who) => `Where ${who} actually live`,
     leadTop3: (a, b, c) => `${a}, ${b} and ${c} hold the largest communities. `,
     leadRest: (date) => `Measured per 1,000 foreign residents the ranking changes, because a big canton has more of everyone. Click any canton to view it across the whole page. SEM permanent residents, ${date}.`,
-    cardIn: (canton) => `Chileans in ${canton}`,
+    cardIn: (who, canton) => `${who} in ${canton}`,
     ofWhomPermanent: "of whom permanent",
     shareForeign: (canton) => `Share of ${canton}’s foreign residents`,
     foreignSub: (n) => `${n} foreign residents`,
-    shareNational: "Share of all Chileans in Switzerland",
+    shareNational: (who) => `Share of all ${who} in Switzerland`,
     nationalSub: (n) => `${n} in Switzerland`,
     largest: (canton) => `Largest community: ${canton}`,
     largestSub: (pct) => `${pct}% of the national total`,
@@ -419,9 +435,9 @@ const en: Dict = {
     segCount: "Absolute count",
     segPer1000: "Per 1,000 foreign residents",
     segIndex: "Index vs national rate",
-    axis: "permanent Chilean nationals",
+    axis: (who) => `permanent ${who}`,
     refTitle: "National average = 100",
-    foot: "Per-capita uses SEM’s count of all foreign residents per canton as the denominator (register totals including Swiss nationals are a BFS concept with a different reference date). The index expresses each canton’s Chilean-to-foreign ratio relative to the national ratio.",
+    foot: "Per-capita uses SEM’s count of all foreign residents per canton as the denominator (register totals including Swiss nationals are a BFS concept with a different reference date). The index expresses each canton’s community-to-foreign ratio relative to the national ratio.",
   },
   availability: {
     eyebrow: "What is knowable",
@@ -452,7 +468,7 @@ const en: Dict = {
     sub: "The four states, the reference-date offset between the two registers, which cross-tabulations exist, and the full source inventory.",
   },
   footer: {
-    note: "An honest exploration of official statistics on Chilean nationals and Chilean-born residents of Switzerland, nationally and canton by canton. Built only from harvested open data; nothing is estimated.",
+    note: "An honest exploration of official statistics on every foreign nationality in Switzerland, nationally and canton by canton. Built only from harvested open data; nothing is estimated.",
     sources: "Sources",
     download: (canton) => `Download ${canton}`,
     csv: "Every cell, CSV",
@@ -466,7 +482,18 @@ const en: Dict = {
 // ---------------------------------------------------------------------------
 const es: Dict = {
   nav: { contrast: "Contraste", portrait: "Retrato", trend: "Evolución", movement: "Movimientos", crossfilter: "Explorador", comparison: "Comparación", method: "Método" },
-  header: { title: "Chilenos en Suiza", cells: (n) => `${n} celdas cosechadas`, loading: "cargando…" },
+  header: { title: "Extranjeros en Suiza", cells: (n) => `${n} celdas cosechadas`, loading: "cargando…" },
+  nats: {
+    _ALL: "Todos los extranjeros",
+    _EU_EFTA: "Nacionales UE / AELC",
+    _THIRD: "Nacionales de terceros países",
+    _SL: "Apátridas",
+    _NONAT: "Sin nacionalidad",
+    _UNK: "Nacionalidad desconocida",
+    _NA_BORDERS: "No atribuible a las fronteras actuales",
+  },
+  natOf: (name) => `nacionales de ${name}`,
+  natPicker: { label: "Población", pickerLabel: "Nacionalidad", search: "Escribe un país…", empty: "Sin coincidencias — el registro no trae ese país." },
   canton: { showing: "Mostrando", back: "← Suiza", backTitle: "Volver a la vista nacional", pickerLabel: "Cantón", rowTitle: (name) => `Ver ${name} en toda la página`, view: "ver →" },
   theme: { toDark: "Cambiar a tema oscuro", toLight: "Cambiar a tema claro" },
   main: { loadingCanton: "Cargando datos del cantón…", error: (msg) => `Algo no se pudo cargar: ${msg}. Las cifras mostradas pueden ser del cantón anterior — recargar la página suele resolverlo.` },
@@ -498,12 +525,12 @@ const es: Dict = {
   metrics: { stock: "Población residente", immigration: "Inmigración (entradas)", emigration: "Emigración (salidas)", naturalisation: "Naturalización" },
   findings: {
     h: "Lo que dicen las cifras oficiales",
-    intro: (canton) => `Cuatro cosas que vale la pena saber sobre los chilenos en ${canton} — y luego los datos mismos, para explorarlos como quieras. Cuando una cifra nunca se publicó, esta página lo dice en vez de mostrar un vacío.`,
+    intro: (who, canton) => `Cuatro cosas que vale la pena saber sobre ${who} en ${canton} — y luego los datos mismos, para explorarlos como quieras. Cuando una cifra nunca se publicó, esta página lo dice en vez de mostrar un vacío.`,
     twoCountsH: "Dos conteos, una comunidad",
-    twoCountsD: (p, b) => `${p} personas tienen pasaporte chileno; ${b} nacieron en Chile. Contar solo una deja fuera a la mayor parte de la otra.`,
+    twoCountsD: (nat, p, b) => `${p} personas tienen el pasaporte; ${b} nacieron en ${nat}. Contar solo una deja fuera a la mayor parte de la otra.`,
     twoCountsCta: "Ver el desglose",
     becameSwissH: "Se hicieron suizos",
-    becameSwissD: (b, swiss, latam) => `De los ${b} nacidos en Chile, ${swiss} tienen hoy pasaporte suizo y ${latam} uno latinoamericano.`,
+    becameSwissD: (nat, b, swiss) => `De los ${b} nacidos en ${nat}, ${swiss} tienen hoy pasaporte suizo.`,
     becameSwissCta: (b) => `Conoce a los ${b}`,
     familyH: "Llegaron por la familia",
     familyD: (all, years, family, leads) => `De ${all} llegadas en ${years} años, ${family} fueron por reagrupación familiar${leads ? " — más que trabajo y estudios juntos" : ""}.`,
@@ -512,32 +539,32 @@ const es: Dict = {
     over65H0: "Tiene más de 65",
     over65H: "Tienen más de 65",
     over65D0: (p, recent) => `Ninguna de las ${p} personas está en edad de jubilar${recent ? `, y ${recent} llegaron en los últimos cinco años` : ""}. Un grupo joven y de llegada reciente.`,
-    over65D: (p, recent) => `De ${p} personas con pasaporte chileno${recent ? `, ${recent} llegaron en los últimos cinco años` : ""}.`,
+    over65D: (p, recent) => `De ${p} personas con este pasaporte${recent ? `, ${recent} llegaron en los últimos cinco años` : ""}.`,
     over65Cta: "Ver el retrato",
   },
   hero: {
     eyebrow: "Dos formas de contar",
     h: "La comunidad es más grande que el conteo de pasaportes",
-    lead: (canton, p, b) => `${canton} registra ${p} personas con pasaporte chileno — y ${b} residentes nacidos en Chile. Muchos de los nacidos en Chile ya tomaron la ciudadanía suiza o de la UE, así que contar solo pasaportes deja fuera a gran parte de la comunidad.`,
-    kickerPassport: "Tienen pasaporte chileno",
-    kickerBorn: "Nacieron en Chile",
+    lead: (nat, canton, p, b) => `${canton} registra ${p} personas con el pasaporte — y ${b} residentes nacidos en ${nat}. Muchos de los nacidos allí ya tomaron la ciudadanía suiza u otra, así que contar solo pasaportes deja fuera a gran parte de la comunidad.`,
+    kickerPassport: (nat) => `Tienen pasaporte — ${nat}`,
+    kickerBorn: (nat) => `Nacieron en ${nat}`,
     footSem: (date) => `SEM · ${date} · residentes permanentes`,
     footBfs: "BFS STATPOP · 31 dic 2024 · residentes permanentes",
-    splitHead: (b) => `Los ${b} residentes nacidos en Chile, según el pasaporte que realmente tienen`,
+    splitHead: (nat, b) => `Los ${b} residentes nacidos en ${nat}, según el pasaporte que realmente tienen`,
     splitAria: "Composición por pasaporte de los residentes nacidos en Chile",
-    insight: (nonLatAm, born, pct) => `${nonLatAm} de los ${born} residentes nacidos en Chile — el ${pct}% — tienen un pasaporte que no es latinoamericano. La naturalización y las familias de nacionalidad mixta hacen que lugar de nacimiento y ciudadanía diverjan fuertemente a esta escala.`,
+    insight: (nonOwn, born, pct) => `${nonOwn} de los ${born} — el ${pct}% — tienen un pasaporte de fuera de su región de nacimiento. La naturalización y las familias de nacionalidad mixta hacen que lugar de nacimiento y ciudadanía diverjan fuertemente.`,
     awaiting: "El desglose por pasaporte proviene del cubo 399 de BFS STATPOP.",
     offsetNote: "Estas dos fechas de referencia están separadas por ~17 meses. El desfase es real y se preserva en todo el explorador — las dos series nunca se reconcilian en una sola cifra.",
   },
   portrait: {
     eyebrow: "Retrato",
     whoAre: (n) => `¿Quiénes son los ${n}?`,
-    nobodyPassport: (canton) => `Nadie en ${canton} tiene pasaporte chileno`,
-    nobodyBorn: (canton) => `Nadie en ${canton} nació en Chile`,
-    leadNationals: (canton) => `Todas las personas de ${canton} con pasaporte chileno, según cada atributo que registra la fuente. Divide por sexo para bajar un nivel más — hasta ahí llega el SEM, que solo cruza estos atributos con sexo. BFS llega más lejos: el explorador de abajo responde permiso, sexo y edad a la vez.`,
-    leadBorn: (canton, latam, rest) => `Todas las personas de ${canton} nacidas en Chile — un grupo más grande y en su mayoría distinto. Solo ${latam} conservan un pasaporte latinoamericano; los otros ${rest} tienen ciudadanía suiza, de la UE u otra, y no aparecen en ninguna cifra de nacionales chilenos.`,
-    popPassport: "Pasaporte chileno",
-    popBorn: "Nacidos en Chile",
+    nobodyPassport: (nat, canton) => `Nadie en ${canton} tiene este pasaporte — ${nat}`,
+    nobodyBorn: (nat, canton) => `Nadie en ${canton} nació en ${nat}`,
+    leadNationals: (who, canton) => `Cada una de las personas (${who}) en ${canton}, según cada atributo que registra la fuente. Divide por sexo para bajar un nivel más — hasta ahí llega el SEM, que solo cruza estos atributos con sexo. BFS llega más lejos: el explorador de abajo responde permiso, sexo y edad a la vez.`,
+    leadBorn: (nat, canton, own, rest) => `Todas las personas de ${canton} nacidas en ${nat} — un grupo más grande y en su mayoría distinto. Solo ${own} conservan un pasaporte de esa región; los otros ${rest} tienen ciudadanía suiza, de la UE u otra, y no aparecen en las cifras por pasaporte.`,
+    popPassport: (nat) => `Pasaporte: ${nat}`,
+    popBorn: (nat) => `Nacidos en ${nat}`,
     everyone: "Todos",
     splitBySex: "Por sexo",
     women: "Mujeres",
@@ -547,13 +574,13 @@ const es: Dict = {
     wallSem: "No se publica por sexo — el SEM informa el estado civil solo para el grupo completo.",
     wallBorn: "No se publica por sexo para esta población.",
     marriedToSwiss: (n) => `De los casados, ${n} están casados con una persona suiza.`,
-    bornMaritalNote: (year, total, head) => `El estado civil de los nacidos en Chile viene de otro cubo y de un año anterior (31 dic ${year}), por eso cuenta ${total} y no ${head}. Las fechas no se reconcilian.`,
+    bornMaritalNote: (nat, year, total, head) => `El estado civil de los nacidos en ${nat} viene de otro cubo y de un año anterior (31 dic ${year}), por eso cuenta ${total} y no ${head}. Las fechas no se reconcilian.`,
     ageSumNote: "Sumado de los 21 tramos quinquenales que publica BFS — aritmética exacta, no una estimación.",
   },
   trend: {
     eyebrow: "Tiempo · 2010–2026",
     h: "Dieciséis años, dos registros",
-    lead: (canton, small) => `Nacionales chilenos en ${canton}, según dos registros que no coinciden y que aquí no se reconcilian.${small ? " A este tamaño, una sola familia que llega mueve la línea." : ""}`,
+    lead: (who, canton, small) => `${who} en ${canton}, según dos registros que no coinciden y que aquí no se reconcilian.${small ? " A este tamaño, una sola familia que llega mueve la línea." : ""}`,
     total: "Total", bySex: "Por sexo", byPermit: "Por permiso", yearly: "Anual", monthly: "Mensual",
     seriesBfs: "BFS STATPOP (registro, 31 dic)",
     seriesSemDec: "SEM (administrativo, 31 dic)",
@@ -575,7 +602,7 @@ const es: Dict = {
     leadTop: (label, val) => ` El motivo más frecuente es ${label}, con ${val}.`,
     leadNoRefugees: " Nadie llegó como refugiado, por caso de rigor ni por resolución de asilo.",
     leadDepartures: (grand, span) => `${grand} personas se fueron ${span} — casi tantas como las que llegaron, y por eso la población cambia tan lento.`,
-    leadSwiss: (grand, span) => `${grand} nacionales chilenos se hicieron ciudadanos suizos ${span}. Cada uno sale del conteo de pasaportes chilenos y entra al de nacidos en Chile — gran parte de por qué ambos difieren tanto.`,
+    leadSwiss: (who, grand, span) => `${grand} personas (${who}) se hicieron ciudadanas suizas ${span}. Cada una sale del conteo por pasaporte pero sigue en el de lugar de nacimiento — gran parte de por qué ambos difieren tanto.`,
     periodAll: (a, b) => `Período completo ${a}–${b}`,
     period12: "Últimos 12 meses",
     periodAria: "Período",
@@ -601,7 +628,7 @@ const es: Dict = {
     try: "Prueba:",
     presetWomenC: "Mujeres con permiso C",
     presetUnder5: "Menos de 5 años aquí",
-    presetBornSwiss: "Nacidos en Chile con pasaporte suizo",
+    presetBornSwiss: (nat) => `Nacidos en ${nat} con pasaporte suizo`,
     presetRetirement: "En edad de jubilar",
     presetWall: "Recién llegados casados — nunca contados",
     fieldSourceMetric: "Fuente y métrica",
@@ -615,7 +642,7 @@ const es: Dict = {
     popTotal: "Total",
     hint: "Cada opción muestra a qué resuelve. Una marca punteada significa que las fuentes nunca cruzaron esas dimensiones — igual se puede elegir, porque esa ausencia es en sí el hallazgo.",
     wallBanner: "Todas las opciones de abajo aparecen punteadas porque la combinación actual nunca se publicó — quita una de las dimensiones seleccionadas para continuar.",
-    passportOfBorn: "Grupo de pasaporte · de los nacidos en Chile",
+    passportOfBorn: (nat) => `Grupo de pasaporte · de los nacidos en ${nat}`,
     any: "Cualquiera",
     neverPublished: "nunca publicado",
     notPubWithCarrier: (carrier) => `Las fuentes nunca cruzaron estas dimensiones para esta población — la tabla más cercana, ${carrier}, no las combina.`,
@@ -634,14 +661,14 @@ const es: Dict = {
   explorer: { exportLabel: "Exporta la vista actual con columnas de procedencia completas", csv: "Descargar CSV", json: "Descargar JSON" },
   baselines: {
     eyebrow: "Comparación",
-    h: "Dónde viven realmente los chilenos",
+    h: (who) => `Dónde viven realmente (${who})`,
     leadTop3: (a, b, c) => `${a}, ${b} y ${c} concentran las comunidades más grandes. `,
     leadRest: (date) => `Medido por cada 1.000 residentes extranjeros el ranking cambia, porque un cantón grande tiene más de todo. Haz clic en cualquier cantón para verlo en toda la página. Residentes permanentes del SEM, ${date}.`,
-    cardIn: (canton) => `Chilenos en ${canton}`,
+    cardIn: (who, canton) => `${who} en ${canton}`,
     ofWhomPermanent: "de ellos permanentes",
     shareForeign: (canton) => `Proporción de los extranjeros de ${canton}`,
     foreignSub: (n) => `${n} residentes extranjeros`,
-    shareNational: "Proporción de todos los chilenos en Suiza",
+    shareNational: (who) => `Proporción del total en Suiza (${who})`,
     nationalSub: (n) => `${n} en Suiza`,
     largest: (canton) => `Mayor comunidad: ${canton}`,
     largestSub: (pct) => `${pct}% del total nacional`,
@@ -650,9 +677,9 @@ const es: Dict = {
     segCount: "Conteo absoluto",
     segPer1000: "Por 1.000 residentes extranjeros",
     segIndex: "Índice vs tasa nacional",
-    axis: "nacionales chilenos permanentes",
+    axis: (who) => `${who} permanentes`,
     refTitle: "Promedio nacional = 100",
-    foot: "El per cápita usa como denominador el conteo del SEM de todos los residentes extranjeros por cantón (los totales con nacionales suizos son un concepto de BFS con otra fecha de referencia). El índice expresa la razón chilenos/extranjeros de cada cantón relativa a la razón nacional.",
+    foot: "El per cápita usa como denominador el conteo del SEM de todos los residentes extranjeros por cantón (los totales con nacionales suizos son un concepto de BFS con otra fecha de referencia). El índice expresa la razón comunidad/extranjeros de cada cantón relativa a la razón nacional.",
   },
   availability: {
     eyebrow: "Lo que se puede saber",
@@ -683,7 +710,7 @@ const es: Dict = {
     sub: "Los cuatro estados, el desfase de fechas entre los dos registros, qué cruces existen y el inventario completo de fuentes.",
   },
   footer: {
-    note: "Una exploración honesta de las estadísticas oficiales sobre nacionales chilenos y residentes nacidos en Chile en Suiza, a nivel nacional y cantón por cantón. Construida solo con datos abiertos cosechados; nada se estima.",
+    note: "Una exploración honesta de las estadísticas oficiales sobre todas las nacionalidades extranjeras en Suiza, a nivel nacional y cantón por cantón. Construida solo con datos abiertos cosechados; nada se estima.",
     sources: "Fuentes",
     download: (canton) => `Descargar ${canton}`,
     csv: "Todas las celdas, CSV",
@@ -697,7 +724,18 @@ const es: Dict = {
 // ---------------------------------------------------------------------------
 const de: Dict = {
   nav: { contrast: "Kontrast", portrait: "Porträt", trend: "Verlauf", movement: "Bewegungen", crossfilter: "Explorer", comparison: "Vergleich", method: "Methode" },
-  header: { title: "Chileninnen und Chilenen in der Schweiz", cells: (n) => `${n} erhobene Zellen`, loading: "lädt…" },
+  header: { title: "Ausländer:innen in der Schweiz", cells: (n) => `${n} erhobene Zellen`, loading: "lädt…" },
+  nats: {
+    _ALL: "Alle ausländischen Staatsangehörigen",
+    _EU_EFTA: "EU-/EFTA-Staatsangehörige",
+    _THIRD: "Drittstaatsangehörige",
+    _SL: "Staatenlos",
+    _NONAT: "Ohne Nationalität",
+    _UNK: "Staat unbekannt",
+    _NA_BORDERS: "Nach heutigen Grenzen nicht zuteilbar",
+  },
+  natOf: (name) => `Staatsangehörige von ${name}`,
+  natPicker: { label: "Bevölkerung", pickerLabel: "Staatsangehörigkeit", search: "Land eintippen…", empty: "Kein Treffer — das Register führt kein solches Land." },
   canton: { showing: "Ansicht", back: "← Schweiz", backTitle: "Zurück zur nationalen Ansicht", pickerLabel: "Kanton", rowTitle: (name) => `${name} auf der ganzen Seite anzeigen`, view: "ansehen →" },
   theme: { toDark: "Zum dunklen Thema wechseln", toLight: "Zum hellen Thema wechseln" },
   main: { loadingCanton: "Kantonsdaten werden geladen…", error: (msg) => `Etwas konnte nicht geladen werden: ${msg}. Die angezeigten Zahlen stammen möglicherweise vom zuvor gewählten Kanton — ein Neuladen der Seite behebt das meist.` },
@@ -729,12 +767,12 @@ const de: Dict = {
   metrics: { stock: "Wohnbevölkerung", immigration: "Einwanderung", emigration: "Auswanderung", naturalisation: "Einbürgerung" },
   findings: {
     h: "Was die offiziellen Zahlen sagen",
-    intro: (canton) => `Vier Dinge, die man über Chileninnen und Chilenen in ${canton} wissen sollte — und danach die Daten selbst, frei erkundbar. Wo eine Zahl nie publiziert wurde, sagt diese Seite das, statt eine Lücke zu zeigen.`,
+    intro: (who, canton) => `Vier Dinge, die man über ${who} in ${canton} wissen sollte — und danach die Daten selbst, frei erkundbar. Wo eine Zahl nie publiziert wurde, sagt diese Seite das, statt eine Lücke zu zeigen.`,
     twoCountsH: "Zwei Zählungen, eine Gemeinschaft",
-    twoCountsD: (p, b) => `${p} Personen haben einen chilenischen Pass; ${b} wurden in Chile geboren. Wer nur eines zählt, verpasst den Grossteil des anderen.`,
+    twoCountsD: (nat, p, b) => `${p} Personen führen den Pass; ${b} wurden in ${nat} geboren. Wer nur eines zählt, verpasst den Grossteil des anderen.`,
     twoCountsCta: "Zur Aufteilung",
     becameSwissH: "Sind Schweizer geworden",
-    becameSwissD: (b, swiss, latam) => `Von den ${b} in Chile Geborenen haben heute ${swiss} einen Schweizer und ${latam} einen lateinamerikanischen Pass.`,
+    becameSwissD: (nat, b, swiss) => `Von den ${b} in ${nat} Geborenen haben heute ${swiss} einen Schweizer Pass.`,
     becameSwissCta: (b) => `Die ${b} kennenlernen`,
     familyH: "Kamen zur Familie",
     familyD: (all, years, family, leads) => `Von ${all} Zuzügen in ${years} Jahren erfolgten ${family} über den Familiennachzug${leads ? " — mehr als Arbeit und Ausbildung zusammen" : ""}.`,
@@ -749,26 +787,26 @@ const de: Dict = {
   hero: {
     eyebrow: "Zwei Arten zu zählen",
     h: "Die Gemeinschaft ist grösser als die Passzählung",
-    lead: (canton, p, b) => `${canton} zählt ${p} Personen mit chilenischem Pass — und ${b} in Chile geborene Einwohner. Viele der in Chile Geborenen haben inzwischen die Schweizer oder eine EU-Staatsbürgerschaft angenommen; wer nur Pässe zählt, verpasst einen grossen Teil der Gemeinschaft.`,
-    kickerPassport: "Haben einen chilenischen Pass",
-    kickerBorn: "Wurden in Chile geboren",
+    lead: (nat, canton, p, b) => `${canton} zählt ${p} Passinhaberinnen und -inhaber — und ${b} Einwohner, die in ${nat} geboren wurden. Viele der dort Geborenen haben inzwischen die Schweizer oder eine andere Staatsbürgerschaft angenommen; wer nur Pässe zählt, verpasst einen grossen Teil der Gemeinschaft.`,
+    kickerPassport: (nat) => `Führen den Pass — ${nat}`,
+    kickerBorn: (nat) => `Wurden in ${nat} geboren`,
     footSem: (date) => `SEM · ${date} · ständige Wohnbevölkerung`,
     footBfs: "BFS STATPOP · 31. Dez 2024 · ständige Wohnbevölkerung",
-    splitHead: (b) => `Die ${b} in Chile geborenen Einwohner, nach dem Pass, den sie tatsächlich haben`,
+    splitHead: (nat, b) => `Die ${b} in ${nat} geborenen Einwohner, nach dem Pass, den sie tatsächlich haben`,
     splitAria: "Passzusammensetzung der in Chile geborenen Einwohner",
-    insight: (nonLatAm, born, pct) => `${nonLatAm} von ${born} in Chile geborenen Einwohnern — ${pct}% — haben keinen lateinamerikanischen Pass. Einbürgerung und gemischt-nationale Familien lassen Geburtsort und Staatsangehörigkeit in dieser Grössenordnung stark auseinanderlaufen.`,
+    insight: (nonOwn, born, pct) => `${nonOwn} von ${born} — ${pct}% — haben einen Pass von ausserhalb ihrer Geburtsregion. Einbürgerung und gemischt-nationale Familien lassen Geburtsort und Staatsangehörigkeit stark auseinanderlaufen.`,
     awaiting: "Die Passaufteilung stammt aus BFS-STATPOP-Würfel 399.",
     offsetNote: "Diese beiden Referenzdaten liegen ~17 Monate auseinander. Der Versatz ist real und bleibt im ganzen Explorer erhalten — die beiden Reihen werden nie zu einer Zahl verrechnet.",
   },
   portrait: {
     eyebrow: "Porträt",
     whoAre: (n) => `Wer sind die ${n}?`,
-    nobodyPassport: (canton) => `Niemand in ${canton} hat einen chilenischen Pass`,
-    nobodyBorn: (canton) => `Niemand in ${canton} wurde in Chile geboren`,
-    leadNationals: (canton) => `Alle Personen in ${canton} mit chilenischem Pass, nach jedem Merkmal, das das Register führt. Nach Geschlecht aufteilen für eine Ebene mehr — weiter kommt das SEM nicht, denn es kreuzt diese Merkmale nur mit dem Geschlecht. Das BFS geht weiter: der Explorer unten beantwortet Bewilligung, Geschlecht und Alter zusammen.`,
-    leadBorn: (canton, latam, rest) => `Alle Personen in ${canton}, die in Chile geboren wurden — eine grössere und mehrheitlich andere Gruppe. Nur ${latam} haben noch einen lateinamerikanischen Pass; die übrigen ${rest} besitzen die Schweizer, eine EU- oder eine andere Staatsbürgerschaft und erscheinen in keiner Zahl über chilenische Staatsangehörige.`,
-    popPassport: "Chilenischer Pass",
-    popBorn: "In Chile geboren",
+    nobodyPassport: (nat, canton) => `Niemand in ${canton} führt diesen Pass — ${nat}`,
+    nobodyBorn: (nat, canton) => `Niemand in ${canton} wurde in ${nat} geboren`,
+    leadNationals: (who, canton) => `Alle ${who} in ${canton}, nach jedem Merkmal, das das Register führt. Nach Geschlecht aufteilen für eine Ebene mehr — weiter kommt das SEM nicht, denn es kreuzt diese Merkmale nur mit dem Geschlecht. Das BFS geht weiter: der Explorer unten beantwortet Bewilligung, Geschlecht und Alter zusammen.`,
+    leadBorn: (nat, canton, own, rest) => `Alle Personen in ${canton}, die in ${nat} geboren wurden — eine grössere und mehrheitlich andere Gruppe. Nur ${own} führen noch einen Pass ihrer Geburtsregion; die übrigen ${rest} besitzen die Schweizer, eine EU- oder eine andere Staatsbürgerschaft und erscheinen in keiner Passzahl.`,
+    popPassport: (nat) => `Pass: ${nat}`,
+    popBorn: (nat) => `In ${nat} geboren`,
     everyone: "Alle",
     splitBySex: "Nach Geschlecht",
     women: "Frauen",
@@ -778,13 +816,13 @@ const de: Dict = {
     wallSem: "Nicht nach Geschlecht publiziert — das SEM weist den Zivilstand nur für die Gruppe als Ganzes aus.",
     wallBorn: "Für diese Bevölkerung nicht nach Geschlecht publiziert.",
     marriedToSwiss: (n) => `Von den Verheirateten sind ${n} mit einer Schweizerin oder einem Schweizer verheiratet.`,
-    bornMaritalNote: (year, total, head) => `Der Zivilstand der in Chile Geborenen stammt aus einem anderen Würfel und einem früheren Jahr (31. Dez ${year}) und zählt darum ${total} statt ${head}. Die Daten werden nicht verrechnet.`,
+    bornMaritalNote: (nat, year, total, head) => `Der Zivilstand der in ${nat} Geborenen stammt aus einem anderen Würfel und einem früheren Jahr (31. Dez ${year}) und zählt darum ${total} statt ${head}. Die Daten werden nicht verrechnet.`,
     ageSumNote: "Summiert aus den 21 Fünfjahresklassen, die das BFS publiziert — exakte Arithmetik, keine Schätzung.",
   },
   trend: {
     eyebrow: "Zeit · 2010–2026",
     h: "Sechzehn Jahre, zwei Register",
-    lead: (canton, small) => `Chilenische Staatsangehörige in ${canton}, gezählt von zwei Registern, die nicht übereinstimmen und hier nicht verrechnet werden.${small ? " Bei dieser Grösse bewegt eine einzige ankommende Familie die Linie." : ""}`,
+    lead: (who, canton, small) => `${who} in ${canton}, gezählt von zwei Registern, die nicht übereinstimmen und hier nicht verrechnet werden.${small ? " Bei dieser Grösse bewegt eine einzige ankommende Familie die Linie." : ""}`,
     total: "Total", bySex: "Nach Geschlecht", byPermit: "Nach Bewilligung", yearly: "Jährlich", monthly: "Monatlich",
     seriesBfs: "BFS STATPOP (Register, 31. Dez)",
     seriesSemDec: "SEM (administrativ, 31. Dez)",
@@ -806,7 +844,7 @@ const de: Dict = {
     leadTop: (label, val) => ` Der häufigste Grund ist ${label} mit ${val}.`,
     leadNoRefugees: " Niemand kam als Flüchtling, als Härtefall oder über eine Asylregelung.",
     leadDepartures: (grand, span) => `${grand} Personen sind ${span} weggezogen — fast so viele wie zugezogen sind, weshalb sich die Bevölkerung so langsam verändert.`,
-    leadSwiss: (grand, span) => `${grand} chilenische Staatsangehörige wurden ${span} Schweizer Bürgerinnen und Bürger. Jede und jeder davon verlässt die Passzählung und tritt in die Zählung der in Chile Geborenen ein — ein grosser Teil des Unterschieds zwischen beiden.`,
+    leadSwiss: (who, grand, span) => `${grand} der ${who} wurden ${span} Schweizer Bürgerinnen und Bürger. Jede und jeder davon verlässt die Passzählung, bleibt aber in der Geburtsort-Zählung — ein grosser Teil des Unterschieds zwischen beiden.`,
     periodAll: (a, b) => `Ganzer Zeitraum ${a}–${b}`,
     period12: "Letzte 12 Monate",
     periodAria: "Zeitraum",
@@ -832,7 +870,7 @@ const de: Dict = {
     try: "Versuch:",
     presetWomenC: "Frauen mit C-Bewilligung",
     presetUnder5: "Weniger als 5 Jahre hier",
-    presetBornSwiss: "In Chile Geborene mit Schweizer Pass",
+    presetBornSwiss: (nat) => `In ${nat} Geborene mit Schweizer Pass`,
     presetRetirement: "Im Rentenalter",
     presetWall: "Verheiratete Neuzugezogene — nie gezählt",
     fieldSourceMetric: "Quelle & Metrik",
@@ -846,7 +884,7 @@ const de: Dict = {
     popTotal: "Total",
     hint: "Jede Option zeigt, wozu sie auflöst. Eine gepunktete Markierung heisst, die Quellen haben diese Dimensionen nie gekreuzt — trotzdem wählbar, denn genau diese Absenz ist der Befund.",
     wallBanner: "Alle Optionen unten sind gestrichelt, weil die aktuelle Kombination nie publiziert wurde — entferne eine der gewählten Dimensionen, um weiterzukommen.",
-    passportOfBorn: "Passgruppe · der in Chile Geborenen",
+    passportOfBorn: (nat) => `Passgruppe · der in ${nat} Geborenen`,
     any: "Alle",
     neverPublished: "nie publiziert",
     notPubWithCarrier: (carrier) => `Die Quellen haben diese Dimensionen für diese Bevölkerung nie gekreuzt — die nächstliegende Tabelle, ${carrier}, kombiniert sie nicht.`,
@@ -865,14 +903,14 @@ const de: Dict = {
   explorer: { exportLabel: "Aktuelle Ansicht mit vollständigen Herkunftsspalten exportieren", csv: "CSV herunterladen", json: "JSON herunterladen" },
   baselines: {
     eyebrow: "Vergleich",
-    h: "Wo Chileninnen und Chilenen tatsächlich leben",
+    h: (who) => `Wo ${who} tatsächlich leben`,
     leadTop3: (a, b, c) => `${a}, ${b} und ${c} haben die grössten Gemeinschaften. `,
     leadRest: (date) => `Pro 1'000 ausländische Einwohner gemessen ändert sich die Rangfolge, denn ein grosser Kanton hat von allem mehr. Klicke auf einen Kanton, um ihn auf der ganzen Seite anzuzeigen. Ständige Wohnbevölkerung SEM, ${date}.`,
-    cardIn: (canton) => `Chileninnen und Chilenen in ${canton}`,
+    cardIn: (who, canton) => `${who} in ${canton}`,
     ofWhomPermanent: "davon ständig",
     shareForeign: (canton) => `Anteil an den Ausländern von ${canton}`,
     foreignSub: (n) => `${n} ausländische Einwohner`,
-    shareNational: "Anteil an allen Chilenen in der Schweiz",
+    shareNational: (who) => `Anteil am Schweizer Total (${who})`,
     nationalSub: (n) => `${n} in der Schweiz`,
     largest: (canton) => `Grösste Gemeinschaft: ${canton}`,
     largestSub: (pct) => `${pct}% des nationalen Totals`,
@@ -881,9 +919,9 @@ const de: Dict = {
     segCount: "Absolute Zahl",
     segPer1000: "Pro 1'000 ausländische Einwohner",
     segIndex: "Index vs nationale Rate",
-    axis: "ständige chilenische Staatsangehörige",
+    axis: (who) => `ständige ${who}`,
     refTitle: "Nationaler Durchschnitt = 100",
-    foot: "Pro Kopf verwendet als Nenner die SEM-Zahl aller ausländischen Einwohner pro Kanton (Gesamtbestände inkl. Schweizer sind ein BFS-Konzept mit anderem Referenzdatum). Der Index setzt das Verhältnis Chilenen/Ausländer jedes Kantons ins Verhältnis zur nationalen Quote.",
+    foot: "Pro Kopf verwendet als Nenner die SEM-Zahl aller ausländischen Einwohner pro Kanton (Gesamtbestände inkl. Schweizer sind ein BFS-Konzept mit anderem Referenzdatum). Der Index setzt das Verhältnis Gemeinschaft/Ausländer jedes Kantons ins Verhältnis zur nationalen Quote.",
   },
   availability: {
     eyebrow: "Was wissbar ist",
@@ -914,7 +952,7 @@ const de: Dict = {
     sub: "Die vier Zustände, der Referenzdaten-Versatz zwischen den beiden Registern, welche Kreuztabellen existieren und das vollständige Quelleninventar.",
   },
   footer: {
-    note: "Eine ehrliche Auswertung der offiziellen Statistik über chilenische Staatsangehörige und in Chile geborene Einwohner der Schweiz, national und Kanton für Kanton. Ausschliesslich aus erhobenen offenen Daten gebaut; nichts wird geschätzt.",
+    note: "Eine ehrliche Auswertung der offiziellen Statistik über jede ausländische Staatsangehörigkeit in der Schweiz, national und Kanton für Kanton. Ausschliesslich aus erhobenen offenen Daten gebaut; nichts wird geschätzt.",
     sources: "Quellen",
     download: (canton) => `${canton} herunterladen`,
     csv: "Jede Zelle, CSV",

@@ -61,7 +61,7 @@ const SEM_SKIP_PATTERNS = [
   /^EU-?\d+$/i,
   /^EU-Kroatien$/i,
   /^EFTA$/i,
-  /^Übriges Europa$/i,
+  /^Übriges? /i, // "Übriges Europa" / "Übrige Europa" and canton-sheet kin
 ];
 
 /**
@@ -69,7 +69,7 @@ const SEM_SKIP_PATTERNS = [
  * "EU28 / EFTA", "EU-28/EFTA", "EU-27/EFTA", "EU / EFTA" all name the same
  * published row. Matched as a shape, on the normalised form.
  */
-const EU_EFTA_PATTERN = /^eu ?\d* ?efta$/;
+const EU_EFTA_PATTERN = /^eu ?\d* ?efta( uk)?$/;
 
 /**
  * Historic label spellings -> ISO. Country names drift across workbook years
@@ -99,6 +99,21 @@ export const SEM_LABEL_ALIASES: Record<string, string> = {
   "moldau": "MD",
   "moldova": "MD",
   "republik moldau": "MD",
+  "mazedonien eh jug rep": "MK",
+  "botswana": "BW",
+  "djibouti": "DJ",
+  "china taiwan": "TW",
+  "salomon inseln": "SB",
+  // Microstates that first gained SEM rows after the registry's source month.
+  "nauru": "NR",
+  "palau": "PW",
+  "tuvalu": "TV",
+  "mikronesien": "FM",
+  "cookinseln": "CK",
+  "vatikanstadt": "VA",
+  "vatikan": "VA",
+  "heiliger stuhl": "VA",
+  "palastina": "PS",
 };
 
 export function loadRegistry(cwd = process.cwd()): Registry {
@@ -106,7 +121,12 @@ export function loadRegistry(cwd = process.cwd()): Registry {
     entries: RegistryEntry[];
     semSkip: string[];
   };
-  const semEntries = raw.entries.filter((e) => e.sem);
+  // The SEM zero-fill universe: every real country, plus the specials and
+  // groups that carry a SEM row. SEM lists only countries with at least one
+  // resident, and its inventory grows over time (Nauru first appears in late
+  // 2025) — a country absent from a sheet has zero people there, whether or
+  // not the registry's source month happened to list it.
+  const semEntries = raw.entries.filter((e) => e.sem || !e.code.startsWith("_"));
   const index = <K extends keyof RegistryEntry>(k: K) => {
     const m = new Map<string, RegistryEntry>();
     for (const e of raw.entries) {

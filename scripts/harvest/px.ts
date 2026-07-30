@@ -17,7 +17,6 @@
 
 import {
   closeSync,
-  createWriteStream,
   existsSync,
   mkdirSync,
   openSync,
@@ -28,8 +27,11 @@ import {
   statSync,
   writeFileSync,
 } from "node:fs";
-import { once } from "node:events";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { dirname, join } from "node:path";
+
+const execFileAsync = promisify(execFile);
 
 export interface PxDim {
   name: string;
@@ -125,42 +127,25 @@ export const PX_INTER_CUBE_MS = 180_000;
  */
 const PX_STALL_MS = 90_000;
 
+/**
+ * The download goes through curl, not Node's fetch, for the same reason as
+ * every other request to this host (see fetcher.ts): the WAF rejects Node's
+ * TLS/HTTP fingerprint with 400s that no header can fix, while curl's default
+ * identity is accepted. `--speed-limit` reproduces the stall timeout — abort
+ * only when bytes stop arriving, never on total elapsed time, because these
+ * files legitimately take minutes.
+ */
 async function downloadOnce(url: string, dest: string): Promise<number> {
-  const ac = new AbortController();
-  let timer: NodeJS.Timeout | undefined;
-  const arm = () => {
-    clearTimeout(timer);
-    timer = setTimeout(() => ac.abort(), PX_STALL_MS);
-  };
-  arm();
-  try {
-    const res = await fetch(url, {
-      signal: ac.signal,
-      headers: { "User-Agent": "chileans-in-zug-harvest/1.0 (open-data research)" },
-    });
-    if (!res.ok || !res.body) throw new Error(`HTTP ${res.status}`);
-    const declared = Number(res.headers.get("content-length") ?? 0);
-
-    const out = createWriteStream(dest);
-    let written = 0;
-    const reader = res.body.getReader();
-    for (;;) {
-      arm();
-      const { done, value } = await reader.read();
-      if (done) break;
-      written += value.byteLength;
-      if (!out.write(value)) await once(out, "drain");
-    }
-    out.end();
-    await once(out, "finish");
-
-    if (declared > 0 && written !== declared) {
-      throw new Error(`truncated: got ${written} of ${declared} bytes`);
-    }
-    return written;
-  } finally {
-    clearTimeout(timer);
-  }
+  const args = [
+    "-sS",
+    "--fail",
+    "--speed-limit", "1024",
+    "--speed-time", String(Math.round(PX_STALL_MS / 1000)),
+    "-o", dest,
+    url,
+  ];
+  await execFileAsync("curl", args, { maxBuffer: 1 << 20 });
+  return statSync(dest).size;
 }
 
 /**

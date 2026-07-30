@@ -5,23 +5,33 @@ import type { Dataset } from "./model";
 import { decodeCanton, type CantonPayload } from "./payload";
 
 export const SWITZERLAND = "CH";
+/** The default nationality scope: every foreign national, as published (SEM Gesamttotal). */
+export const ALL_FOREIGN = "_ALL";
 
-export interface CantonEntry {
+export interface NatIndexEntry {
   code: string;
+  de: string;
   observations: number;
   bytes: number;
+  semTotal: number | null;
+  bfsTotal: number | null;
+  hasSem: boolean;
+  hasBfs: boolean;
 }
 
 interface DataState {
   dataset: Dataset | null;
-  /** Cantonal comparison figures for every canton at once. */
+  /** Cantonal comparison figures for the selected nationality, every canton at once. */
   summary: Observation[] | null;
   manifest: Manifest | null;
+  /** All nationalities with data, for the picker and the ranking. */
+  natIndex: NatIndexEntry[];
+  nat: string;
+  setNat: (code: string) => void;
   canton: string;
-  cantons: CantonEntry[];
   setCanton: (code: string) => void;
   loading: boolean;
-  /** True while a canton switch is in flight and the previous data is still shown. */
+  /** True while a scope switch is in flight and the previous data is still shown. */
   switching: boolean;
   error: string | null;
 }
@@ -30,8 +40,10 @@ const DataContext = createContext<DataState>({
   dataset: null,
   summary: null,
   manifest: null,
+  natIndex: [],
+  nat: ALL_FOREIGN,
+  setNat: () => {},
   canton: SWITZERLAND,
-  cantons: [],
   setCanton: () => {},
   loading: true,
   switching: false,
@@ -39,40 +51,37 @@ const DataContext = createContext<DataState>({
 });
 
 /**
- * Loads the harvest one canton at a time.
+ * Loads the harvest one (nationality, canton) slice at a time.
  *
- * Switzerland is the default view and the only observation file fetched on first
- * paint. Selecting a canton fetches that canton's file and keeps it, so
- * returning to one already seen is instant. Everything loaded stays for the life
- * of the page — each canton is a few hundred kB decoded, and nobody visits
- * enough of them for that to become a problem.
- *
- * The previous dataset stays on screen while the next one loads, so switching
- * canton dims the figures rather than blanking the page.
+ * The default view is every foreign national in Switzerland; picking a
+ * nationality or a canton fetches that slice's file and keeps it, so returning
+ * to one already seen is instant. The previous dataset stays on screen while
+ * the next one loads — switching dims the figures rather than blanking the
+ * page and losing the reader's scroll position.
  */
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const [manifest, setManifest] = useState<Manifest | null>(null);
-  const [cantons, setCantons] = useState<CantonEntry[]>([]);
-  const [summary, setSummary] = useState<Observation[] | null>(null);
+  const [natIndex, setNatIndex] = useState<NatIndexEntry[]>([]);
+  const [nat, setNatState] = useState<string>(ALL_FOREIGN);
   const [canton, setCantonState] = useState<string>(SWITZERLAND);
   const [cache, setCache] = useState<Record<string, Observation[]>>({});
+  const [summaryCache, setSummaryCache] = useState<Record<string, Observation[]>>({});
   const [switching, setSwitching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Manifest and the cross-canton comparison figures: fetched once.
+  // Manifest and the nationality index: fetched once.
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const [mRes, sRes] = await Promise.all([fetch("/data/manifest.json"), fetch("/data/summary.json")]);
+        const [mRes, iRes] = await Promise.all([fetch("/data/manifest.json"), fetch("/data/index.json")]);
         if (!mRes.ok) throw new Error("Failed to load the manifest");
-        const m = (await mRes.json()) as Manifest & { cantons?: CantonEntry[] };
+        const m = (await mRes.json()) as Manifest;
         if (cancelled) return;
         setManifest(m);
-        setCantons(m.cantons ?? []);
-        if (sRes.ok) {
-          const payload = (await sRes.json()) as CantonPayload;
-          if (!cancelled) setSummary(decodeCanton(payload));
+        if (iRes.ok) {
+          const idx = (await iRes.json()) as { nationalities: NatIndexEntry[] };
+          if (!cancelled) setNatIndex(idx.nationalities);
         }
       } catch (err) {
         if (!cancelled) setError(String(err));
@@ -83,18 +92,19 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Whichever canton is selected, fetched once and remembered.
+  // Whichever (nationality, canton) is selected, fetched once and remembered.
+  const sliceKey = `${nat}/${canton}`;
   useEffect(() => {
-    if (cache[canton]) return;
+    if (cache[sliceKey]) return;
     let cancelled = false;
     setSwitching(true);
     (async () => {
       try {
-        const res = await fetch(`/data/canton/${canton}.json`);
-        if (!res.ok) throw new Error(`No data file for ${canton}`);
+        const res = await fetch(`/data/nat/${nat}/${canton}.json`);
+        if (!res.ok) throw new Error(`No data file for ${nat}/${canton}`);
         const payload = (await res.json()) as CantonPayload;
         const decoded = decodeCanton(payload);
-        if (!cancelled) setCache((c) => ({ ...c, [canton]: decoded }));
+        if (!cancelled) setCache((c) => ({ ...c, [sliceKey]: decoded }));
       } catch (err) {
         if (!cancelled) setError(String(err));
       } finally {
@@ -104,57 +114,95 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [canton, cache]);
+  }, [nat, canton, sliceKey, cache]);
 
-  const setCanton = useCallback((code: string) => {
-    setCantonState(code);
-    // The canton is part of the address: a shared link must reopen on the same
-    // scope, or the same query silently answers with different numbers.
+  // Per-nationality comparison summary, fetched once per nationality.
+  useEffect(() => {
+    if (summaryCache[nat]) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/data/nat/${nat}/summary.json`);
+        if (!res.ok) return;
+        const payload = (await res.json()) as CantonPayload;
+        if (!cancelled) setSummaryCache((c) => ({ ...c, [nat]: decodeCanton(payload) }));
+      } catch {
+        /* summary is an enhancement; the section shows its own empty state */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [nat, summaryCache]);
+
+  const writeUrl = useCallback((key: string, value: string | null) => {
+    // The scope is part of the address: a shared link must reopen on the same
+    // nationality and canton, or the same question silently answers with
+    // different numbers.
     try {
       const url = new URL(window.location.href);
-      if (code === SWITZERLAND) url.searchParams.delete("kt");
-      else url.searchParams.set("kt", code);
+      if (value === null) url.searchParams.delete(key);
+      else url.searchParams.set(key, value);
       window.history.replaceState(null, "", url.toString());
     } catch {
-      // Server rendering or a sandboxed context: the URL just does not update.
+      /* server rendering: the URL just does not update */
     }
   }, []);
 
-  // On first load, honour a canton named in the URL.
+  const setCanton = useCallback(
+    (code: string) => {
+      setCantonState(code);
+      writeUrl("kt", code === SWITZERLAND ? null : code);
+    },
+    [writeUrl],
+  );
+  const setNat = useCallback(
+    (code: string) => {
+      setNatState(code);
+      writeUrl("nat", code === ALL_FOREIGN ? null : code);
+    },
+    [writeUrl],
+  );
+
+  // On first load, honour a scope named in the URL.
   useEffect(() => {
     try {
-      const kt = new URLSearchParams(window.location.search).get("kt");
+      const params = new URLSearchParams(window.location.search);
+      const kt = params.get("kt");
       if (kt && /^[A-Z]{2}$/.test(kt)) setCantonState(kt);
+      const n = params.get("nat");
+      if (n && /^[A-Z_]{2,12}$/.test(n)) setNatState(n);
     } catch {
       /* no URL to read */
     }
   }, []);
 
-  const observations = cache[canton];
-  // While a switch is in flight the previous canton's data stays on screen,
-  // dimmed — unmounting every section into skeletons and losing the reader's
-  // scroll position is far worse than showing year-old figures for 300 ms.
-  const lastGood = useRef<{ observations: Observation[]; canton: string } | null>(null);
-  if (observations) lastGood.current = { observations, canton };
-  const effective = observations ?? lastGood.current?.observations;
+  const observations = cache[sliceKey];
+  const lastGood = useRef<Observation[] | null>(null);
+  if (observations) lastGood.current = observations;
+  const effective = observations ?? lastGood.current;
   const dataset = useMemo<Dataset | null>(
     () => (effective && manifest ? { observations: effective, manifest } : null),
     [effective, manifest],
   );
+
+  const summary = summaryCache[nat] ?? null;
 
   const value = useMemo<DataState>(
     () => ({
       dataset,
       summary,
       manifest,
+      natIndex,
+      nat,
+      setNat,
       canton,
-      cantons,
       setCanton,
       loading: dataset === null && error === null,
       switching,
       error,
     }),
-    [dataset, summary, manifest, canton, cantons, setCanton, switching, error],
+    [dataset, summary, manifest, natIndex, nat, setNat, canton, setCanton, switching, error],
   );
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
