@@ -26,9 +26,9 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chileans in Switzerland — a data explorer for a very small population",
+  title: "Foreigners in Switzerland — every nationality, every canton",
   description:
-    "An honest exploration of official statistics on Chilean nationals and Chilean-born residents in Switzerland, nationally and by canton. Every cell resolves to observed, structural zero, suppressed, or not published.",
+    "An honest exploration of official statistics on every foreign nationality in Switzerland, nationally and by canton. Every cell resolves to observed, structural zero, suppressed, or not published.",
 };
 
 /**

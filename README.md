@@ -1,12 +1,16 @@
-# Chileans in Switzerland — a data explorer for a very small population
+# Foreigners in Switzerland — every nationality, every canton
 
-An honest exploration of official statistics on **Chilean nationals** and
-**Chilean-born residents** in Switzerland: **3 303 passport holders** and
-**8 308 people born in Chile** nationally, shown for the country by default and
-for any of the 26 cantons on demand. In Zug that is 35 and 99; in Appenzell
-Innerrhoden it is nobody at all. The populations are small — in most cantons
-very small — and that is the whole design problem — Swiss statistical offices suppress or never produce most
-multi-dimensional cross-tabs over a population this small, so a conventional
+An honest exploration of official statistics on **every foreign nationality in
+Switzerland** — around 200 of them, from the largest communities to the
+microstates with a single resident — shown for the whole country by default,
+narrowable to any of the 26 cantons and to any nationality. The default view
+is the entire foreign population; picking a country turns the same page into
+that community's portrait (the project began as "Chileans in Zug": 35 passport
+holders, 99 Chilean-born — that view still exists at `?nat=CL&kt=ZG`).
+
+Most of these populations are small at canton level, and that is the whole
+design problem — Swiss statistical offices suppress or never produce most
+multi-dimensional cross-tabs over small populations, so a conventional
 dashboard would render mostly blank panels and imply *absence of people* where
 the truth is *absence of a published figure*.
 
@@ -33,11 +37,11 @@ concept they disagree slightly (in Zug, SEM counts 35 permanent Chilean national
 
 ## The central finding
 
-The community is bigger than the passport count. Nationally, **3 303** people
-hold a Chilean passport while **8 308** were born in Chile — and most of the
-Chilean-born hold Swiss or EU passports today. The same contrast holds at every
-scale (in Zug: 35 vs 99). It is the app's hero view, not something buried
-behind a filter.
+For almost every nationality, the community is bigger than the passport count:
+many of those born in a country have since taken Swiss or other citizenship
+and vanish from its passport figures. Chile nationally: 3 303 passport holders
+vs 8 308 Chilean-born. The same contrast holds for most countries at every
+scale, and it is the app's hero view, not something buried behind a filter.
 
 ## Data model
 
@@ -96,12 +100,12 @@ offers the single filter to drop to reach a populated view.
   error. Number and date formats follow the language: 3,303 / 3.303 / 3'303 /
   3 303. Register citations (table ids, cube names) deliberately stay as-is —
   they are citations, not prose.
-- **Comparison baselines** — the selected canton against all Chileans in
+- **Comparison baselines** — the selected canton against the selected community in
   Switzerland, its own foreign population, and every other canton, with
   per-1,000 normalisation and an index-vs-national view. Clicking a canton row
   re-scopes the entire page.
 - **Population portrait** — every attribute the register carries drawn at once,
-  for either population (Chilean passport holders, or the larger Chilean-born
+  for either population (passport holders, or the larger born-there
   group), with a sex split. Where a split does not exist the section says so
   instead of rendering a blank: SEM's table 2-22 has no sex columns for marital
   status at all.
@@ -113,7 +117,7 @@ offers the single filter to drop to reach a populated view.
 - **Depth as far as each source goes.** SEM crosses each attribute with sex and
   nothing else — a fixed workbook layout, so that limit is real. BFS is a
   queryable cube and returns any combination, so the explorer answers three
-  attributes at once there (in Zug: 33 Chilean nationals, 18 on a B permit, 13
+  attributes at once there (Chile in Zug: 33 nationals, 18 on a B permit, 13
   of those women, 5 of those aged 45–49).
 - **Time series 2010–2026**, yearly or monthly, with each scope’s own peak and
   trough annotated and the SEM and BFS series distinguishable (solid vs
@@ -206,7 +210,7 @@ npm run verify:bfs     # -> data/verification-bfs.md
 ```
 
 `verify.ts` re-downloads the SEM workbooks from the recorded provenance URLs,
-finds the `Chile` row itself, and resolves each column from an independently
+finds each country row itself (by the label recorded in provenance), and resolves each column from an independently
 written map of the SEM header rows — covering ≥15% of eligible SEM cells
 (deterministically sampled, every dataset and reference period represented) plus
 every SEM anchor. `verify-bfs.ts` inverts the *harvested dimensions* back into
@@ -214,7 +218,7 @@ PxWeb codes, re-POSTs those queries, and decodes json-stat2 with its own
 row-major decoder; it covers 100% of non-null BFS cells (they arrive in
 rectangular blocks, so checking all of them costs the same handful of requests as
 sampling would) plus every BFS anchor. It also re-fetches each cube's metadata to
-confirm from the source's own labels that `8407` really is Chile, `ZG` really is
+confirm from the source's own labels that each code really means what the registry says (8407 = Chile, ZG = Zug,
 Zug, and so on — the bare numeric codes are exactly where a silent mapping error
 would hide. Both write a Markdown report and exit non-zero on any discrepancy.
 
@@ -230,7 +234,7 @@ VERIFY_BFS_PLAN=1 npm run verify:bfs  # invert every BFS cell back to PxWeb code
 Because each verifier deliberately re-derives its own mapping rather than
 importing the harvest's, it identifies cells by the harvest's *label strings* —
 and when a label is reworded (`"Born in Switzerland"` becoming `"Born in
-Switzerland (of Chilean nationality)"`), the verifier's rule quietly stops
+Switzerland (same nationality)"`), the verifier's rule quietly stops
 matching. The plan modes resolve **every** eligible cell, not just the sampled
 ones, and fail if any cell has no rule. Without that, a reworded label outside
 the sample stays invisible until a much later run happens to draw one.
