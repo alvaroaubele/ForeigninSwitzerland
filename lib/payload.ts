@@ -34,10 +34,15 @@ interface ObsGroup {
   h?: number;
   l?: number;
   q?: number;
-  /** per-cell parallel arrays: dim tuple, refDate, url, value */
+  /**
+   * Per-cell parallel arrays: dim tuple, refDate, url, value. `r` and `u`
+   * collapse to a scalar when every cell in the group shares the value —
+   * which is every BFS group (one cube file, one reference date) and most of
+   * the payload's bytes.
+   */
   t: number[];
-  r: number[];
-  u: number[];
+  r: number[] | number;
+  u: number[] | number;
   v: (number | null)[];
   /** sparse state exceptions: [cellIndex, stateIndex] */
   st?: [number, number][];
@@ -122,12 +127,20 @@ export function encodeCanton(canton: string, observations: Observation[]): Canto
     void _y; void _mo;
     const tuple = oc !== undefined && oc !== canton ? { ...rest, canton: oc } : rest;
     g.t.push(dims.index(JSON.stringify(tuple)));
-    g.r.push(refDates.index(o.provenance.referenceDate));
-    g.u.push(urls.index(o.provenance.url));
+    (g.r as number[]).push(refDates.index(o.provenance.referenceDate));
+    (g.u as number[]).push(urls.index(o.provenance.url));
     g.v.push(o.value);
     if (o.state !== defaultState(o.value)) {
       (g.st ??= []).push([g.v.length - 1, STATES.indexOf(o.state)]);
     }
+  }
+
+  // Collapse uniform per-cell arrays to scalars.
+  for (const g of groups.values()) {
+    const rArr = g.r as number[];
+    if (rArr.length > 0 && rArr.every((x) => x === rArr[0])) g.r = rArr[0];
+    const uArr = g.u as number[];
+    if (uArr.length > 0 && uArr.every((x) => x === uArr[0])) g.u = uArr[0];
   }
 
   return {
@@ -165,8 +178,10 @@ export function decodeCanton(p: CantonPayload): Observation[] {
     const rowLabel = g.l !== undefined ? p.rowLabels[g.l] : undefined;
     const query = g.q !== undefined ? JSON.parse(p.queries[g.q]) : undefined;
     const exceptions = new Map(g.st ?? []);
+    const rOf = (i: number) => (typeof g.r === "number" ? g.r : g.r[i]);
+    const uOf = (i: number) => (typeof g.u === "number" ? g.u : g.u[i]);
     for (let i = 0; i < g.v.length; i++) {
-      const refDate = p.refDates[g.r[i]];
+      const refDate = p.refDates[rOf(i)];
       const year = Number(refDate.slice(0, 4));
       const value = g.v[i];
       const stEx = exceptions.get(i);
@@ -187,7 +202,7 @@ export function decodeCanton(p: CantonPayload): Observation[] {
         concept,
         unit: "persons",
         provenance: {
-          url: p.urls[g.u[i]],
+          url: p.urls[uOf(i)],
           referenceDate: refDate,
           retrievedAt: p.retrievedAt,
           ...(sheet !== undefined ? { sheet } : {}),
